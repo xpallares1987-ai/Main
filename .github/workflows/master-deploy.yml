@@ -1,4 +1,4 @@
-name: Multi-Project Deployment
+﻿name: Multi-Project Deployment
 
 on:
   push:
@@ -35,6 +35,7 @@ jobs:
       - name: Build BPMN Modeler
         run: |
           cd BPMN-Modeler
+          npm install --legacy-peer-deps
           npm run build -- --base ./
           mkdir -p ../out/BPMN-Modeler
           if [ -d "dist" ]; then cp -r dist/* ../out/BPMN-Modeler/; fi
@@ -43,6 +44,7 @@ jobs:
       - name: Build Shipment Tracker
         run: |
           cd Shipment-Tracker
+          npm install --legacy-peer-deps
           npm run build -- --base ./
           mkdir -p ../out/Shipment-Tracker
           if [ -d "dist" ]; then cp -r dist/* ../out/Shipment-Tracker/; fi
@@ -51,6 +53,7 @@ jobs:
       - name: Build Logistics Dashboard
         run: |
           cd Logistics-Dashboard
+          npm install --legacy-peer-deps
           npm run build -- --base ./
           mkdir -p ../out/Logistics-Dashboard
           if [ -d "dist" ]; then cp -r dist/* ../out/Logistics-Dashboard/; fi
