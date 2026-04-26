@@ -32,7 +32,6 @@ jobs:
       - name: Build BPMN Modeler
         run: |
           cd BPMN-Modeler
-          # Saltamos comprobación de tipos en CI si es necesario para evitar bloqueos
           npx vite build --base ./
           mkdir -p ../out/BPMN-Modeler
           cp -r dist/* ../out/BPMN-Modeler/
