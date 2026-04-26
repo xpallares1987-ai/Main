@@ -1,4 +1,4 @@
-﻿name: Multi-Project Deployment
+name: Multi-Project Deployment
 
 on:
   push:
@@ -34,29 +34,23 @@ jobs:
       # BUILD BPMN Modeler
       - name: Build BPMN Modeler
         run: |
-          cd BPMN-Modeler
-          npm install --legacy-peer-deps
-          npm run build -- --base ./
-          mkdir -p ../out/BPMN-Modeler
-          if [ -d "dist" ]; then cp -r dist/* ../out/BPMN-Modeler/; fi
+          npm run build -w bpmn-modeler -- --base ./
+          mkdir -p out/BPMN-Modeler
+          cp -r BPMN-Modeler/dist/* out/BPMN-Modeler/
 
       # BUILD Shipment Tracker
       - name: Build Shipment Tracker
         run: |
-          cd Shipment-Tracker
-          npm install --legacy-peer-deps
-          npm run build -- --base ./
-          mkdir -p ../out/Shipment-Tracker
-          if [ -d "dist" ]; then cp -r dist/* ../out/Shipment-Tracker/; fi
+          npm run build -w shipment-tracker -- --base ./
+          mkdir -p out/Shipment-Tracker
+          cp -r Shipment-Tracker/dist/* out/Shipment-Tracker/
 
       # BUILD Logistics Dashboard
       - name: Build Logistics Dashboard
         run: |
-          cd Logistics-Dashboard
-          npm install --legacy-peer-deps
-          npm run build -- --base ./
-          mkdir -p ../out/Logistics-Dashboard
-          if [ -d "dist" ]; then cp -r dist/* ../out/Logistics-Dashboard/; fi
+          npm run build -w logistics-dashboard -- --base ./
+          mkdir -p out/Logistics-Dashboard
+          cp -r Logistics-Dashboard/dist/* out/Logistics-Dashboard/
 
       # COPY Root Index
       - name: Copy Root Index
