@@ -80,11 +80,16 @@ export function attachPropertiesPanel(modeler: any, container: string | HTMLElem
   modeler.get("propertiesPanel").attachTo(target);
 }
 
+export function destroyModeler(modeler: any) {
+  if (!modeler) return;
+  try {
+    modeler.destroy();
+  } catch (error) {
+    console.error("Error al destruir el modelador:", error);
+  }
+}
+
 export function detachPropertiesPanel(modeler: any) {
   if (!modeler) return;
   modeler.get("propertiesPanel").detach();
-}
-
-export function destroyModeler(modeler: any) {
-  if (modeler) modeler.destroy();
 }

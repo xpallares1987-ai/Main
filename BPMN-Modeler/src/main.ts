@@ -67,11 +67,26 @@ async function handleSwitchTab(tabId: string) {
   const currentTab = state.tabs.find(t => t.id === state.activeTabId);
   if (currentTab && state.modeler) {
     currentTab.xml = await getDiagramXml(state.modeler);
+    // Limpieza de instancia antigua para liberar RAM
+    destroyModeler(state.modeler);
+    state.modeler = null;
   }
 
   state.activeTabId = tabId;
   const nextTab = state.tabs.find(t => t.id === tabId);
-  if (nextTab && state.modeler) {
+  
+  if (nextTab) {
+    // Re-inicializar modelador para la nueva pestaña
+    state.modeler = createModeler({
+      container: APP_CONFIG.selectors.canvas,
+      properties: APP_CONFIG.selectors.properties,
+      keyboardBindToWindow: true,
+      camunda8: true,
+      propertiesPanel: state.propertiesPanelOpen,
+      zeebeSupport: true,
+    });
+    
+    bindModelerEvents();
     await importDiagram(state.modeler, nextTab.xml);
     setDiagramName(ui.diagramName, nextTab.name);
     updateTabsUi();

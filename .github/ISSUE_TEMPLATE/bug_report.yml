@@ -1,0 +1,29 @@
+name: 🐞 Reporte de Bug
+description: Informa sobre un error en alguna de las herramientas.
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Proyecto afectado
+      options:
+        - BPMN-Modeler
+        - Shipment-Tracker
+        - Logistics-Dashboard
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del error
+      placeholder: ¿Qué está fallando?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. Entrar en...
+        2. Hacer click en...
+        3. El error aparece al...

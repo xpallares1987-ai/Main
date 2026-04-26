@@ -85,27 +85,53 @@ async function handleFileUpload(e: Event) {
 
     try {
         resetState();
-        state.db = await parseExcelFile(file);
-        const sheets = Object.keys(state.db);
         
-        if (sheets.length > 0) {
-            state.currentTab = sheets[0];
-            renderSheetSelect(sheets);
-            state.filterRes = [...state.db[state.currentTab]];
-            buildFilters(applyFilters);
-            renderAll();
-            qs('#dashboardUI').style.display = 'block';
-            showToast("Auditoría Finalizada", "El ecosistema de datos ha sido estructurado exitosamente.", false);
-        } else {
-            showToast("Carencia de Datos", "El archivo no contiene matrices válidas para auditoría.");
+        // Uso de Web Worker para procesamiento off-thread
+        const worker = new Worker(new URL('./services/excelWorker.ts', import.meta.url), { type: 'module' });
+        const arrayBuffer = await file.arrayBuffer();
+        
+        worker.postMessage(arrayBuffer, [arrayBuffer]); // Transferencia de buffer para máxima eficiencia
+
+        worker.onmessage = (event) => {
+            const { success, db, error } = event.data;
+            if (success) {
+                state.db = db;
+                const sheets = Object.keys(state.db);
+                
+                if (sheets.length > 0) {
+                    state.currentTab = sheets[0];
+                    renderSheetSelect(sheets);
+                    state.filterRes = [...state.db[state.currentTab]];
+                    buildFilters(applyFilters);
+                    renderAll();
+                    qs('#dashboardUI').style.display = 'block';
+                    showToast("Auditoría Finalizada", "El ecosistema de datos ha sido estructurado exitosamente.", false);
+                } else {
+                    showToast("Carencia de Datos", "El archivo no contiene matrices válidas para auditoría.");
+                    qs('#uploadPanel').style.display = 'flex';
+                }
+            } else {
+                console.error(error);
+                showToast("Fallo Crítico", "Error en el procesamiento de datos: " + error);
+                qs('#uploadPanel').style.display = 'flex';
+            }
+            qs('#loader').style.display = 'none';
+            worker.terminate();
+        };
+
+        worker.onerror = (err) => {
+            console.error("Worker Error:", err);
+            showToast("Fallo Crítico", "Error interno en el motor de auditoría.");
+            qs('#loader').style.display = 'none';
             qs('#uploadPanel').style.display = 'flex';
-        }
+            worker.terminate();
+        };
+
     } catch (err) {
         console.error(err);
-        showToast("Fallo Crítico", "Estructura de archivo corrupta o no soportada.");
-        qs('#uploadPanel').style.display = 'flex';
-    } finally {
+        showToast("Fallo Crítico", "No se pudo iniciar el motor de auditoría.");
         qs('#loader').style.display = 'none';
+        qs('#uploadPanel').style.display = 'flex';
     }
 }
 
