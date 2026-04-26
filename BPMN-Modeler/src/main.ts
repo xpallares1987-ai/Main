@@ -3,6 +3,7 @@ import { state, updateTheme } from "./state";
 import {
   attachPropertiesPanel,
   createModeler,
+  destroyModeler,
   detachPropertiesPanel,
   fitViewport,
   importDiagram,
