@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src 'self' https://api.github.com;">
     <meta name="referrer" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
-    <title>BPMN 2.0 Enterprise Modeler</title>
+    <title>BPMN 2.0 Interactive Modeler</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,21 +17,49 @@
     <div class="app-shell">
       <header class="topbar">
         <div class="topbar__brand">
-          <h1 class="topbar__title">BPMN Modeler</h1>
-          <span class="topbar__subtitle">Enterprise</span>
+          <h1 class="topbar__title">
+            BPMN 2.0 Interactive Modeler
+          </h1>
+          <span class="topbar__subtitle">
+            V 1.0
+          </span>
         </div>
 
         <nav class="topbar__actions">
-          <button id="btnNew" class="btn"><img src="./assets/icons/new.svg" class="btn-icon"> Nuevo</button>
-          <button id="btnOpen" class="btn"><img src="./assets/icons/open.svg" class="btn-icon"> Abrir</button>
-          <button id="btnSave" class="btn btn--primary"><img src="./assets/icons/save.svg" class="btn-icon"> Guardar</button>
-          <button id="btnExport" class="btn"><img src="./assets/icons/image.svg" class="btn-icon"> Imagen</button>
-          <button id="btnLogistics" class="btn"><img src="./assets/icons/logistics.svg" class="btn-icon"> Logística</button>
-          <button id="btnCloud" class="btn"><img src="./assets/icons/cloud.svg" class="btn-icon"> Nube</button>
+          <button id="btnNew" class="btn">
+            <img src="./assets/icons/new.svg" class="btn-icon">
+            Nuevo
+          </button>
+          <button id="btnOpen" class="btn">
+            <img src="./assets/icons/open.svg" class="btn-icon">
+            Abrir
+          </button>
+          <button id="btnSave" class="btn btn--primary">
+            <img src="./assets/icons/save.svg" class="btn-icon">
+            Guardar
+          </button>
+          <button id="btnExport" class="btn">
+            <img src="./assets/icons/image.svg" class="btn-icon">
+            Imagen
+          </button>
+          <button id="btnLogistics" class="btn">
+            <img src="./assets/icons/logistics.svg" class="btn-icon">
+            Logística
+          </button>
+          <button id="btnCloud" class="btn">
+            <img src="./assets/icons/cloud.svg" class="btn-icon">
+            Nube
+          </button>
           <div class="divider"></div>
-          <button id="btnTheme" class="btn">Tema</button>
-          <button id="btnShortcuts" class="btn">Atajos</button>
-          <button id="btnToggleProperties" class="btn">Propiedades</button>
+          <button id="btnTheme" class="btn">
+            Tema
+          </button>
+          <button id="btnShortcuts" class="btn">
+            Atajos
+          </button>
+          <button id="btnToggleProperties" class="btn">
+            Propiedades
+          </button>
         </nav>
       </header>
 
@@ -43,7 +71,9 @@
           </div>
           <div class="canvas-panel__header">
             <span>Editor de Procesos Logísticos</span>
-            <span id="diagramName">blank-process.bpmn</span>
+            <span id="diagramName">
+              Blank Process
+            </span>
           </div>
           <div id="canvas" class="canvas-panel__body"></div>
           
@@ -55,14 +85,22 @@
         </section>
 
         <aside id="propertiesSidebar" class="sidebar">
-          <div class="sidebar__header"><h2 class="sidebar__title">Propiedades</h2></div>
+          <div class="sidebar__header">
+            <h2 class="sidebar__title">
+              Propiedades
+            </h2>
+          </div>
           <div id="properties" class="sidebar__body"></div>
         </aside>
       </main>
 
       <footer class="statusbar">
-        <div id="statusText">Listo</div>
-        <div id="selectionText">Sin selección</div>
+        <div id="statusText">
+          Listo
+        </div>
+        <div id="selectionText">
+          Sin selección
+        </div>
       </footer>
     </div>
 
@@ -71,30 +109,53 @@
 
     <dialog id="shortcutsModal" class="modal">
       <div class="modal__header">
-        <h2 class="modal__title">Atajos de Teclado</h2>
+        <h2 class="modal__title">
+          Atajos de Teclado
+        </h2>
         <button id="btnCloseModal" class="btn--close">&times;</button>
       </div>
       <div class="modal__body">
         <table class="shortcuts-table">
-          <tr><td>Deshacer / Rehacer</td><td><kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd></td></tr>
-          <tr><td>Copiar / Pegar</td><td><kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd></td></tr>
-          <tr><td>Eliminar</td><td><kbd>Supr</kbd></td></tr>
+          <tr>
+            <td>Deshacer / Rehacer</td>
+            <td>
+              <kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd>
+            </td>
+          </tr>
+          <tr>
+            <td>Copiar / Pegar</td>
+            <td>
+              <kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>
+            </td>
+          </tr>
+          <tr>
+            <td>Eliminar</td>
+            <td>
+              <kbd>Supr</kbd>
+            </td>
+          </tr>
         </table>
       </div>
     </dialog>
 
     <dialog id="cloudModal" class="modal">
       <div class="modal__header">
-        <h2 class="modal__title">Sincronización en la Nube</h2>
+        <h2 class="modal__title">
+          Sincronización en la Nube
+        </h2>
         <button id="btnCloseCloudModal" class="btn--close">&times;</button>
       </div>
       <div class="modal__body">
         <div class="form-group">
-          <label for="githubToken">GitHub Personal Access Token</label>
+          <label for="githubToken">
+            GitHub Personal Access Token
+          </label>
           <input type="password" id="githubToken" class="input" placeholder="ghp_xxxxxxxxxxxx">
           <p class="help-text">Los diagramas se guardarán de forma privada en tus Gists.</p>
         </div>
-        <button id="btnCloudSync" class="btn btn--primary" style="width: 100%; margin-top: 1rem;">Sincronizar ahora</button>
+        <button id="btnCloudSync" class="btn btn--primary" style="width: 100%; margin-top: 1rem;">
+          Sincronizar ahora
+        </button>
       </div>
     </dialog>
 
