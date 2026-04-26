@@ -10,7 +10,6 @@ permissions:
   id-token: write
 
 env:
-  # Optamos por Node 24 para las acciones para eliminar avisos de obsolescencia
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
