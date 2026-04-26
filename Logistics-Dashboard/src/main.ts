@@ -1,5 +1,4 @@
 import { state, resetState } from './state';
-import { parseExcelFile } from './services/excelParser';
 import { generateAIInsights } from './services/aiAnalyzer';
 import { buildDynamicCharts } from './services/chartBuilder';
 import { 
