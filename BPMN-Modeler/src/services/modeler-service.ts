@@ -80,7 +80,7 @@ export function attachPropertiesPanel(modeler: any, container: string | HTMLElem
   modeler.get("propertiesPanel").attachTo(target);
 }
 
-export function destroyModeler(modeler: any) {
+export function cleanupModeler(modeler: any) {
   if (!modeler) return;
   try {
     modeler.destroy();

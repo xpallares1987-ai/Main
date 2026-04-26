@@ -3,7 +3,7 @@ import { state, updateTheme } from "./state";
 import {
   attachPropertiesPanel,
   createModeler,
-  destroyModeler,
+  cleanupModeler,
   detachPropertiesPanel,
   fitViewport,
   importDiagram,
@@ -69,7 +69,7 @@ async function handleSwitchTab(tabId: string) {
   if (currentTab && state.modeler) {
     currentTab.xml = await getDiagramXml(state.modeler);
     // Limpieza de instancia antigua para liberar RAM
-    destroyModeler(state.modeler);
+    cleanupModeler(state.modeler);
     state.modeler = null;
   }
 
