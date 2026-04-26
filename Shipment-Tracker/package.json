@@ -12,8 +12,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "lucide-static": "^0.372.0",
-    "vite-plugin-pwa": "^1.2.0"
+    "lucide-static": "^0.372.0"
   },
   "devDependencies": {
   }
