@@ -20,33 +20,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies (Monorepo)
+        run: npm install
 
       # BUILD BPMN Modeler
       - name: Build BPMN Modeler
         run: |
-          cd BPMN-Modeler
-          npm install
-          npm run build
-          mkdir -p ../out/BPMN-Modeler
-          cp -r dist/* ../out/BPMN-Modeler/
+          npm run build -w bpmn-modeler
+          mkdir -p out/BPMN-Modeler
+          cp -r BPMN-Modeler/dist/* out/BPMN-Modeler/
 
       # BUILD Shipment Tracker
       - name: Build Shipment Tracker
         run: |
-          cd Shipment-Tracker
-          npm install
-          npm run build
-          mkdir -p ../out/Shipment-Tracker
-          cp -r dist/* ../out/Shipment-Tracker/
+          npm run build -w shipment-tracker
+          mkdir -p out/Shipment-Tracker
+          cp -r Shipment-Tracker/dist/* out/Shipment-Tracker/
 
       # BUILD Logistics Dashboard
       - name: Build Logistics Dashboard
         run: |
-          cd Logistics-Dashboard
-          npm install
-          npm run build
-          mkdir -p ../out/Logistics-Dashboard
-          cp -r dist/* ../out/Logistics-Dashboard/
+          npm run build -w logistics-dashboard
+          mkdir -p out/Logistics-Dashboard
+          cp -r Logistics-Dashboard/dist/* out/Logistics-Dashboard/
 
       # COPY Root Index
       - name: Copy Root Index

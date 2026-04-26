@@ -1,0 +1,27 @@
+{
+  "name": "ict-opex-monorepo",
+  "private": true,
+  "workspaces": [
+    "BPMN-Modeler",
+    "Shipment-Tracker",
+    "Logistics-Dashboard"
+  ],
+  "scripts": {
+    "dev:bpmn": "npm run dev -w BPMN-Modeler",
+    "dev:shipment": "npm run dev -w Shipment-Tracker",
+    "dev:logistics": "npm run dev -w Logistics-Dashboard",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces",
+    "test": "npm run test --workspaces",
+    "format": "prettier --write \"**/*.ts\" \"**/index.html\""
+  },
+  "devDependencies": {
+    "vite": "^8.0.10",
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "@types/node": "^20.17.19"
+  }
+}
