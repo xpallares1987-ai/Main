@@ -35,25 +35,25 @@ jobs:
       - name: Build BPMN Modeler
         run: |
           cd BPMN-Modeler
-          npx vite build --base ./
+          npm run build -- --base ./
           mkdir -p ../out/BPMN-Modeler
-          cp -r dist/* ../out/BPMN-Modeler/
+          if [ -d "dist" ]; then cp -r dist/* ../out/BPMN-Modeler/; fi
 
       # BUILD Shipment Tracker
       - name: Build Shipment Tracker
         run: |
           cd Shipment-Tracker
-          npx vite build --base ./
+          npm run build -- --base ./
           mkdir -p ../out/Shipment-Tracker
-          cp -r dist/* ../out/Shipment-Tracker/
+          if [ -d "dist" ]; then cp -r dist/* ../out/Shipment-Tracker/; fi
 
       # BUILD Logistics Dashboard
       - name: Build Logistics Dashboard
         run: |
           cd Logistics-Dashboard
-          npx vite build --base ./
+          npm run build -- --base ./
           mkdir -p ../out/Logistics-Dashboard
-          cp -r dist/* ../out/Logistics-Dashboard/
+          if [ -d "dist" ]; then cp -r dist/* ../out/Logistics-Dashboard/; fi
 
       # COPY Root Index
       - name: Copy Root Index
