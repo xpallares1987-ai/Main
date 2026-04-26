@@ -25,6 +25,7 @@ jobs:
           node-version: 22
           cache: 'npm'
 
+      # Única instalación para todo el Monorepo
       - name: Install dependencies (Monorepo)
         run: npm install --legacy-peer-deps
 
@@ -41,11 +42,9 @@ jobs:
       # BUILD Shipment Tracker
       - name: Build Shipment Tracker
         run: |
-          # Usamos npx vite directamente para evitar scripts de usuario corruptos
-          cd Shipment-Tracker
-          npx vite build --base ./
-          mkdir -p ../out/Shipment-Tracker
-          cp -r dist/* ../out/Shipment-Tracker/
+          npm run build -w shipment-tracker -- --base ./
+          mkdir -p out/Shipment-Tracker
+          cp -r Shipment-Tracker/dist/* out/Shipment-Tracker/
 
       # BUILD Logistics Dashboard
       - name: Build Logistics Dashboard
