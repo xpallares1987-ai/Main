@@ -1,0 +1,141 @@
+import { state, resetState } from './state';
+import { parseExcelFile } from './services/excelParser';
+import { generateAIInsights } from './services/aiAnalyzer';
+import { buildDynamicCharts } from './services/chartBuilder';
+import { 
+    renderSheetSelect, 
+    buildFilters, 
+    updateKPIs, 
+    renderTable, 
+    updateActiveFiltersDisplay,
+    showToast
+} from './ui/render';
+import { qs } from './utils/dom';
+import { FilterCriteria } from './types';
+
+function applyFilters() {
+    const criteria: FilterCriteria = {};
+    document.querySelectorAll('.ms-wrap input:checked').forEach(i => {
+        const input = i as HTMLInputElement;
+        const col = input.dataset.col!;
+        if (!criteria[col]) criteria[col] = [];
+        criteria[col].push(String(input.value));
+    });
+
+    state.filterRes = state.db[state.currentTab].filter(row => {
+        return Object.keys(criteria).every(col => criteria[col].includes(String(row[col] || "")));
+    });
+
+    updateActiveFiltersDisplay(criteria, removeFilter);
+    state.sortCol = '';
+    state.pIndex = 1;
+    renderAll();
+}
+
+function removeFilter(col: string, val: string) {
+    const inputs = document.querySelectorAll(`.ms-wrap input[data-col="${col}"]`);
+    inputs.forEach(i => {
+        const input = i as HTMLInputElement;
+        if (input.value === val) {
+            input.checked = false;
+            // Trigger label update by finding the wrap
+            const wrap = input.closest('.ms-wrap') as HTMLElement;
+            const checked = wrap.querySelectorAll('input:checked');
+            const span = wrap.querySelector('.ms-anchor span') as HTMLElement;
+            if (checked.length === 0) span.textContent = "Todas las entidades";
+            else if (checked.length === 1) span.textContent = (checked[0] as HTMLInputElement).value;
+            else span.textContent = `${checked.length} selecciones activas`;
+        }
+    });
+    applyFilters();
+}
+
+function resetFilters() {
+    document.querySelectorAll('.ms-wrap input[type="checkbox"]').forEach(i => (i as HTMLInputElement).checked = false);
+    document.querySelectorAll('.ms-anchor span').forEach(s => s.textContent = "Todas las entidades");
+    document.querySelectorAll('.ms-search').forEach(s => (s as HTMLInputElement).value = "");
+    document.querySelectorAll('.ms-option').forEach(o => (o as HTMLElement).style.display = 'flex');
+    applyFilters();
+}
+
+function renderAll() {
+    updateKPIs();
+    renderTable();
+    buildDynamicCharts(state.filterRes, 'chartsGrid');
+    const aiSummary = qs('#aiSummary');
+    aiSummary.innerHTML = generateAIInsights(state.filterRes);
+}
+
+function switchTab(tabId: string) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
+    qs(`#${tabId}`).classList.add('active');
+    if (tabId === 'tab-charts') qs('#tabChartsBtn').classList.add('active');
+    else qs('#tabDataBtn').classList.add('active');
+}
+
+async function handleFileUpload(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    qs('#loader').style.display = 'flex';
+    qs('#dashboardUI').style.display = 'none';
+    qs('#uploadPanel').style.display = 'none';
+
+    try {
+        resetState();
+        state.db = await parseExcelFile(file);
+        const sheets = Object.keys(state.db);
+        
+        if (sheets.length > 0) {
+            state.currentTab = sheets[0];
+            renderSheetSelect(sheets);
+            state.filterRes = [...state.db[state.currentTab]];
+            buildFilters(applyFilters);
+            renderAll();
+            qs('#dashboardUI').style.display = 'block';
+            showToast("Auditoría Finalizada", "El ecosistema de datos ha sido estructurado exitosamente.", false);
+        } else {
+            showToast("Carencia de Datos", "El archivo no contiene matrices válidas para auditoría.");
+            qs('#uploadPanel').style.display = 'flex';
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Fallo Crítico", "Estructura de archivo corrupta o no soportada.");
+        qs('#uploadPanel').style.display = 'flex';
+    } finally {
+        qs('#loader').style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    qs('#excelInput').addEventListener('change', handleFileUpload);
+    qs('#btnReset').addEventListener('click', resetFilters);
+    qs('#btnApply').addEventListener('click', applyFilters);
+    qs('#tabChartsBtn').addEventListener('click', () => switchTab('tab-charts'));
+    qs('#tabDataBtn').addEventListener('click', () => switchTab('tab-data'));
+    qs('#btnPrev').addEventListener('click', () => { if (state.pIndex > 1) { state.pIndex--; renderTable(); } });
+    qs('#btnNext').addEventListener('click', () => { 
+        const total = Math.ceil(state.filterRes.length / 50);
+        if (state.pIndex < total) { state.pIndex++; renderTable(); } 
+    });
+    qs('#tableSearch').addEventListener('input', () => { state.pIndex = 1; renderTable(); });
+
+    qs('#sheetSelect').addEventListener('change', (e) => {
+        state.currentTab = (e.target as HTMLSelectElement).value;
+        state.sortCol = '';
+        state.pIndex = 1;
+        state.filterRes = [...state.db[state.currentTab]];
+        buildFilters(applyFilters);
+        renderAll();
+    });
+
+    // Global click listener to close multi-selects
+    window.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (!target.matches('.ms-anchor') && !target.closest('.ms-anchor') && !target.closest('.ms-list')) {
+            document.querySelectorAll('.ms-wrap').forEach(w => w.classList.remove('open'));
+        }
+    });
+});

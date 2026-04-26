@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.sheetjs.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
+    <title>Universal Logistics BI Dashboard - ICT-OPEX</title>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --fms-red: #8B0000;
+            --fms-red-light: #A52A2A;
+            --fms-red-hover: #600000;
+            --fms-dark: #0F172A;
+            --fms-gray-dark: #1E293B;
+            --fms-gray: #64748B;
+            --fms-gray-light: #F8FAFC;
+            --fms-surface: #FFFFFF;
+            --border: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-red: 0 4px 14px 0 rgba(139, 0, 0, 0.39);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --error: #EF4444;
+        }
+
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            font-size: 14px; 
+            background-color: #F1F5F9; 
+            color: var(--fms-dark); 
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .navbar { 
+            background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2.5rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            box-shadow: var(--shadow-md);
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 2px solid var(--fms-red);
+        }
+
+        .nav-brand { display: flex; align-items: center; gap: 1.25rem; color: var(--fms-surface); }
+        .nav-brand h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
+        .nav-brand span { font-size: 0.85rem; font-weight: 500; color: #94A3B8; padding-left: 1.25rem; border-left: 1px solid #334155; }
+        
+        .nav-status { display: flex; align-items: center; gap: 0.75rem; background: rgba(255,255,255,0.1); padding: 0.5rem 1.25rem; border-radius: 30px; color: var(--fms-surface); font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
+        .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite; }
+
+        .container { padding: 2.5rem; max-width: 1920px; margin: 0 auto; width: 100%; }
+
+        .card { 
+            background: var(--fms-surface); 
+            padding: 1.75rem; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-sm); 
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+
+        .upload-wrapper { display: flex; gap: 1.5rem; margin-bottom: 2rem; animation: slideUp 0.6s ease-out; }
+        .upload-section {
+            flex: 1; border: 2px dashed #CBD5E0; padding: 3rem; text-align: center; border-radius: var(--radius-xl); cursor: pointer; transition: all 0.3s; background: linear-gradient(145deg, #ffffff, #f8fafc); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; position: relative; overflow: hidden;
+        }
+        .upload-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, transparent, rgba(139,0,0,0.03), transparent); transform: translateX(-100%); transition: transform 0.6s; }
+        .upload-section:hover::before { transform: translateX(100%); }
+        .upload-section:hover { border-color: var(--fms-red); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+        .upload-section input { display: none; }
+        .upload-icon { background: rgba(139,0,0,0.05); color: var(--fms-red); padding: 1.5rem; border-radius: 50%; display: inline-flex; transition: transform 0.3s; }
+        .upload-section:hover .upload-icon { transform: scale(1.1); background: rgba(139,0,0,0.1); }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+        .kpi-card { 
+            background: var(--fms-surface); padding: 1.75rem; border-radius: var(--radius-lg); border-left: 5px solid var(--fms-red); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .kpi-card::after { content: ''; position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: linear-gradient(135deg, transparent 50%, rgba(139,0,0,0.04) 50%); border-radius: 50%; }
+        .kpi-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+        .kpi-label { font-size: 0.8rem; text-transform: uppercase; color: var(--fms-gray); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
+        .kpi-value { font-size: 2.25rem; color: var(--fms-dark); font-weight: 800; line-height: 1.1; letter-spacing: -0.5px; }
+        .kpi-sub { font-size: 0.85rem; font-weight: 600; margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        .sub-up { color: var(--success); background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: 12px; } 
+        .sub-down { color: var(--fms-red); background: rgba(139, 0, 0, 0.1); padding: 2px 8px; border-radius: 12px; }
+        .sub-neutral { color: var(--fms-gray-dark); background: var(--fms-gray-light); padding: 2px 8px; border-radius: 12px; }
+
+        .control-panel { background: var(--fms-surface); padding: 1.75rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 2.5rem; border: 1px solid var(--border); position: relative; overflow: visible; }
+        .control-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
+        .control-header h3 { font-size: 1.15rem; font-weight: 700; color: var(--fms-dark); display: flex; align-items: center; gap: 0.75rem; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+        .filter-item label { font-size: 0.8rem; font-weight: 700; margin-bottom: 0.6rem; display: block; color: var(--fms-gray-dark); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        select, .btn, .input-base { padding: 0.7rem 1.2rem; border: 1px solid var(--border); border-radius: 10px; font-size: 0.9rem; font-family: inherit; transition: all 0.2s; outline: none; background: var(--fms-surface); color: var(--fms-dark); font-weight: 500; }
+        select:focus, .input-base:focus { border-color: var(--fms-red); box-shadow: 0 0 0 3px rgba(139,0,0,0.1); }
+        
+        .btn { cursor: pointer; font-weight: 600; border: none; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; letter-spacing: 0.02em; }
+        .btn-primary { background: var(--fms-red); color: var(--white); box-shadow: var(--shadow-red); }
+        .btn-primary:hover { background: var(--fms-red-hover); transform: translateY(-2px); box-shadow: 0 6px 20px 0 rgba(139, 0, 0, 0.4); }
+        .btn-secondary { background: var(--fms-gray-light); color: var(--fms-gray-dark); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: #E2E8F0; transform: translateY(-1px); }
+
+        .active-filters-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
+        .filter-chip { background: var(--fms-red); color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; animation: scaleIn 0.2s ease; }
+        .filter-chip button { background: rgba(0,0,0,0.2); border: none; color: white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+        .filter-chip button:hover { background: rgba(0,0,0,0.4); }
+
+        .ms-wrap { position: relative; }
+        .ms-anchor { background: var(--fms-surface); border: 1px solid var(--border); padding: 0.7rem 1rem; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .ms-anchor:hover { border-color: #CBD5E0; }
+        .ms-anchor::after { content: '▼'; font-size: 0.65rem; color: var(--fms-gray); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .ms-wrap.open .ms-anchor::after { transform: rotate(180deg); }
+        .ms-wrap.open .ms-anchor { border-color: var(--fms-red); box-shadow: 0 0 0 3px rgba(139,0,0,0.1); }
+        .ms-list { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--fms-surface); border: 1px solid var(--border); z-index: 1001; max-height: 320px; overflow-y: auto; box-shadow: var(--shadow-lg); border-radius: 12px; padding: 0.5rem; animation: scaleIn 0.2s ease-out; transform-origin: top center; }
+        .ms-wrap.open .ms-list { display: block; }
+        .ms-search { width: 100%; margin-bottom: 0.75rem; background: var(--fms-gray-light); border: 1px solid transparent; border-radius: 8px; padding: 0.6rem 1rem; }
+        .ms-search:focus { background: var(--fms-surface); border-color: var(--fms-red); }
+        .ms-option { padding: 0.6rem 0.75rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 0.9rem; border-radius: 6px; transition: background 0.15s; }
+        .ms-option:hover { background: var(--fms-gray-light); }
+        .ms-option input[type="checkbox"] { accent-color: var(--fms-red); width: 18px; height: 18px; cursor: pointer; }
+
+        .tab-container { margin-bottom: 2.5rem; }
+        .tab-bar { display: flex; gap: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0px; }
+        .tab-btn { padding: 1rem 2rem; background: transparent; border: none; cursor: pointer; color: var(--fms-gray); font-weight: 600; font-size: 1rem; border-bottom: 3px solid transparent; transition: all 0.3s; margin-bottom: -2px; display: flex; align-items: center; gap: 0.75rem; }
+        .tab-btn:hover { color: var(--fms-dark); background: rgba(241, 245, 249, 0.5); border-radius: 8px 8px 0 0; }
+        .tab-btn.active { color: var(--fms-red); border-bottom-color: var(--fms-red); }
+        .tab-pane { display: none; animation: fadeIn 0.5s ease; }
+        .tab-pane.active { display: block; }
+
+        .ai-panel { 
+            background: linear-gradient(135deg, var(--fms-dark) 0%, #1e293b 100%); 
+            color: var(--white); padding: 2rem 2.5rem; border-radius: var(--radius-xl); margin-bottom: 2.5rem; display: flex; gap: 2rem; align-items: flex-start; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; 
+        }
+        .ai-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: linear-gradient(to bottom, var(--fms-red), #ef4444); }
+        .ai-panel::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%); pointer-events: none; }
+        .ai-icon-wrap { background: rgba(255,255,255,0.1); padding: 1.25rem; border-radius: var(--radius-lg); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .ai-content { z-index: 1; width: 100%; }
+        .ai-content h4 { font-size: 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; letter-spacing: 0.5px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .ai-pills { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .ai-pill { background: rgba(255,255,255,0.1); padding: 0.6rem 1.25rem; border-radius: 30px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; gap: 0.75rem; backdrop-filter: blur(4px); transition: transform 0.2s; max-width: 100%; }
+        .ai-pill:hover { transform: translateY(-2px); background: rgba(255,255,255,0.15); }
+        .ai-pill span { color: #93C5FD; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; flex-shrink: 0; }
+        .ai-pill strong { white-space: normal; word-break: break-word; }
+        .ai-desc { font-size: 1rem; color: #FFFFFF; line-height: 1.7; width: 100%; background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--info); backdrop-filter: blur(4px); }
+
+        .dynamic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 2rem; }
+        .chart-card { background: var(--fms-surface); padding: 1.75rem; border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); border: 1px solid var(--border); display: flex; flex-direction: column; min-height: 450px; transition: all 0.3s; }
+        .chart-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .chart-title { font-size: 1.1rem; font-weight: 800; color: var(--fms-dark); display: flex; align-items: center; gap: 0.5rem; }
+        .chart-controls { display: flex; gap: 0.75rem; }
+        .chart-controls select { padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 8px; background: var(--fms-gray-light); border-color: var(--border); font-weight: 600; cursor: pointer; }
+        .chart-wrapper { flex-grow: 1; position: relative; width: 100%; min-height: 320px; }
+
+        .data-table-container { background: var(--fms-surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
+        .table-toolbar { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: #FAFAFA; }
+        .table-responsive { overflow-x: auto; max-height: 650px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th { background: #F8FAFC; padding: 1.25rem 1rem; font-size: 0.8rem; font-weight: 800; color: var(--fms-gray-dark); text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid var(--border); white-space: nowrap; cursor: pointer; transition: background 0.2s; user-select: none; }
+        th:hover { background: #E2E8F0; }
+        th::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--border); }
+        .sort-icon { display: inline-block; margin-left: 0.5rem; font-size: 0.7rem; color: var(--fms-gray); }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--fms-dark); white-space: nowrap; }
+        
+        .row-parent { cursor: pointer; transition: background-color 0.2s; }
+        .row-parent:hover { background-color: #F1F5F9; }
+        .row-child { display: none; background-color: #F8FAFC; box-shadow: inset 0 4px 6px -4px rgba(0,0,0,0.1); }
+        .row-child.active { display: table-row; animation: fadeIn 0.3s; }
+        .sub-table-wrap { padding: 1.5rem 2.5rem; }
+        .sub-table { width: 100%; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--fms-surface); box-shadow: var(--shadow-sm); }
+        .sub-table th { background: var(--fms-gray-light); padding: 0.75rem 1rem; font-size: 0.75rem; border-bottom: 2px solid var(--border); cursor: default; }
+        .sub-table th:hover { background: var(--fms-gray-light); }
+        .sub-table td { padding: 0.75rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+        
+        .expand-btn { width: 32px; height: 32px; border-radius: 8px; background: var(--fms-surface); border: 1px solid var(--border); color: var(--fms-dark); display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+        .row-parent:hover .expand-btn { background: var(--fms-red); color: white; border-color: var(--fms-red); transform: scale(1.05); }
+
+        .badge { padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .badge-danger { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+        .badge-success { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+        .badge-info { background: #DBEAFE; color: #1E40AF; border: 1px solid #93C5FD; }
+
+        .pagination-bar { padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); background: #FAFAFA; }
+
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(248, 250, 252, 0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--fms-red); border-radius: 50%; animation: spin 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) infinite; margin-bottom: 1.5rem; }
+
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 12px; }
+        .toast { background: var(--fms-surface); border-left: 5px solid var(--error); box-shadow: var(--shadow-lg); padding: 1.25rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 1.25rem; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 300px; }
+        .toast.show { transform: translateX(0); }
+        .toast-content { display: flex; flex-direction: column; gap: 0.25rem; }
+        .toast-title { font-weight: 800; color: var(--fms-dark); font-size: 0.95rem; }
+        .toast-message { font-size: 0.85rem; color: var(--fms-gray); line-height: 1.4; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scaleY(0.95); } to { opacity: 1; transform: scaleY(1); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: var(--fms-gray-light); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 5px; border: 2px solid var(--fms-gray-light); }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" rx="14" fill="#E53E3E"/>
+                <path d="M25 35H75V42H25V35ZM25 47H60V54H25V47ZM25 59H75V66H25V59Z" fill="white"/>
+            </svg>
+            <div>
+                <h1>Logistics Intelligence</h1>
+                <span>Fr. Meyer's Sohn • ICT-OPEX Spain</span>
+            </div>
+        </div>
+        <div class="nav-status">
+            <div class="status-dot"></div>
+            Análisis Inteligente v7.1 Activo
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="upload-wrapper" id="uploadPanel">
+            <label class="upload-section" for="excelInput">
+                <div class="upload-icon">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                </div>
+                <div>
+                    <h3 style="color: var(--fms-dark); font-size: 1.5rem; font-weight: 800; margin-bottom: 0.75rem;">Importar Datos Corporativos</h3>
+                    <p style="color: var(--fms-gray); font-size: 1rem; max-width: 600px; margin: 0 auto;">Cargue su reporte estructurado de Seastep, WMS, Finanzas o cualquier dataset matricial (.xlsx, .csv). El sistema identificará y procesará las entidades dinámicamente.</p>
+                </div>
+                <input type="file" id="excelInput" accept=".xlsx, .xls, .csv">
+            </label>
+        </div>
+
+        <div id="loader">
+            <div class="spinner"></div>
+            <h2 style="color: var(--fms-dark); font-weight: 800; margin-bottom: 0.5rem; font-size: 1.5rem;">Procesando Auditoría Analítica...</h2>
+            <p style="color: var(--fms-gray); font-size: 1rem; font-weight: 500;">Validando estructura multidimensional, computando métricas financieras/logísticas y parametrizando la IA.</p>
+        </div>
+
+        <div id="dashboardUI" style="display: none;">
+            
+            <div class="control-panel">
+                <div class="control-header">
+                    <h3>
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                        Parámetros de Auditoría
+                    </h3>
+                    <div style="display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--fms-gray-light); padding: 0.25rem 0.5rem 0.25rem 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--fms-gray);">VISTA ACTIVA:</span>
+                            <select id="sheetSelect" style="font-weight: 800; border: none; background: transparent; color: var(--fms-red); padding-left: 0.5rem; cursor: pointer;"></select>
+                        </div>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            Restablecer
+                        </button>
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            Actualizar Dashboard
+                        </button>
+                    </div>
+                </div>
+                <div id="filterGrid" class="filter-grid"></div>
+                <div id="activeFilters" class="active-filters-container" style="display: none;"></div>
+            </div>
+
+            <div class="ai-panel">
+                <div class="ai-icon-wrap">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="ai-content" id="aiPanel">
+                    <h4>Análisis Inteligente (Hugo Chat Bot)</h4>
+                    <div id="aiSummary">Interpretando ecosistema de datos y correlaciones financieras/logísticas...</div>
+                </div>
+            </div>
+
+            <div class="kpi-grid" id="kpiContainer"></div>
+
+            <div class="tab-container">
+                <div class="tab-bar">
+                    <button class="tab-btn active" onclick="switchTab(event, 'tab-charts')">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        Inteligencia Visual (Dashboard)
+                    </button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-data')">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                        Registro de Auditoría Integral
+                    </button>
+                </div>
+            </div>
+
+            <div id="tab-charts" class="tab-pane active">
+                <div class="dynamic-grid" id="chartsGrid">
+                </div>
+                
+                <div class="card chart-card" id="cardChart5" style="display:none; grid-column: 1 / -1; margin-top: 2rem;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <svg width="24" height="24" fill="none" stroke="var(--fms-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            Análisis Avanzado Multivariante
+                        </h3>
+                        <div class="chart-controls">
+                            <select id="c5X" onchange="updateCharts()" style="border: 1px solid var(--border);"></select>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper" style="min-height: 450px;"><canvas id="chart5"></canvas></div>
+                </div>
+            </div>
+
+            <div id="tab-data" class="tab-pane">
+                <div class="data-table-container">
+                    <div class="table-toolbar">
+                        <div style="position: relative; width: 100%; max-width: 400px;">
+                            <svg width="18" height="18" fill="none" stroke="var(--fms-gray)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="text" id="tableSearch" class="input-base" style="width: 100%; padding-left: 2.5rem;" placeholder="Búsqueda global en registros de tabla..." oninput="renderTable()">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="dataTable">
+                            <thead id="dtHead"></thead>
+                            <tbody id="dtBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-bar">
+                        <span id="pageLabel" style="font-weight: 700; color: var(--fms-gray); font-size: 0.9rem;">Paginación</span>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button class="btn btn-secondary" id="btnPrev" onclick="navPage(-1)">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                                Anterior
+                            </button>
+                            <button class="btn btn-secondary" id="btnNext" onclick="navPage(1)">
+                                Siguiente
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const BLACK_SHEETS = ['Final Destination', 'Warehouse'];
+        const BLACK_COLS = ['Warehouse Code', 'Ext. Addr. Number', 'POL', 'POD', 'Reel Year', 'Load Type', 'Roll Length (CM)'];
+        const BLACK_FILTERS = ['Quantity', 'Customer Order', 'Item Number', 'Weight (Kg)', 'Weight (Kgs)', 'Weight (KG)', 'Pending', 'Total', 'Buyer Address', 'Load Code', 'Grammage (GM)', 'Diameter (CM)', 'Roll Width (CM)', 'Payables', 'Receivables', 'Local Amount', 'Total Rate', 'GP Ops.', 'Revenue Ops.', 'Expenses Ops.'];
+        const BRANCH_MAP = { "BCN": "Barcelona", "VLC": "Valencia", "BIO": "Bilbao", "MAD": "Madrid" };
+
+        const PALETTES = {
+            primary: ['#8B0000', '#1E293B', '#F59E0B', '#3B82F6', '#10B981', '#64748B', '#8B5CF6', '#EC4899', '#14B8A6', '#F43F5E'],
+            cool: ['#0F172A', '#1E293B', '#334155', '#475569', '#64748B', '#94A3B8'],
+            warm: ['#7f1d1d', '#991b1b', '#b91c1c', '#dc2626', '#ef4444', '#f87171']
+        };
+
+        let db = {}; 
+        let currentTab = "";
+        let filterRes = [];
+        let pIndex = 1;
+        const pSize = 50;
+        let chartInstances = {};
+        
+        let sortCol = '';
+        let sortAsc = true;
+
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        function showToast(title, message, isError = true) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if(!isError) toast.style.borderLeftColor = 'var(--success)';
+            
+            const icon = isError 
+                ? `<svg width="28" height="28" fill="none" stroke="var(--error)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+                : `<svg width="28" height="28" fill="none" stroke="var(--success)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+
+            toast.innerHTML = `
+                ${icon}
+                <div class="toast-content">
+                    <span class="toast-title">${escapeHTML(title)}</span>
+                    <span class="toast-message">${escapeHTML(message)}</span>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 5000);
+        }
+
+        document.getElementById('excelInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('dashboardUI').style.display = 'none';
+            document.getElementById('uploadPanel').style.display = 'none';
+
+            Object.keys(chartInstances).forEach(id => { chartInstances[id].destroy(); delete chartInstances[id]; });
+            db = {};
+            filterRes.length = 0;
+
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                setTimeout(() => { 
+                    try {
+                        const workbook = XLSX.read(new Uint8Array(ev.target.result), { type: 'array', cellDates: true });
+                        let listData = [], contentData = [];
+
+                        workbook.SheetNames.forEach(name => {
+                            if (BLACK_SHEETS.includes(name)) return;
+                            const json = XLSX.utils.sheet_to_json(workbook.Sheets[name], { defval: "" });
+                            if (json.length === 0) return;
+
+                            if (name.includes('Pending Receptions List')) listData = json;
+                            else if (name.includes('Pending Receptions Content')) contentData = json;
+                            else db[name] = processData(json);
+                        });
+
+                        if (listData.length > 0 && contentData.length > 0) {
+                            const aList = processData(listData);
+                            const aContent = processData(contentData);
+                            aList.forEach(parent => {
+                                parent._children = aContent.filter(c => c['Load Code'] === parent['Load Code']);
+                            });
+                            db['Pending Receptions Unificado'] = aList;
+                        } else {
+                            if (listData.length > 0) db['Pending Receptions List'] = processData(listData);
+                            if (contentData.length > 0) db['Pending Receptions Content'] = processData(contentData);
+                        }
+
+                        const sheets = Object.keys(db);
+                        if (sheets.length > 0) {
+                            currentTab = sheets[0];
+                            renderSheetSelect(sheets);
+                            initDashboard();
+                            showToast("Auditoría Finalizada", "El ecosistema de datos ha sido estructurado exitosamente.", false);
+                        } else {
+                            showToast("Carencia de Datos", "El archivo no contiene matrices válidas para auditoría.");
+                            document.getElementById('uploadPanel').style.display = 'flex';
+                        }
+                    } catch(err) { 
+                        console.error(err); 
+                        showToast("Fallo Crítico", "Estructura de archivo corrupta o no soportada.");
+                        document.getElementById('uploadPanel').style.display = 'flex';
+                    }
+                    document.getElementById('loader').style.display = 'none';
+                }, 300);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function processData(data) {
+            return data.map(row => {
+                const clean = {};
+                let wt = 0;
+                let isKgs = false;
+
+                for (let k in row) {
+                    let key = k.trim();
+                    if (BLACK_COLS.includes(key)) continue;
+                    let val = row[k];
+                    
+                    if (val instanceof Date) { }
+                    else if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}/.test(val)) {
+                        const d = new Date(val);
+                        if(!isNaN(d)) val = d;
+                    }
+                    
+                    if (key === "Branch") val = BRANCH_MAP[val] || val;
+                    
+                    let keyUpper = key.toUpperCase();
+                    if (keyUpper.includes('WEIGHT')) {
+                        let valNum = Number(val) || 0;
+                        if (keyUpper.includes('KG')) { wt = valNum; isKgs = true; }
+                        else if (keyUpper.includes('TON')) { wt = valNum; isKgs = false; }
+                        else { wt = valNum; }
+                    }
+
+                    clean[key] = val;
+                }
+                
+                let gr = row['Grammage (GM)'] || row['Grammage'];
+                let dia = row['Diameter (CM)'] || row['Diameter'];
+                let wid = row['Roll Width (CM)'] || row['Roll Width'];
+                if (gr && dia && wid) {
+                    clean['Calidad'] = `${gr}g x ${dia}cm x ${wid}cm`;
+                }
+
+                clean['Weight (Tons)'] = isKgs ? wt / 1000 : wt;
+                
+                ['Payables', 'Receivables', 'Revenue Ops.', 'Expenses Ops.', 'GP Ops.', 'TEU', 'Total Rate', 'Local Amount', 'Quantity', 'Pending', 'Total'].forEach(col => {
+                    if (clean[col] !== undefined) clean[col] = Number(clean[col]) || 0;
+                });
+
+                return clean;
+            });
+        }
+
+        function initDashboard() {
+            filterRes = [...db[currentTab]];
+            sortCol = '';
+            buildFilters();
+            renderAll();
+            document.getElementById('dashboardUI').style.display = 'block';
+        }
+
+        function buildFilters() {
+            const container = document.getElementById('filterGrid');
+            container.innerHTML = '';
+            if (!filterRes.length) return;
+            const headers = Object.keys(filterRes[0] || {}).filter(h => !h.startsWith('_'));
+            
+            const fragment = document.createDocumentFragment();
+
+            headers.forEach(h => {
+                if (BLACK_COLS.includes(h) || BLACK_FILTERS.includes(h)) return;
+                const unique = [...new Set(db[currentTab].map(r => r[h]))].filter(v => v !== "" && v !== undefined && v !== null).sort();
+                if (unique.length < 2 || unique.length > 250) return;
+
+                const div = document.createElement('div');
+                div.className = 'filter-item';
+                div.innerHTML = `<label>${escapeHTML(h)}</label>
+                    <div class="ms-wrap" id="ms-${escapeHTML(h)}">
+                        <div class="ms-anchor" onclick="toggleMS(this)">
+                            <span style="overflow: hidden; text-overflow: ellipsis;">Todas las entidades</span>
+                        </div>
+                        <div class="ms-list">
+                            <input type="text" class="input-base ms-search" placeholder="Filtrar dimensión..." oninput="filterMS(this)">
+                            ${unique.map(v => `<label class="ms-option"><input type="checkbox" value="${escapeHTML(v)}" data-col="${escapeHTML(h)}" onchange="updateMSLabel(this)"> <span style="word-break: break-word;">${escapeHTML(v)}</span></label>`).join('')}
+                        </div>
+                    </div>`;
+                fragment.appendChild(div);
+            });
+            container.appendChild(fragment);
+            updateActiveFiltersDisplay({});
+        }
+
+        window.toggleMS = (el) => {
+            const wrap = el.parentElement;
+            document.querySelectorAll('.ms-wrap').forEach(w => { if(w !== wrap) w.classList.remove('open') });
+            wrap.classList.toggle('open');
+        };
+
+        window.filterMS = (input) => {
+            const term = input.value.toLowerCase();
+            input.parentElement.querySelectorAll('.ms-option').forEach(opt => {
+                const text = opt.querySelector('span').textContent.toLowerCase();
+                opt.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+        };
+
+        window.updateMSLabel = (input) => {
+            const wrap = input.closest('.ms-wrap');
+            const checked = wrap.querySelectorAll('input:checked');
+            const span = wrap.querySelector('.ms-anchor span');
+            if (checked.length === 0) span.textContent = "Todas las entidades";
+            else if (checked.length === 1) span.textContent = checked[0].value;
+            else span.textContent = `${checked.length} selecciones activas`;
+        };
+
+        function updateActiveFiltersDisplay(criteria) {
+            const container = document.getElementById('activeFilters');
+            container.innerHTML = '';
+            let hasFilters = false;
+            
+            for (let col in criteria) {
+                if (criteria[col].length > 0) {
+                    hasFilters = true;
+                    criteria[col].forEach(val => {
+                        const chip = document.createElement('div');
+                        chip.className = 'filter-chip';
+                        chip.innerHTML = `<strong>${escapeHTML(col)}:</strong> ${escapeHTML(val)} <button onclick="removeFilter('${escapeHTML(col)}', '${escapeHTML(val)}')">×</button>`;
+                        container.appendChild(chip);
+                    });
+                }
+            }
+            container.style.display = hasFilters ? 'flex' : 'none';
+        }
+
+        window.removeFilter = (col, val) => {
+            const inputs = document.querySelectorAll(`.ms-wrap input[data-col="${col}"]`);
+            inputs.forEach(i => {
+                if (i.value === val) {
+                    i.checked = false;
+                    updateMSLabel(i);
+                }
+            });
+            applyFilters();
+        };
+
+        function applyFilters() {
+            const criteria = {};
+            document.querySelectorAll('.ms-wrap input:checked').forEach(i => {
+                const col = i.dataset.col;
+                if (!criteria[col]) criteria[col] = [];
+                criteria[col].push(String(i.value));
+            });
+
+            filterRes = db[currentTab].filter(row => {
+                return Object.keys(criteria).every(col => criteria[col].includes(String(row[col] || "")));
+            });
+
+            updateActiveFiltersDisplay(criteria);
+            sortCol = '';
+            pIndex = 1;
+            renderAll();
+        }
+
+        window.resetFilters = () => {
+            document.querySelectorAll('.ms-wrap input[type="checkbox"]').forEach(i => i.checked = false);
+            document.querySelectorAll('.ms-anchor span').forEach(s => s.textContent = "Todas las entidades");
+            document.querySelectorAll('.ms-search').forEach(s => s.value = "");
+            document.querySelectorAll('.ms-option').forEach(o => o.style.display = 'flex');
+            applyFilters();
+        };
+
+        function renderAll() {
+            updateKPIs();
+            renderTable();
+            buildDynamicCharts();
+            generateAIInsights();
+        }
+
+        function updateKPIs() {
+            const container = document.getElementById('kpiContainer');
+            container.innerHTML = '';
+            if (!filterRes.length) return;
+            const head = Object.keys(filterRes[0] || {});
+            
+            const metrics = [{ 
+                label: 'Transacciones Evaluadas', 
+                val: filterRes.length.toLocaleString('es-ES'), 
+                sub: `${((filterRes.length / db[currentTab].length)*100).toFixed(1)}% del volumen original`,
+                trend: filterRes.length === db[currentTab].length ? 'neutral' : 'up'
+            }];
+
+            let totalRev = 0, totalExp = 0, totalGP = 0;
+            let totalPay = 0, totalRec = 0;
+            let totalTEU = 0, totalWeight = 0;
+
+            filterRes.forEach(r => {
+                if (r['Revenue Ops.']) totalRev += r['Revenue Ops.'];
+                if (r['Expenses Ops.']) totalExp += r['Expenses Ops.'];
+                if (r['GP Ops.']) totalGP += r['GP Ops.'];
+                if (r['Payables']) totalPay += r['Payables'];
+                if (r['Receivables']) totalRec += r['Receivables'];
+                if (r['TEU']) totalTEU += r['TEU'];
+                if (r['Weight (Tons)']) totalWeight += r['Weight (Tons)'];
+            });
+
+            const targets = ['Quantity', 'Total', 'Pending', 'Weight (Tons)', 'TEU', 'GP Ops.', 'Payables', 'Receivables'];
+            targets.forEach(m => {
+                if (head.includes(m) && filterRes.some(r => r[m] !== undefined && r[m] !== 0)) {
+                    const sum = filterRes.reduce((a, b) => a + (Number(b[m]) || 0), 0);
+                    
+                    let formatConfig = {maximumFractionDigits: 0};
+                    if (m.includes('Weight') || m.includes('Ops.') || m === 'Payables' || m === 'Receivables') {
+                        formatConfig = {minimumFractionDigits: 2, maximumFractionDigits: 2};
+                    }
+                    
+                    let label = `Total ${m}`;
+                    if (m === 'GP Ops.') label = 'Beneficio Bruto (GP)';
+                    if (m === 'Weight (Tons)') label = 'Masa Operativa (Tons)';
+
+                    metrics.push({ 
+                        label: label, 
+                        val: sum.toLocaleString('es-ES', formatConfig), 
+                        sub: m.includes('Ops.') || m === 'Payables' || m === 'Receivables' ? '€' : 'Volumen',
+                        trend: sum > 0 ? 'up' : 'neutral'
+                    });
+                }
+            });
+
+            if (totalRev > 0) {
+                const margin = (totalGP / totalRev) * 100;
+                metrics.push({ label: 'Margen Operativo', val: `${margin.toFixed(2)}%`, sub: 'GP / Revenue', trend: margin >= 10 ? 'up' : 'down' });
+            }
+
+            if (totalRec > 0 || totalPay > 0) {
+                const balance = totalRec - totalPay;
+                metrics.push({ label: 'Balance Neto', val: balance.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}), sub: 'AR - AP (€)', trend: balance >= 0 ? 'up' : 'down' });
+            }
+
+            if (totalTEU > 0 && totalWeight > 0) {
+                const wtPerTeu = totalWeight / totalTEU;
+                metrics.push({ label: 'Ratio Tons/TEU', val: wtPerTeu.toLocaleString('es-ES', {maximumFractionDigits:2}), sub: 'Eficiencia Media', trend: 'neutral' });
+            }
+
+            const distTargets = [{col: 'Customer Order', lbl: 'Shipments'}, {col: 'Item Number', lbl: 'Bobinas Únicas'}];
+            distTargets.forEach(dt => {
+                if (head.includes(dt.col)) {
+                    const dist = new Set(filterRes.map(r => r[dt.col]).filter(v => v !== "")).size;
+                    metrics.push({ label: dt.lbl, val: dist.toLocaleString('es-ES'), sub: 'Cuentas Distintas', trend: 'neutral' });
+                }
+            });
+
+            metrics.slice(0, 8).forEach(m => {
+                let icon = '';
+                if (m.trend === 'down') icon = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="sub-down"><path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>`;
+                else if (m.trend === 'up') icon = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="sub-up"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
+                else icon = `<span class="sub-neutral"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path></svg></span>`;
+
+                container.innerHTML += `<div class="kpi-card">
+                    <div class="kpi-label">${escapeHTML(m.label)}</div>
+                    <div class="kpi-value">${escapeHTML(m.val)}</div>
+                    <div class="kpi-sub">${icon} <span>${escapeHTML(m.sub)}</span></div>
+                </div>`;
+            });
+        }
+
+        function generateAIInsights() {
+            const panel = document.getElementById('aiSummary');
+            if (filterRes.length === 0) { 
+                panel.innerHTML = "<div class='ai-desc'>Insuficiencia de datos para estructurar modelos lógicos o generar inteligencia contextual.</div>"; 
+                return; 
+            }
+
+            const head = Object.keys(filterRes[0] || {});
+            const isFinancial = head.includes('Payables') || head.includes('Receivables');
+            const isShipment = head.includes('TEU') || head.includes('GP Ops.');
+
+            let html = `<div class="ai-pills">`;
+
+            if (isFinancial) {
+                const topClient = getTop('Customer Name') || getTop('Debitor/Creditor');
+                const topCharge = getTop('Charge (desc)');
+                let totAR = 0, totAP = 0;
+                filterRes.forEach(r => { totAR += (Number(r['Receivables'])||0); totAP += (Number(r['Payables'])||0); });
+
+                if(topClient) html += `<div class="ai-pill"><span>Socio Comercial Frecuente:</span> <strong>${escapeHTML(topClient)}</strong></div>`;
+                if(topCharge) html += `<div class="ai-pill"><span>Concepto Mayoritario:</span> <strong>${escapeHTML(topCharge)}</strong></div>`;
+                
+                html += `</div><div class="ai-desc">`;
+                html += `El análisis financiero procesa <strong>${filterRes.length.toLocaleString('es-ES')} transacciones</strong> en este segmento. `;
+                html += `Volumen agregado de Cuentas por Cobrar (AR): <strong>${totAR.toLocaleString('es-ES', {style:'currency', currency:'EUR'})}</strong>, frente a Cuentas por Pagar (AP): <strong>${totAP.toLocaleString('es-ES', {style:'currency', currency:'EUR'})}</strong>. `;
+                
+                if (totAR > totAP) html += `<br><br><span style="color:var(--success); font-weight:800;">✅ Diagnóstico:</span> Balance Netamente Positivo detectado en la selección actual.`;
+                else if (totAP > totAR) html += `<br><br><span style="color:var(--warning); font-weight:800;">⚠️ Diagnóstico:</span> Dominancia de costes operativos o Balance Negativo.`;
+                else html += `<br><br><span style="color:var(--info); font-weight:800;">ℹ️ Diagnóstico:</span> Equilibrio financiero detectado.`;
+
+            } else if (isShipment) {
+                const topClient = getTop('Customer Name') || getTop('Consignee Name');
+                const topPOL = getTop('POL');
+                const topPOD = getTop('POD');
+                let totTEU = 0, totGP = 0;
+                filterRes.forEach(r => { totTEU += (Number(r['TEU'])||0); totGP += (Number(r['GP Ops.'])||0); });
+
+                if(topClient) html += `<div class="ai-pill"><span>Cuenta Estratégica:</span> <strong>${escapeHTML(topClient)}</strong></div>`;
+                if(topPOL) html += `<div class="ai-pill"><span>POL Crítico:</span> <strong>${escapeHTML(topPOL)}</strong></div>`;
+                if(topPOD) html += `<div class="ai-pill"><span>POD Frecuente:</span> <strong>${escapeHTML(topPOD)}</strong></div>`;
+                
+                html += `</div><div class="ai-desc">`;
+                html += `El módulo de tráfico evalúa <strong>${totTEU.toLocaleString('es-ES')} TEUs</strong> gestionados en ${filterRes.length} operaciones. `;
+                html += `El Beneficio Bruto (GP) proyectado asciende a <strong>${totGP.toLocaleString('es-ES', {style:'currency', currency:'EUR'})}</strong>. `;
+                
+                let avgTeuGP = totTEU > 0 ? (totGP / totTEU) : 0;
+                if (avgTeuGP > 0) {
+                    html += `<br><br><span style="color:var(--success); font-weight:800;">💡 Eficiencia Rentable:</span> El rendimiento promedio se establece en <strong>${avgTeuGP.toLocaleString('es-ES', {maximumFractionDigits:2})} € por TEU operado</strong>.`;
+                }
+
+            } else {
+                const topClient = getTop('Customer Name') || getTop('Main Contact') || getTop('Branch');
+                const topWH = getTop('Warehouse') || getTop('POL');
+                const topDest = getTop('Final Destination') || getTop('POD');
+                
+                let totalQty = filterRes.length; 
+                let measureName = "registros estructurados";
+                
+                if (filterRes[0] && filterRes[0]['Quantity'] !== undefined) {
+                    totalQty = filterRes.reduce((a,b)=>a+(Number(b['Quantity'])||0), 0);
+                    measureName = "unidades operativas";
+                } else if (filterRes[0] && filterRes[0]['Item Number'] !== undefined) {
+                    const s = new Set();
+                    filterRes.forEach(r => { if(r['Item Number']) s.add(r['Item Number']); });
+                    totalQty = s.size;
+                    measureName = "bobinas/ítems únicos";
+                }
+
+                let totalPending = 0;
+                if(filterRes[0] && filterRes[0]['Pending'] !== undefined) {
+                    totalPending = filterRes.reduce((a,b)=>a+(Number(b['Pending'])||0), 0);
+                }
+                
+                if(topClient && topClient !== "N/A") html += `<div class="ai-pill"><span>Entidad Crítica:</span> <strong>${escapeHTML(topClient)}</strong></div>`;
+                if(topWH && topWH !== "N/A") html += `<div class="ai-pill"><span>HUB Primario:</span> <strong>${escapeHTML(topWH)}</strong></div>`;
+                if(topDest && topDest !== "N/A") html += `<div class="ai-pill"><span>Vector Destino:</span> <strong>${escapeHTML(topDest)}</strong></div>`;
+                html += `</div><div class="ai-desc">`;
+
+                html += `A través de las dimensiones filtradas, la IA consolida un flujo logístico de <strong>${totalQty.toLocaleString('es-ES')} ${escapeHTML(measureName)}</strong>. `;
+                
+                if (filterRes[0] && filterRes[0]['Pending'] !== undefined) {
+                    let completionRate = totalQty > 0 ? (((totalQty - totalPending) / totalQty) * 100).toFixed(1) : 100;
+                    html += `El ratio de cumplimiento operativo se sitúa en un <strong>${completionRate}%</strong>. `;
+                    
+                    if(totalPending > 0) {
+                        html += `<br><br><span style="color:var(--warning); font-weight:800;">⚠️ Alerta Operativa:</span> Existen <strong>${totalPending.toLocaleString('es-ES')} unidades en estado Pending</strong>, provocando degradación en la latencia de la cadena de suministro.`;
+                    } else if (totalQty > 0) {
+                        html += `<br><br><span style="color:var(--success); font-weight:800;">✅ Estado de Salud:</span> Integridad operativa al 100%. Ausencia de cuellos de botella.`;
+                    }
+                }
+            }
+            html += `</div>`;
+            panel.innerHTML = html;
+        }
+
+        function getTop(col) {
+            if(!filterRes[0] || filterRes[0][col] === undefined) return null;
+            const counts = {};
+            filterRes.forEach(r => { if(r[col] && r[col]!=="") counts[r[col]] = (counts[r[col]] || 0) + 1; });
+            const keys = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
+            return keys.length > 0 ? keys[0] : null;
+        }
+
+        function buildDynamicCharts() {
+            const grid = document.getElementById('chartsGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(chartInstances).forEach(id => { chartInstances[id].destroy(); });
+            chartInstances = {};
+
+            if (filterRes.length === 0) return;
+
+            const keys = Object.keys(filterRes[0]).filter(k => !k.startsWith('_'));
+            const dateCols = keys.filter(k => filterRes[0][k] instanceof Date);
+            const numCols = keys.filter(k => typeof filterRes[0][k] === 'number');
+            const catCols = keys.filter(k => {
+                if (BLACK_FILTERS.includes(k)) return false;
+                if(typeof filterRes[0][k] !== 'string') return false;
+                const unique = new Set(filterRes.map(r=>r[k])).size;
+                return unique > 1 && unique <= 40;
+            });
+            const distinctCols = ['Customer Order', 'Item Number'].filter(k => keys.includes(k));
+
+            if (catCols.length === 0 && dateCols.length === 0) {
+                grid.innerHTML = '<div style="padding: 2rem; text-align:center; color: var(--fms-gray); font-weight: 600; width: 100%;">Dimensionalidad insuficiente para vectorizar gráficos.</div>';
+                return;
+            }
+
+            let chartCount = 0;
+            const createContainer = (title) => {
+                chartCount++;
+                const id = `chart_dyn_${chartCount}`;
+                const div = document.createElement('div');
+                div.className = 'chart-card';
+                div.innerHTML = `
+                    <div class="chart-header">
+                        <h3 class="chart-title">${escapeHTML(title)}</h3>
+                    </div>
+                    <div class="chart-wrapper"><canvas id="${id}"></canvas></div>
+                `;
+                grid.appendChild(div);
+                return id;
+            };
+
+            if (dateCols.length > 0) {
+                const dateCol = dateCols[0];
+                const metrica = numCols.includes('GP Ops.') ? 'GP Ops.' : (numCols.includes('Quantity') ? 'Quantity' : (numCols[0] || '_Count'));
+                const timeData = {};
+                filterRes.forEach(r => {
+                    const d = r[dateCol];
+                    if(!d || !(d instanceof Date) || isNaN(d)) return;
+                    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                    if(!timeData[key]) timeData[key] = 0;
+                    timeData[key] += metrica === '_Count' ? 1 : (Number(r[metrica]) || 0);
+                });
+
+                const sortedDates = Object.keys(timeData).sort();
+                if (sortedDates.length > 1) {
+                    const id = createContainer(`Cronología Operativa: ${metrica} vs ${dateCol}`);
+                    const primaryColor = Array.isArray(PALETTES.primary) ? PALETTES.primary[0] : PALETTES.primary;
+                    renderCJS(id, 'line', sortedDates, sortedDates.map(k=>timeData[k]), metrica, primaryColor, true);
+                }
+            }
+
+            let cat1 = catCols.includes('Warehouse') ? 'Warehouse' : (catCols.includes('Final Destination') ? 'Final Destination' : (catCols.includes('Charge (desc)') ? 'Charge (desc)' : catCols[0]));
+            let met1 = numCols.includes('Receivables') ? 'Receivables' : (numCols.includes('Weight (Tons)') ? 'Weight (Tons)' : (numCols.includes('Quantity') ? 'Quantity' : '_Count'));
+            
+            if (cat1) {
+                const dataGroup = groupData(cat1, met1);
+                if (dataGroup.labels.length > 0) {
+                    const id = createContainer(`Distribución Base por ${cat1}`);
+                    renderCJS(id, 'doughnut', dataGroup.labels, dataGroup.values, met1, PALETTES.primary, false);
+                }
+            }
+
+            let cat2 = catCols.find(c => c !== cat1 && (c === 'Customer Name' || c === 'Debitor/Creditor' || c === 'Branch')) || catCols.find(c => c !== cat1);
+            if (cat2) {
+                let met2 = distinctCols.length > 0 ? distinctCols[0] : (numCols.find(n => n !== met1) || met1);
+                if(numCols.includes('GP Ops.')) met2 = 'GP Ops.';
+                const dataGroup = groupData(cat2, met2);
+                if (dataGroup.labels.length > 0) {
+                    const isDistinct = distinctCols.includes(met2);
+                    const id = createContainer(`Rendimiento por ${cat2} (${isDistinct ? 'Únicos' : met2})`);
+                    const secondaryColor = Array.isArray(PALETTES.primary) ? PALETTES.primary[1] : PALETTES.primary;
+                    renderCJS(id, 'bar', dataGroup.labels, dataGroup.values, met2, secondaryColor, false, true);
+                }
+            }
+
+            if (numCols.length >= 2 && cat1 && catCols.length >= 3) {
+                 let cat3 = catCols.find(c => c !== cat1 && c !== cat2);
+                 if (cat3) {
+                    const dataGroup = groupData(cat3, '_Count');
+                    if (dataGroup.labels.length > 0) {
+                        const id = createContainer(`Densidad de Tráfico: ${cat3}`);
+                        renderCJS(id, 'polarArea', dataGroup.labels, dataGroup.values, 'Volumen (Registros)', PALETTES.cool, false);
+                    }
+                 }
+            }
+
+            let cat5Options = [];
+            if(keys.includes('Calidad')) cat5Options.push('Calidad');
+            if(keys.includes('Product Code')) cat5Options.push('Product Code');
+            if(keys.includes('Product Description')) cat5Options.push('Product Description');
+            if(keys.includes('Charge (desc)')) cat5Options.push('Charge (desc)'); 
+            if(keys.includes('Branch')) cat5Options.push('Branch'); 
+            
+            const card5 = document.getElementById('cardChart5');
+            if (cat5Options.length > 0) {
+                card5.style.display = 'flex';
+                const sel = document.getElementById('c5X');
+                sel.innerHTML = cat5Options.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+                
+                const renderChart5 = () => {
+                    const xCol = sel.value;
+                    const groups = {};
+                    const isFin = keys.includes('Payables') || keys.includes('Receivables');
+
+                    filterRes.forEach(r => {
+                        const k = String(r[xCol] || "N/D");
+                        if (!groups[k]) groups[k] = { qty: 0, primaryVal: 0, reels: new Set() };
+                        
+                        if (!isFin) {
+                            if (r['Item Number']) groups[k].reels.add(r['Item Number']);
+                            else if (r['Quantity'] !== undefined) groups[k].qty += (Number(r['Quantity']) || 0);
+                            else groups[k].qty += 1;
+                            
+                            groups[k].primaryVal += (Number(r['Weight (Tons)']) || 0);
+                        } else {
+                            groups[k].qty += (Number(r['Payables']) || 0);
+                            groups[k].primaryVal += (Number(r['Receivables']) || 0);
+                        }
+                    });
+                    
+                    const sorted = Object.keys(groups).sort((a,b) => groups[b].primaryVal - groups[a].primaryVal).slice(0, 15);
+                    const qtyData = sorted.map(k => isFin ? groups[k].qty : (groups[k].reels.size > 0 ? groups[k].reels.size : groups[k].qty));
+                    const primData = sorted.map(k => groups[k].primaryVal);
+
+                    if (chartInstances['chart_adv_5']) chartInstances['chart_adv_5'].destroy();
+                    
+                    let yLabel1 = isFin ? 'Receivables (€)' : 'Masa Operativa (Tons)';
+                    let yLabel2 = isFin ? 'Payables (€)' : 'Densidad (Unidades)';
+
+                    const primColor = Array.isArray(PALETTES.primary) ? PALETTES.primary[0] : PALETTES.primary;
+                    const secColor = Array.isArray(PALETTES.primary) ? PALETTES.primary[2] : PALETTES.primary;
+
+                    chartInstances['chart_adv_5'] = new Chart(document.getElementById('chart5').getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: sorted,
+                            datasets: [
+                                {
+                                    label: yLabel1,
+                                    data: primData,
+                                    backgroundColor: primColor,
+                                    borderRadius: 6,
+                                    yAxisID: 'y',
+                                    borderWidth: 0
+                                },
+                                {
+                                    label: yLabel2,
+                                    data: qtyData,
+                                    type: 'line',
+                                    borderColor: secColor,
+                                    backgroundColor: secColor,
+                                    borderWidth: 4,
+                                    tension: 0.4,
+                                    pointRadius: 4,
+                                    pointBackgroundColor: '#fff',
+                                    pointBorderWidth: 2,
+                                    yAxisID: 'y1'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            plugins: { 
+                                tooltip: { padding: 12, cornerRadius: 8, titleFont: { size: 14 }, bodyFont: { size: 13 }, backgroundColor: 'rgba(15, 23, 42, 0.9)' },
+                                legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
+                            },
+                            scales: {
+                                x: { grid: { display: false } },
+                                y: { type: 'linear', display: true, position: 'left', title: {display: true, text: yLabel1, font: {weight: 700}}, grid: {color: '#E2E8F0', drawBorder: false, borderDash: [5, 5]} },
+                                y1: { type: 'linear', display: true, position: 'right', grid:{drawOnChartArea:false}, title:{display:true, text: yLabel2, font: {weight: 700}} }
+                            }
+                        }
+                    });
+                };
+                renderChart5();
+                sel.onchange = renderChart5;
+            } else {
+                card5.style.display = 'none';
+            }
+        }
+
+        function groupData(catCol, numCol) {
+            const groups = {};
+            filterRes.forEach(r => {
+                const k = String(r[catCol] || "N/D");
+                if (!groups[k]) groups[k] = (BLACK_FILTERS.includes(numCol) && (numCol==='Customer Order' || numCol==='Item Number')) ? new Set() : 0;
+                
+                if (groups[k] instanceof Set) { if(r[numCol]) groups[k].add(r[numCol]); }
+                else if (numCol === '_Count') { groups[k] += 1; }
+                else { groups[k] += (Number(r[numCol]) || 0); }
+            });
+
+            const sorted = Object.keys(groups).sort((a,b) => {
+                const vA = (groups[a] instanceof Set) ? groups[a].size : groups[a];
+                const vB = (groups[b] instanceof Set) ? groups[b].size : groups[b];
+                return vB - vA;
+            }).slice(0, 12);
+
+            return {
+                labels: sorted,
+                values: sorted.map(k => (groups[k] instanceof Set) ? groups[k].size : groups[k])
+            };
+        }
+
+        function renderCJS(id, type, labels, data, label, colorConfig, fillArea=false, horizontal=false) {
+            const ctx = document.getElementById(id).getContext('2d');
+            const isPie = type === 'pie' || type === 'doughnut' || type === 'polarArea';
+            
+            let bgColors = colorConfig;
+            let borderColors = '#ffffff';
+
+            if (!isPie) {
+                bgColors = fillArea ? hexToRgbA(colorConfig, 0.1) : colorConfig;
+                borderColors = colorConfig;
+            }
+
+            chartInstances[id] = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderColor: borderColors,
+                        borderWidth: isPie ? 2 : (type==='line'?3:0),
+                        fill: fillArea,
+                        tension: 0.4,
+                        borderRadius: type==='bar' ? 6 : 0,
+                        pointRadius: type==='line' ? 3 : 0,
+                        pointBackgroundColor: colorConfig
+                    }]
+                },
+                options: {
+                    indexAxis: horizontal ? 'y' : 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: isPie, position: 'right', labels: { usePointStyle: true, padding: 20 } },
+                        tooltip: { padding: 12, cornerRadius: 8, titleFont: {size: 14}, bodyFont: {size: 13}, backgroundColor: 'rgba(15, 23, 42, 0.9)' }
+                    },
+                    scales: isPie ? {} : {
+                        y: { beginAtZero: true, grid: { color: '#E2E8F0', drawBorder: false, borderDash: [4, 4] } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function hexToRgbA(hex, alpha){
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return `rgba(139,0,0,${alpha})`;
+        }
+
+        window.sortTable = (col) => {
+            if (sortCol === col) { sortAsc = !sortAsc; } 
+            else { sortCol = col; sortAsc = true; }
+            
+            filterRes.sort((a, b) => {
+                let valA = a[col]; let valB = b[col];
+                if (valA === undefined || valA === null) valA = '';
+                if (valB === undefined || valB === null) valB = '';
+                
+                if (typeof valA === 'number' && typeof valB === 'number') {
+                    return sortAsc ? valA - valB : valB - valA;
+                }
+                if (valA instanceof Date && valB instanceof Date) {
+                    return sortAsc ? valA - valB : valB - valA;
+                }
+                
+                let strA = String(valA).toLowerCase();
+                let strB = String(valB).toLowerCase();
+                if (strA < strB) return sortAsc ? -1 : 1;
+                if (strA > strB) return sortAsc ? 1 : -1;
+                return 0;
+            });
+            pIndex = 1;
+            renderTable();
+        };
+
+        function renderTable() {
+            const head = document.getElementById('dtHead');
+            const body = document.getElementById('dtBody');
+            const term = document.getElementById('tableSearch').value.toLowerCase();
+            
+            if (filterRes.length === 0) { body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding: 3rem; color: var(--fms-gray); font-weight: 500;">Entorno vacío. Ajuste los parámetros de filtro.</td></tr>'; return; }
+
+            const keys = Object.keys(filterRes[0]).filter(k => !k.startsWith('_'));
+            const hasExpandable = filterRes.some(r => r._children && r._children.length > 0);
+            
+            head.innerHTML = `<tr>${hasExpandable ? '<th style="width:50px; text-align:center;">Drill</th>' : ''}${keys.map(k => {
+                let sortArrow = sortCol === k ? (sortAsc ? ' ↑' : ' ↓') : '';
+                return `<th onclick="sortTable('${escapeHTML(k)}')">${escapeHTML(k)}<span class="sort-icon">${sortArrow}</span></th>`;
+            }).join('')}</tr>`;
+
+            const filteredTableData = term ? filterRes.filter(row => keys.some(k => {
+                let v = row[k];
+                if (v instanceof Date) v = v.toLocaleDateString('es-ES');
+                return String(v || "").toLowerCase().includes(term);
+            })) : filterRes;
+
+            const data = filteredTableData.slice((pIndex - 1) * pSize, pIndex * pSize);
+
+            body.innerHTML = data.map((row, idx) => {
+                const hasChildren = row._children && row._children.length > 0;
+                const rowId = `row_${pIndex}_${idx}`;
+                
+                let html = `<tr class="row-parent" ${hasChildren ? `onclick="toggleRow('${rowId}')"` : ''}>`;
+                if (hasExpandable) {
+                    html += `<td style="text-align:center;">${hasChildren ? `<button class="expand-btn" aria-label="Expandir"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></button>` : ''}</td>`;
+                }
+
+                keys.forEach(k => {
+                    let v = row[k];
+                    let safeV = escapeHTML(v);
+                    
+                    if (v instanceof Date) safeV = escapeHTML(v.toLocaleDateString('es-ES'));
+                    else if (typeof v === 'number') {
+                        safeV = escapeHTML(v.toLocaleString('es-ES', { maximumFractionDigits: 2 }));
+                    }
+
+                    let formatHtml = safeV;
+                    if (k === 'Pending' && v > 0) formatHtml = `<span class="badge badge-danger"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${safeV}</span>`;
+                    else if (k === 'Pending' && v === 0) formatHtml = `<span class="badge badge-success"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg> OK</span>`;
+
+                    html += `<td title="${safeV || ''}">${formatHtml || '<span style="color:#CBD5E0;">-</span>'}</td>`;
+                });
+                html += `</tr>`;
+
+                if (hasChildren) {
+                    const childKeys = Object.keys(row._children[0]).filter(k => !k.startsWith('_') && k !== 'Load Code');
+                    html += `<tr class="row-child" id="child_${rowId}">
+                        <td colspan="${keys.length + (hasExpandable ? 1 : 0)}" style="padding:0;">
+                            <div class="sub-table-wrap">
+                                <table class="sub-table">
+                                    <thead><tr>${childKeys.map(k => `<th>${escapeHTML(k)}</th>`).join('')}</tr></thead>
+                                    <tbody>
+                                        ${row._children.map(c => `<tr>${childKeys.map(k => {
+                                            let cv = c[k];
+                                            if (cv instanceof Date) cv = cv.toLocaleDateString('es-ES');
+                                            else if (typeof cv === 'number') cv = cv.toLocaleString('es-ES', { maximumFractionDigits: 2 });
+                                            return `<td>${escapeHTML(cv || '-')}</td>`;
+                                        }).join('')}</tr>`).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>`;
+                }
+                return html;
+            }).join('');
+
+            const total = Math.ceil(filteredTableData.length / pSize) || 1;
+            document.getElementById('pageLabel').textContent = `Mostrando segmento ${pIndex} de ${total}`;
+            document.getElementById('btnPrev').disabled = pIndex === 1;
+            document.getElementById('btnNext').disabled = pIndex >= total;
+        }
+
+        window.toggleRow = (id) => {
+            const el = document.getElementById(`child_${id}`);
+            if (el) el.classList.toggle('active');
+            
+            const btn = document.querySelector(`tr[onclick="toggleRow('${id}')"] .expand-btn`);
+            if (btn) {
+                if(el.classList.contains('active')) {
+                    btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6"></path></svg>';
+                    btn.style.backgroundColor = 'var(--fms-red)';
+                    btn.style.color = 'white';
+                    btn.style.borderColor = 'var(--fms-red)';
+                } else {
+                    btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>';
+                    btn.style.backgroundColor = '';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }
+            }
+        };
+
+        window.switchTab = (e, id) => {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            e.currentTarget.classList.add('active');
+        };
+        
+        function renderSheetSelect(names) {
+            const s = document.getElementById('sheetSelect');
+            s.innerHTML = names.map(n => `<option value="${escapeHTML(n)}">${escapeHTML(n)}</option>`).join('');
+            s.onchange = (e) => { currentTab = e.target.value; sortCol = ''; pIndex = 1; initDashboard(); };
+        }
+
+        window.navPage = (d) => { pIndex += d; renderTable(); };
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.ms-anchor') && !event.target.closest('.ms-anchor') && !event.target.closest('.ms-list')) {
+                document.querySelectorAll('.ms-wrap').forEach(w => w.classList.remove('open'));
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+name: Multi-Project Deployment
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # BUILD BPMN Modeler
+      - name: Build BPMN Modeler
+        run: |
+          cd BPMN-Modeler
+          npm install
+          npm run build
+          mkdir -p ../out/BPMN-Modeler
+          cp -r dist/* ../out/BPMN-Modeler/
+
+      # BUILD Shipment Tracker
+      - name: Build Shipment Tracker
+        run: |
+          cd Shipment-Tracker
+          npm install
+          npm run build
+          mkdir -p ../out/Shipment-Tracker
+          cp -r dist/* ../out/Shipment-Tracker/
+
+      # BUILD Logistics Dashboard
+      - name: Build Logistics Dashboard
+        run: |
+          cd Logistics-Dashboard
+          npm install
+          npm run build
+          mkdir -p ../out/Logistics-Dashboard
+          cp -r dist/* ../out/Logistics-Dashboard/
+
+      # COPY Root Index
+      - name: Copy Root Index
+        run: cp index.html out/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './out'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,58 @@
+/* Variables para el tema claro (por defecto) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --topbar-bg: #f8f9fa;
+  --sidebar-bg: #f8f9fa;
+  --border-color: #dee2e6;
+  --btn-secondary-bg: #e9ecef;
+  --btn-secondary-text: #212529;
+}
+
+/* Variables para el tema oscuro */
+[data-theme='dark'] {
+  --bg-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --topbar-bg: #2d2d2d;
+  --sidebar-bg: #252525;
+  --border-color: #404040;
+  --btn-secondary-bg: #3d3d3d;
+  --btn-secondary-text: #ffffff;
+}
+
+/* Inversión de colores del modelador para Modo Oscuro */
+[data-theme='dark'] .canvas-panel__body {
+  background-color: #1e1e1e !important;
+}
+
+[data-theme='dark'] .djs-container {
+  background-color: #1e1e1e !important;
+}
+
+/* Ajuste de elementos BPMN en modo oscuro */
+[data-theme='dark'] .djs-visual rect,
+[data-theme='dark'] .djs-visual circle,
+[data-theme='dark'] .djs-visual polygon,
+[data-theme='dark'] .djs-visual path {
+  fill: #2d2d2d !important;
+  stroke: #e0e0e0 !important;
+}
+
+[data-theme='dark'] .djs-visual text,
+[data-theme='dark'] .djs-label {
+  fill: #e0e0e0 !important;
+}
+
+[data-theme='dark'] .djs-outline {
+  stroke: #404040 !important;
+}
+
+/* Ajuste del Mini-mapa en modo oscuro */
+[data-theme='dark'] .djs-minimap {
+  background-color: #252525 !important;
+  border-color: #404040 !important;
+}
+
+[data-theme='dark'] .djs-minimap .viewport {
+  stroke: #007bff !important;
+}
