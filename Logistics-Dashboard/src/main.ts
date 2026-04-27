@@ -41,9 +41,11 @@ function removeFilter(col: string, val: string) {
             const wrap = input.closest('.ms-wrap') as HTMLElement;
             const checked = wrap.querySelectorAll('input:checked');
             const span = wrap.querySelector('.ms-anchor span') as HTMLElement;
-            if (checked.length === 0) span.textContent = "Todas las entidades";
-            else if (checked.length === 1) span.textContent = (checked[0] as HTMLInputElement).value;
-            else span.textContent = `${checked.length} selecciones activas`;
+            if (span) {
+                if (checked.length === 0) span.textContent = "Todas las entidades";
+                else if (checked.length === 1) span.textContent = (checked[0] as HTMLInputElement).value;
+                else span.textContent = `${checked.length} selecciones activas`;
+            }
         }
     });
     applyFilters();
@@ -62,25 +64,29 @@ function renderAll() {
     renderTable();
     buildDynamicCharts(state.filterRes, 'chartsGrid');
     const aiSummary = qs('#aiSummary');
-    aiSummary.innerHTML = generateAIInsights(state.filterRes);
+    if (aiSummary) aiSummary.innerHTML = generateAIInsights(state.filterRes);
 }
 
 function switchTab(tabId: string) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     
-    qs(`#${tabId}`).classList.add('active');
-    if (tabId === 'tab-charts') qs('#tabChartsBtn').classList.add('active');
-    else qs('#tabDataBtn').classList.add('active');
+    qs(`#${tabId}`)?.classList.add('active');
+    if (tabId === 'tab-charts') qs('#tabChartsBtn')?.classList.add('active');
+    else qs('#tabDataBtn')?.classList.add('active');
 }
 
 async function handleFileUpload(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
-    qs('#loader').style.display = 'flex';
-    qs('#dashboardUI').style.display = 'none';
-    qs('#uploadPanel').style.display = 'none';
+    const loader = qs('#loader');
+    const dashboardUI = qs('#dashboardUI');
+    const uploadPanel = qs('#uploadPanel');
+
+    if (loader) loader.style.display = 'flex';
+    if (dashboardUI) dashboardUI.style.display = 'none';
+    if (uploadPanel) uploadPanel.style.display = 'none';
 
     try {
         resetState();
@@ -103,51 +109,61 @@ async function handleFileUpload(e: Event) {
                     state.filterRes = [...state.db[state.currentTab]];
                     buildFilters(applyFilters);
                     renderAll();
-                    qs('#dashboardUI').style.display = 'block';
+                    if (dashboardUI) dashboardUI.style.display = 'block';
                     showToast("Auditoría Finalizada", "El ecosistema de datos ha sido estructurado exitosamente.", false);
                 } else {
                     showToast("Carencia de Datos", "El archivo no contiene matrices válidas para auditoría.");
-                    qs('#uploadPanel').style.display = 'flex';
+                    if (uploadPanel) uploadPanel.style.display = 'flex';
                 }
             } else {
                 console.error(error);
                 showToast("Fallo Crítico", "Error en el procesamiento de datos: " + error);
-                qs('#uploadPanel').style.display = 'flex';
+                if (uploadPanel) uploadPanel.style.display = 'flex';
             }
-            qs('#loader').style.display = 'none';
+            if (loader) loader.style.display = 'none';
             worker.terminate();
         };
 
         worker.onerror = (err) => {
             console.error("Worker Error:", err);
             showToast("Fallo Crítico", "Error interno en el motor de auditoría.");
-            qs('#loader').style.display = 'none';
-            qs('#uploadPanel').style.display = 'flex';
+            if (loader) loader.style.display = 'none';
+            if (uploadPanel) uploadPanel.style.display = 'flex';
             worker.terminate();
         };
 
     } catch (err) {
         console.error(err);
         showToast("Fallo Crítico", "No se pudo iniciar el motor de auditoría.");
-        qs('#loader').style.display = 'none';
-        qs('#uploadPanel').style.display = 'flex';
+        if (loader) loader.style.display = 'none';
+        if (uploadPanel) uploadPanel.style.display = 'flex';
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    qs('#excelInput').addEventListener('change', handleFileUpload);
-    qs('#btnReset').addEventListener('click', resetFilters);
-    qs('#btnApply').addEventListener('click', applyFilters);
-    qs('#tabChartsBtn').addEventListener('click', () => switchTab('tab-charts'));
-    qs('#tabDataBtn').addEventListener('click', () => switchTab('tab-data'));
-    qs('#btnPrev').addEventListener('click', () => { if (state.pIndex > 1) { state.pIndex--; renderTable(); } });
-    qs('#btnNext').addEventListener('click', () => { 
+    const excelInput = qs('#excelInput');
+    const btnReset = qs('#btnReset');
+    const btnApply = qs('#btnApply');
+    const tabChartsBtn = qs('#tabChartsBtn');
+    const tabDataBtn = qs('#tabDataBtn');
+    const btnPrev = qs('#btnPrev');
+    const btnNext = qs('#btnNext');
+    const tableSearch = qs('#tableSearch');
+    const sheetSelect = qs('#sheetSelect');
+
+    excelInput?.addEventListener('change', handleFileUpload);
+    btnReset?.addEventListener('click', resetFilters);
+    btnApply?.addEventListener('click', applyFilters);
+    tabChartsBtn?.addEventListener('click', () => switchTab('tab-charts'));
+    tabDataBtn?.addEventListener('click', () => switchTab('tab-data'));
+    btnPrev?.addEventListener('click', () => { if (state.pIndex > 1) { state.pIndex--; renderTable(); } });
+    btnNext?.addEventListener('click', () => { 
         const total = Math.ceil(state.filterRes.length / 50);
         if (state.pIndex < total) { state.pIndex++; renderTable(); } 
     });
-    qs('#tableSearch').addEventListener('input', () => { state.pIndex = 1; renderTable(); });
+    tableSearch?.addEventListener('input', () => { state.pIndex = 1; renderTable(); });
 
-    qs('#sheetSelect').addEventListener('change', (e) => {
+    sheetSelect?.addEventListener('change', (e) => {
         state.currentTab = (e.target as HTMLSelectElement).value;
         state.sortCol = '';
         state.pIndex = 1;
@@ -164,4 +180,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-

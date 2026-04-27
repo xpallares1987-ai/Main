@@ -6,11 +6,12 @@ import { UIComponents } from './components';
 
 export function renderSheetSelect(names: string[]) {
     const s = qs<HTMLSelectElement>('#sheetSelect');
-    s.innerHTML = names.map(n => `<option value="${escapeHTML(n)}">${escapeHTML(n)}</option>`).join('');
+    if (s) s.innerHTML = names.map(n => `<option value="${escapeHTML(n)}">${escapeHTML(n)}</option>`).join('');
 }
 
 export function buildFilters(onFilterChange: () => void) {
     const container = qs('#filterGrid');
+    if (!container) return;
     container.innerHTML = '';
     if (!state.filterRes.length) return;
     const headers = Object.keys(state.filterRes[0] || {}).filter(h => !h.startsWith('_'));
@@ -60,9 +61,11 @@ export function buildFilters(onFilterChange: () => void) {
                 const wrap = div.querySelector('.ms-wrap') as HTMLElement;
                 const checked = wrap.querySelectorAll('input:checked');
                 const span = wrap.querySelector('.ms-anchor span') as HTMLElement;
-                if (checked.length === 0) span.textContent = "Todas las entidades";
-                else if (checked.length === 1) span.textContent = (checked[0] as HTMLInputElement).value;
-                else span.textContent = `${checked.length} selecciones activas`;
+                if (span) {
+                    if (checked.length === 0) span.textContent = "Todas las entidades";
+                    else if (checked.length === 1) span.textContent = (checked[0] as HTMLInputElement).value;
+                    else span.textContent = `${checked.length} selecciones activas`;
+                }
                 onFilterChange();
             };
         });
@@ -74,6 +77,7 @@ export function buildFilters(onFilterChange: () => void) {
 
 export function updateActiveFiltersDisplay(criteria: FilterCriteria, onRemove: (col: string, val: string) => void) {
     const container = qs('#activeFilters');
+    if (!container) return;
     container.innerHTML = '';
     let hasFilters = false;
     
@@ -85,9 +89,11 @@ export function updateActiveFiltersDisplay(criteria: FilterCriteria, onRemove: (
                 const chipDiv = document.createElement('div');
                 chipDiv.innerHTML = chipHtml;
                 const chip = chipDiv.firstElementChild as HTMLElement;
-                const btn = chip.querySelector('button') as HTMLButtonElement;
-                btn.onclick = () => onRemove(col, val);
-                container.appendChild(chip);
+                if (chip) {
+                    const btn = chip.querySelector('button') as HTMLButtonElement;
+                    if (btn) btn.onclick = () => onRemove(col, val);
+                    container.appendChild(chip);
+                }
             });
         }
     }
@@ -96,6 +102,7 @@ export function updateActiveFiltersDisplay(criteria: FilterCriteria, onRemove: (
 
 export function updateKPIs() {
     const container = qs('#kpiContainer');
+    if (!container) return;
     container.innerHTML = '';
     if (!state.filterRes.length) return;
     const head = Object.keys(state.filterRes[0] || {});
@@ -161,8 +168,11 @@ export function updateKPIs() {
 export function renderTable() {
     const head = qs('#dtHead');
     const body = qs('#dtBody');
-    const term = (qs('#tableSearch') as HTMLInputElement).value.toLowerCase();
+    const searchInput = qs<HTMLInputElement>('#tableSearch');
+    const term = searchInput ? searchInput.value.toLowerCase() : "";
     
+    if (!body) return;
+
     if (state.filterRes.length === 0) { 
         body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding: 3rem; color: var(--fms-gray); font-weight: 500;">Entorno vacío. Ajuste los parámetros de filtro.</td></tr>'; 
         return; 
@@ -185,8 +195,10 @@ export function renderTable() {
         };
         headerRow.appendChild(th);
     });
-    head.innerHTML = '';
-    head.appendChild(headerRow);
+    if (head) {
+        head.innerHTML = '';
+        head.appendChild(headerRow);
+    }
 
     const filteredTableData = term ? state.filterRes.filter(row => keys.some(k => {
         let v = row[k];
@@ -263,9 +275,13 @@ export function renderTable() {
     });
 
     const total = Math.ceil(filteredTableData.length / PAGE_SIZE) || 1;
-    qs('#pageLabel').textContent = `Mostrando segmento ${state.pIndex} de ${total}`;
-    (qs('#btnPrev') as HTMLButtonElement).disabled = state.pIndex === 1;
-    (qs('#btnNext') as HTMLButtonElement).disabled = state.pIndex >= total;
+    const pageLabel = qs('#pageLabel');
+    if (pageLabel) pageLabel.textContent = `Mostrando segmento ${state.pIndex} de ${total}`;
+    
+    const btnPrev = qs<HTMLButtonElement>('#btnPrev');
+    const btnNext = qs<HTMLButtonElement>('#btnNext');
+    if (btnPrev) btnPrev.disabled = state.pIndex === 1;
+    if (btnNext) btnNext.disabled = state.pIndex >= total;
 }
 
 function sortAndRender() {
@@ -294,35 +310,40 @@ function sortAndRender() {
 
 export function toggleRow(id: string) {
     const el = qs(`#child_${id}`);
+    if (!el) return;
     el.classList.toggle('active');
     
     const trParent = el.previousElementSibling as HTMLElement;
-    const btn = trParent.querySelector('.expand-btn') as HTMLElement;
-    if (btn) {
-        if(el.classList.contains('active')) {
-            btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6"></path></svg>';
-            btn.style.backgroundColor = 'var(--fms-red)';
-            btn.style.color = 'white';
-            btn.style.borderColor = 'var(--fms-red)';
-        } else {
-            btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>';
-            btn.style.backgroundColor = '';
-            btn.style.color = '';
-            btn.style.borderColor = '';
+    if (trParent) {
+        const btn = trParent.querySelector('.expand-btn') as HTMLElement;
+        if (btn) {
+            if(el.classList.contains('active')) {
+                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6"></path></svg>';
+                btn.style.backgroundColor = 'var(--fms-red)';
+                btn.style.color = 'white';
+                btn.style.borderColor = 'var(--fms-red)';
+            } else {
+                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>';
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }
         }
     }
 }
 
 export function showToast(title: string, message: string, isError = true) {
     const container = qs('#toastContainer');
+    if (!container) return;
     const toastDiv = document.createElement('div');
     toastDiv.innerHTML = UIComponents.renderToast(title, message, isError);
     const toast = toastDiv.firstElementChild as HTMLElement;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-    }, 5000);
+    if (toast) {
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 5000);
+    }
 }
-

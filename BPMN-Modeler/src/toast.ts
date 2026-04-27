@@ -1,5 +1,5 @@
-﻿import APP_CONFIG from "./config";
-import { qs } from "./utils/dom";
+import APP_CONFIG from "./config";
+import { qs } from "shared-utils";
 
 export type ToastType = "info" | "success" | "warning" | "error";
 
@@ -25,3 +25,4 @@ export function showToast(message: string, type: ToastType = "info", duration: n
     }, { once: true });
   }, duration);
 }
+

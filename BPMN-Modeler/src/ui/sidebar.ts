@@ -1,4 +1,4 @@
-﻿import { ensureElement } from "../utils/helpers";
+import { ensureElement } from "shared-utils";
 
 export function createSidebar({
   sidebarElement,
@@ -41,3 +41,4 @@ export function createSidebar({
     },
   };
 }
+

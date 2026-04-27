@@ -1,4 +1,4 @@
-﻿import { ensureElement } from "../utils/helpers";
+import { ensureElement } from "shared-utils";
 
 function bindClick(element: HTMLElement, handler: Function) {
   if (typeof handler !== "function") return () => {};
@@ -41,3 +41,4 @@ export function createToolbar(elements: any = {}, handlers: any = {}) {
     destroy: () => cleanups.forEach(cleanup => cleanup()),
   };
 }
+

@@ -1,4 +1,4 @@
-﻿import { ensureElement } from "../utils/helpers";
+import { ensureElement } from "shared-utils";
 import { DiagramTab } from "../types";
 
 export function setDiagramName(element: HTMLElement, fileName: string) {
@@ -39,3 +39,4 @@ export function renderTabs(
     container.appendChild(tabEl);
   });
 }
+

@@ -9,5 +9,6 @@ export {
     formatError,
     safeTrim,
     ensureElement,
-    getFileNameFromPath
+    getFileNameFromPath,
+    hexToRgbA
 } from './utils/dom';

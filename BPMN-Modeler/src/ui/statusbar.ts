@@ -1,4 +1,4 @@
-﻿import { ensureElement } from "../utils/helpers";
+import { ensureElement } from "shared-utils";
 
 export function createStatusbar({ statusElement, selectionElement }: any) {
   const statusEl = ensureElement(statusElement, "elemento de estado");
@@ -21,3 +21,4 @@ export function createStatusbar({ statusElement, selectionElement }: any) {
     },
   };
 }
+
