@@ -1,5 +1,5 @@
 {
-  "name": "Personal-Dev-monorepo",
+  "name": "Personal-Logistics-Monorepo",
   "private": true,
   "packageManager": "npm@10.8.2",
   "workspaces": [
