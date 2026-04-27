@@ -1,7 +1,6 @@
 import { Shipment } from '../types';
 import { I18nService } from './i18nService';
-
-declare var ApexCharts: any;
+import ApexCharts from 'apexcharts';
 
 let statusChart: any;
 let modeChart: any;
@@ -9,11 +8,11 @@ let modeChart: any;
 export const ChartService = {
   init() {
     const commonOptions = {
-      chart: { type: 'donut', height: 250, foreColor: '#94a3b8' },
+      chart: { type: 'donut' as const, height: 250, foreColor: '#94a3b8' },
       stroke: { show: false },
-      legend: { position: 'bottom' },
+      legend: { position: 'bottom' as const },
       dataLabels: { enabled: false },
-      theme: { mode: 'dark' }
+      theme: { mode: 'dark' as const }
     };
 
     statusChart = new ApexCharts(document.querySelector("#statusChart"), {

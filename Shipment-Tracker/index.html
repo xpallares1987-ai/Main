@@ -14,9 +14,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Integridad de Leaflet corregida según reporte del navegador -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-    <link rel="stylesheet" href="./assets/css/style.css">
-</head>
+    <!-- Estilos locales procesados por Vite -->
+    <link rel="stylesheet" href="./src/assets/css/app.css">
+    </head>
 <body>
     <div id="offline-alert" class="offline-banner" style="display: none;">
         <span id="txt-offline-mode"></span> - <small id="txt-offline-warning"></small>
@@ -85,9 +85,6 @@
 
     <div id="toast-container"></div>
 
-    <!-- Scripts externos con integridad y CORS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script type="module" src="./src/main.ts"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Shipment } from '../types';
-
-declare var L: any;
 
 export class MapService {
   private static instance: any;
