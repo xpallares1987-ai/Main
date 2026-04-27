@@ -47,7 +47,7 @@ function resolveUi(selectors: Record<string, string>): AppUi {
 
 function createTab(name: string, xml: string): DiagramTab {
   return {
-    id: Math.random().toString(36).slice(2, 10),
+    id: crypto.randomUUID(),
     name: getSafeDiagramName(name),
     xml,
     isDirty: false,
@@ -336,5 +336,6 @@ async function init() {
 }
 
 init();
+
 
 
