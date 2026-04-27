@@ -1,7 +1,7 @@
 import { Chart, registerables } from 'chart.js';
 import { DataRow } from '../types';
 import { BLACK_FILTERS, PALETTES } from '../config';
-import { escapeHTML, hexToRgbA } from '../utils/dom';
+import { escapeHTML, hexToRgbA } from "shared-utils";
 
 Chart.register(...registerables);
 
@@ -168,3 +168,4 @@ export function buildDynamicCharts(filterRes: DataRow[], gridId: string) {
         }
     }
 }
+

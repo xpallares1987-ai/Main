@@ -1,7 +1,7 @@
 import { state } from '../state';
 import { FilterCriteria } from '../types';
 import { BLACK_COLS, BLACK_FILTERS, PAGE_SIZE } from '../config';
-import { escapeHTML, qs } from '../utils/dom';
+import { escapeHTML, qs } from "shared-utils";
 import { UIComponents } from './components';
 
 export function renderSheetSelect(names: string[]) {
@@ -325,3 +325,4 @@ export function showToast(title: string, message: string, isError = true) {
         setTimeout(() => toast.remove(), 400);
     }, 5000);
 }
+

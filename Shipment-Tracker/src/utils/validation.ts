@@ -1,4 +1,4 @@
-﻿export const ValidationUtils = {
+export const ValidationUtils = {
   /**
    * Valida un número de contenedor (ISO 6346) básico.
    * Formato: 4 letras + 7 números.
@@ -16,3 +16,4 @@
     return ref.trim().length >= 5;
   }
 };
+

@@ -1,4 +1,4 @@
-﻿export interface Milestone {
+export interface Milestone {
   label: string;
   key: string;
   completed: boolean;
@@ -55,3 +55,4 @@ export const mockShipments: Shipment[] = [
     ]
   }
 ];
+

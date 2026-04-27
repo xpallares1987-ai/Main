@@ -1,5 +1,5 @@
-﻿import { Shipment, Milestone, Agent } from '../types';
-import { DOMUtils } from '../utils/dom';
+import { Shipment, Milestone, Agent } from '../types';
+import { qs, on, escapeHTML, debounce } from "shared-utils";
 import { ShipmentService } from '../services/shipmentService';
 import { I18nService } from '../services/i18nService';
 import { ValidationUtils } from '../utils/validation';
@@ -57,12 +57,12 @@ export const UIComponents = {
         <div class="card-status" style="color: ${statusColor}">${(t as any)[s.status]?.toUpperCase() || s.status.toUpperCase()}</div>
         <h3>
           <span class="icon-cyan">${renderIcon(s.mode)}</span>
-          ${DOMUtils.escapeHTML(s.reference)}
+          ${escapeHTML(s.reference)}
         </h3>
         ${exceptions.map(e => `<div class="exception-badge ${e.type === 'delay' ? 'delay' : 'critical'}">⚠️ ${(t as any)[e.type + 'Alert'] || e.message}</div>`).join('')}
-        <div class="info-row"><span class="info-label">${t.route}:</span><span>${DOMUtils.escapeHTML(s.origin)} ➔ ${DOMUtils.escapeHTML(s.destination)}</span></div>
-        <div class="info-row"><span class="info-label">${t.container}:</span><span class="${!isContainerValid ? 'text-danger' : ''}">${DOMUtils.escapeHTML(s.container)}</span></div>
-        <div class="info-row"><span class="info-label">${t.eta}:</span><span class="eta-value">${DOMUtils.escapeHTML(s.eta)}</span></div>
+        <div class="info-row"><span class="info-label">${t.route}:</span><span>${escapeHTML(s.origin)} ➔ ${escapeHTML(s.destination)}</span></div>
+        <div class="info-row"><span class="info-label">${t.container}:</span><span class="${!isContainerValid ? 'text-danger' : ''}">${escapeHTML(s.container)}</span></div>
+        <div class="info-row"><span class="info-label">${t.eta}:</span><span class="eta-value">${escapeHTML(s.eta)}</span></div>
         <div class="timeline">${s.milestones.map(m => this.renderMilestone(m)).join('')}</div>
         <div class="card-actions"><button class="btn-details" onclick="window.showDetails('${s.id}')">${exceptions.length > 0 ? t.analyzeException : t.viewDetails}</button></div>
       </div>
@@ -75,7 +75,7 @@ export const UIComponents = {
     return `
       <div class="milestone ${m.completed ? 'milestone--completed' : ''}">
         <div class="dot"></div>
-        <span class="milestone-label">${DOMUtils.escapeHTML(label)}</span>
+        <span class="milestone-label">${escapeHTML(label)}</span>
       </div>
     `;
   },
@@ -88,11 +88,11 @@ export const UIComponents = {
       <div class="agent-card">
         <div class="agent-status-dot" style="background: ${statusColor}"></div>
         <div class="agent-avatar">${a.name.charAt(0)}</div>
-        <h3 style="margin: 1rem 0 0.25rem 0;">${DOMUtils.escapeHTML(a.name)}</h3>
-        <p class="text-soft" style="font-size: 0.8rem; margin-bottom: 1rem;">${DOMUtils.escapeHTML(a.role)}</p>
-        <div class="info-row"><span class="info-label">${t.route}:</span><span>${DOMUtils.escapeHTML(a.region)}</span></div>
+        <h3 style="margin: 1rem 0 0.25rem 0;">${escapeHTML(a.name)}</h3>
+        <p class="text-soft" style="font-size: 0.8rem; margin-bottom: 1rem;">${escapeHTML(a.role)}</p>
+        <div class="info-row"><span class="info-label">${t.route}:</span><span>${escapeHTML(a.region)}</span></div>
         <div class="specialties">
-          ${a.specialties.map(s => `<span class="specialty-tag">${DOMUtils.escapeHTML(s)}</span>`).join('')}
+          ${a.specialties.map(s => `<span class="specialty-tag">${escapeHTML(s)}</span>`).join('')}
         </div>
         <div class="agent-actions">
           <a href="mailto:${a.email}" class="btn-lang active" style="flex: 1; text-align: center; text-decoration: none; padding: 8px;">${t.email}</a>
@@ -102,3 +102,4 @@ export const UIComponents = {
     `;
   }
 };
+

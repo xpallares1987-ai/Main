@@ -1,4 +1,4 @@
-import { escapeHTML } from '../utils/dom';
+import { escapeHTML } from "shared-utils";
 
 export const UIComponents = {
     renderKPI(label: string, value: string, sub: string, trend: 'up' | 'down' | 'neutral') {
@@ -43,3 +43,4 @@ export const UIComponents = {
         `;
     }
 };
+

@@ -22,13 +22,14 @@ import { setDiagramName, renderTabs } from "./ui/render";
 import { createSidebar } from "./ui/sidebar";
 import { createStatusbar } from "./ui/statusbar";
 import { createToolbar } from "./ui/toolbar";
-import { on, qs } from "./utils/dom";
 import {
+  on,
+  qs,
   debounce,
   ensureExtension,
   formatError,
   safeTrim,
-} from "./utils/helpers";
+} from "shared-utils";
 import { showToast } from "./toast";
 import { AppUi, DiagramTab } from "./types";
 

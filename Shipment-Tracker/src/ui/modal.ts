@@ -1,5 +1,5 @@
-﻿import { Shipment } from "../types";
-import { DOMUtils } from "../utils/dom";
+import { Shipment } from "../types";
+import { qs, on, escapeHTML, debounce } from "shared-utils";
 import { I18nService } from "../services/i18nService";
 
 const getIconPath = (mode: string) => {
@@ -25,7 +25,7 @@ export const ModalUI = {
       <div class="modal-header">
         <h2 style="color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 12px;">
           <img src="${iconPath}" style="width: 24px; height: 24px; filter: invert(53%) sepia(93%) saturate(3033%) hue-rotate(175deg) brightness(101%) contrast(92%);" alt="${shipment.mode}">
-          ${DOMUtils.escapeHTML(shipment.reference)}
+          ${escapeHTML(shipment.reference)}
         </h2>
         <p class="text-soft">${shipment.status.toUpperCase()} | ${shipment.container}</p>
       </div>
@@ -40,8 +40,8 @@ export const ModalUI = {
           <div class="modal-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
             <div class="details-section">
               <h4 style="color: var(--cyan); margin-bottom:0.5rem;">${t.generalInfo}</h4>
-              <p style="font-size:0.9rem;"><strong>${t.route}:</strong> ${DOMUtils.escapeHTML(shipment.origin)} ➔ ${DOMUtils.escapeHTML(shipment.destination)}</p>
-              <p style="font-size:0.9rem;"><strong>${t.eta}:</strong> ${DOMUtils.escapeHTML(shipment.eta)}</p>
+              <p style="font-size:0.9rem;"><strong>${t.route}:</strong> ${escapeHTML(shipment.origin)} ➔ ${escapeHTML(shipment.destination)}</p>
+              <p style="font-size:0.9rem;"><strong>${t.eta}:</strong> ${escapeHTML(shipment.eta)}</p>
             </div>
             <div class="audit-section">
               <h4 style="color: var(--cyan); margin-bottom:0.5rem;">${t.demurrageStatus}</h4>
@@ -57,7 +57,7 @@ export const ModalUI = {
               ${shipment.milestones.map(m => `
                 <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; opacity: ${m.completed ? 1 : 0.4}">
                   <div style="width: 8px; height: 8px; border-radius: 50%; background: ${m.completed ? "var(--success)" : "var(--border)"}"></div>
-                  <span style="font-size: 0.85rem;">${DOMUtils.escapeHTML((t as any)[m.key] || m.label)}</span>
+                  <span style="font-size: 0.85rem;">${escapeHTML((t as any)[m.key] || m.label)}</span>
                   <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-soft)">${m.date || t.pending}</span>
                 </div>
               `).join("")}
@@ -70,10 +70,10 @@ export const ModalUI = {
               ${shipment.notes?.length ? shipment.notes.map(n => `
                   <div style="background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 8px; margin-bottom: 0.8rem; border-left: 3px solid var(--primary);">
                       <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-soft); margin-bottom: 0.3rem;">
-                          <span>${DOMUtils.escapeHTML(n.author)}</span>
+                          <span>${escapeHTML(n.author)}</span>
                           <span>${n.date}</span>
                       </div>
-                      <p style="margin: 0; font-size: 0.85rem;">${DOMUtils.escapeHTML(n.text)}</p>
+                      <p style="margin: 0; font-size: 0.85rem;">${escapeHTML(n.text)}</p>
                   </div>
               `).reverse().join("") : `<p class="text-soft" style="text-align: center; font-size:0.9rem;">${t.noNotes}</p>`}
           </div>
@@ -99,8 +99,8 @@ export const ModalUI = {
                           <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                               <td style="padding: 0.5rem; color: var(--text-soft);">${a.timestamp}</td>
                               <td style="padding: 0.5rem;"><code>${a.action}</code></td>
-                              <td style="padding: 0.5rem;">${DOMUtils.escapeHTML(a.author)}</td>
-                              <td style="padding: 0.5rem;">${DOMUtils.escapeHTML(a.details)}</td>
+                              <td style="padding: 0.5rem;">${escapeHTML(a.author)}</td>
+                              <td style="padding: 0.5rem;">${escapeHTML(a.details)}</td>
                           </tr>
                       `).reverse().join("") || ''}
                   </tbody>
@@ -135,3 +135,4 @@ export const ModalUI = {
     return { days: diffDays, cost, overdue };
   }
 };
+

@@ -1,4 +1,4 @@
-﻿import { Shipment, ShipmentFilters, Note, AuditLog } from '../types';
+import { Shipment, ShipmentFilters, Note, AuditLog } from '../types';
 
 const INITIAL_SHIPMENTS: Shipment[] = [
   {
@@ -118,3 +118,4 @@ export const ShipmentService = {
   saveFilters(filters: ShipmentFilters): void { localStorage.setItem(FILTERS_KEY, JSON.stringify(filters)); },
   loadFilters(): ShipmentFilters | null { const saved = localStorage.getItem(FILTERS_KEY); return saved ? JSON.parse(saved) : null; }
 };
+

@@ -14,7 +14,8 @@
   "dependencies": {
     "chart.js": "^4.4.7",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "shared-utils": "*"
   },
   "devDependencies": {
   }

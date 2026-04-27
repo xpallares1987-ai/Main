@@ -4,7 +4,7 @@ import { MapService } from "./services/mapService";
 import { UIComponents } from "./ui/components";
 import { ModalUI } from "./ui/modal";
 import { Toast } from "./ui/toast";
-import { DOMUtils } from "./utils/dom";
+import { qs, on, escapeHTML, debounce } from "shared-utils";
 import { I18nService } from "./services/i18nService";
 import { ExportService } from "./services/exportService";
 import { ChartService } from "./services/chartService";
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateView();
   };
 
-  searchInput?.addEventListener("input", DOMUtils.debounce(handleFilterChange, 300));
+  searchInput?.addEventListener("input", debounce(handleFilterChange, 300));
   statusFilter?.addEventListener("change", handleFilterChange);
   btnExport?.addEventListener("click", () => ExportService.exportToCSV(ShipmentService.filterShipments(state.allShipments, state.filters)));
   
@@ -181,3 +181,4 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('offline', () => { state.isOnline = false; updateView(); });
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") ModalUI.close(); });
 });
+

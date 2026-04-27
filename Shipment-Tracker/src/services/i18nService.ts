@@ -1,4 +1,4 @@
-﻿export type Language = 'es' | 'en';
+export type Language = 'es' | 'en';
 export const translations = {
   es: {
     title: 'Torre de Control',
@@ -121,3 +121,4 @@ export const I18nService = {
   get lang() { return currentLang; },
   setLang(lang: Language) { currentLang = lang; localStorage.setItem('app_lang', lang); window.location.reload(); }
 };
+

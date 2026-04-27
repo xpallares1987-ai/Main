@@ -4,7 +4,8 @@
   "workspaces": [
     "BPMN-Modeler",
     "Shipment-Tracker",
-    "Logistics-Dashboard"
+    "Logistics-Dashboard",
+    "Shared-Utils"
   ],
   "scripts": {
     "dev:bpmn": "npm run dev -w BPMN-Modeler",
@@ -15,19 +16,18 @@
     "test": "npm run test --workspaces",
     "format": "prettier --write \"**/*.ts\" \"**/index.html\""
   },
-  "dependencies": {
+  "devDependencies": {
+    "@types/node": "^20.17.19",
+    "@vite-pwa/assets-generator": "^1.0.0",
+    "@vitest/mocker": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
+    "eslint": "^9.39.4",
+    "jsdom": "^29.0.2",
+    "prettier": "^3.8.3",
+    "typescript": "^5.7.3",
     "vite": "^8.0.10",
     "vite-plugin-pwa": "^1.2.0",
-    "@vite-pwa/assets-generator": "^1.0.0",
-    "typescript": "^5.7.3",
-    "vitest": "^4.1.5",
-    "@vitest/ui": "^4.1.5",
-    "@vitest/mocker": "^4.1.5",
-    "eslint": "^9.39.4",
-    "prettier": "^3.8.3",
-    "@types/node": "^20.17.19"
-  },
-  "devDependencies": {
+    "vitest": "^4.1.5"
   },
   "overrides": {
     "serialize-javascript": "7.0.5",

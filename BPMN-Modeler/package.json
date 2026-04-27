@@ -22,7 +22,8 @@
     "diagram-js-minimap": "^5.2.0",
     "tiny-invariant": "^1.3.3",
     "zeebe-bpmn-moddle": "^1.1.0",
-    "vite-plugin-pwa": "^1.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "shared-utils": "*"
   },
   "devDependencies": {
     "vite": "^8.0.10"

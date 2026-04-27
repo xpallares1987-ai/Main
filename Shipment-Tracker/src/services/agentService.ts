@@ -1,4 +1,4 @@
-﻿import { Agent } from '../types';
+import { Agent } from '../types';
 
 export const mockAgents: Agent[] = [
   {
@@ -38,3 +38,4 @@ export const AgentService = {
     return mockAgents;
   }
 };
+

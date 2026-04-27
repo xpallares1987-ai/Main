@@ -1,4 +1,4 @@
-﻿export interface Milestone {
+export interface Milestone {
   label: string;
   key: string;
   completed: boolean;
@@ -57,3 +57,4 @@ export interface ShipmentFilters {
   term: string;
   status: string;
 }
+

@@ -1,4 +1,4 @@
-﻿import { Shipment } from '../types';
+import { Shipment } from '../types';
 import { I18nService } from './i18nService';
 
 declare var ApexCharts: any;
@@ -58,3 +58,4 @@ export const ChartService = {
     modeChart.updateOptions({ labels: ['Ocean', 'Air', 'Land'] });
   }
 };
+

@@ -1,5 +1,5 @@
 import { DataRow } from '../types';
-import { escapeHTML } from '../utils/dom';
+import { escapeHTML } from "shared-utils";
 
 export function getTop(data: DataRow[], col: string): string | null {
     if(!data.length || data[0][col] === undefined) return null;
@@ -101,3 +101,4 @@ export function generateAIInsights(filterRes: DataRow[]): string {
     html += `</div>`;
     return html;
 }
+

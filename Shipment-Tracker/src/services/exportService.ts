@@ -1,4 +1,4 @@
-﻿import { Shipment } from '../types';
+import { Shipment } from '../types';
 import { I18nService } from './i18nService';
 
 export const ExportService = {
@@ -46,3 +46,4 @@ export const ExportService = {
     return fileName;
   }
 };
+
