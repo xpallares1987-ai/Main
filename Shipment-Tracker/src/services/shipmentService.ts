@@ -118,5 +118,5 @@ export const ShipmentService = {
   },
 
   async saveFilters(filters: ShipmentFilters): Promise<void> { await db.set(FILTERS_KEY, filters); },
-  async loadFilters(): Promise<ShipmentFilters | null> { return await db.get(FILTERS_KEY); }
+  async loadFilters(): Promise<ShipmentFilters | null> { return await db.get(FILTERS_KEY, null); }
 };

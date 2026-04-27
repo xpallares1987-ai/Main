@@ -16,43 +16,48 @@ export async function createModeler({
   propertiesPanel = true,
   zeebeSupport = true,
 }: any) {
-  // Lazy load BPMN dependencies to optimize initial bundle size
-  const [
-    { default: BpmnModeler },
-    { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule, ZeebePropertiesProviderModule },
-    { default: zeebeModdle },
-    { default: ZeebeBehaviorsModule },
-    { default: MinimapModule },
-    { default: LintModule }
-  ] = await Promise.all([
-    import("bpmn-js/lib/Modeler"),
-    import("bpmn-js-properties-panel"),
-    import("zeebe-bpmn-moddle/resources/zeebe.json"),
-    import("camunda-bpmn-js-behaviors/lib/camunda-cloud"),
-    import("diagram-js-minimap"),
-    import("bpmn-js-bpmnlint")
-  ]);
+  try {
+    // Lazy load BPMN dependencies to optimize initial bundle size
+    const [
+      { default: BpmnModeler },
+      { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule, ZeebePropertiesProviderModule },
+      { default: zeebeModdle },
+      { default: ZeebeBehaviorsModule },
+      { default: MinimapModule },
+      { default: LintModule }
+    ] = await Promise.all([
+      import("bpmn-js/lib/Modeler"),
+      import("bpmn-js-properties-panel"),
+      import("zeebe-bpmn-moddle/resources/zeebe.json"),
+      import("camunda-bpmn-js-behaviors/lib/camunda-cloud"),
+      import("diagram-js-minimap"),
+      import("bpmn-js-bpmnlint")
+    ]);
 
-  const containerNode = resolveTarget(container);
-  const propertiesNode = propertiesPanel ? resolveTarget(properties) : null;
+    const containerNode = resolveTarget(container);
+    const propertiesNode = propertiesPanel ? resolveTarget(properties) : null;
 
-  return new BpmnModeler({
-    container: containerNode,
-    propertiesPanel: propertiesNode ? { parent: propertiesNode } : undefined,
-    linting: { active: true },
-    additionalModules: [
-      MinimapModule,
-      LintModule,
-      ...(propertiesPanel ? [BpmnPropertiesPanelModule, BpmnPropertiesProviderModule] : []),
-      ...(camunda8 && zeebeSupport ? [ZeebePropertiesProviderModule, ZeebeBehaviorsModule] : []),
-    ],
-    moddleExtensions: {
-      ...(camunda8 && zeebeSupport ? { zeebe: zeebeModdle } : {}),
-    },
-    keyboard: {
-      bindTo: keyboardBindToWindow ? window : document,
-    },
-  });
+    return new BpmnModeler({
+      container: containerNode,
+      propertiesPanel: propertiesNode ? { parent: propertiesNode } : undefined,
+      linting: { active: true },
+      additionalModules: [
+        MinimapModule,
+        LintModule,
+        ...(propertiesPanel ? [BpmnPropertiesPanelModule, BpmnPropertiesProviderModule] : []),
+        ...(camunda8 && zeebeSupport ? [ZeebePropertiesProviderModule, ZeebeBehaviorsModule] : []),
+      ],
+      moddleExtensions: {
+        ...(camunda8 && zeebeSupport ? { zeebe: zeebeModdle } : {}),
+      },
+      keyboard: {
+        bindTo: keyboardBindToWindow ? window : document,
+      },
+    });
+  } catch (error) {
+    console.error("Fallo crítico al cargar el motor de modelado BPMN:", error);
+    throw new Error("No se pudo iniciar el modelador. Verifique su conexión a internet.");
+  }
 }
 
 export async function importDiagram(modeler: any, xml: string) {
@@ -70,7 +75,8 @@ export async function getDiagramXml(modeler: any, format = true) {
 
 export function fitViewport(modeler: any) {
   if (!modeler) return;
-  modeler.get("canvas").zoom("fit-viewport", "auto");
+  const canvas = modeler.get("canvas");
+  if (canvas) canvas.zoom("fit-viewport", "auto");
 }
 
 export function zoomByStep(modeler: any, delta = 0.1) {
@@ -97,5 +103,6 @@ export function cleanupModeler(modeler: any) {
 
 export function detachPropertiesPanel(modeler: any) {
   if (!modeler) return;
-  modeler.get("propertiesPanel").detach();
+  const panel = modeler.get("propertiesPanel");
+  if (panel) panel.detach();
 }

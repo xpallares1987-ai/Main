@@ -25,8 +25,8 @@ export class SharedDatabase extends Dexie {
     return this.settings.add({ key, value, updatedAt: Date.now() });
   }
 
-  async get(key: string, fallback: any = null) {
+  async get<T>(key: string, fallback: T): Promise<T> {
     const item = await this.settings.where({ key }).first();
-    return item ? item.value : fallback;
+    return item ? (item.value as T) : fallback;
   }
 }
