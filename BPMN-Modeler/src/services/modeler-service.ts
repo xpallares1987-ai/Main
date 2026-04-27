@@ -1,14 +1,3 @@
-import BpmnModeler from "bpmn-js/lib/Modeler";
-import {
-  BpmnPropertiesPanelModule,
-  BpmnPropertiesProviderModule,
-  ZeebePropertiesProviderModule,
-} from "bpmn-js-properties-panel";
-import zeebeModdle from "zeebe-bpmn-moddle/resources/zeebe.json";
-import ZeebeBehaviorsModule from "camunda-bpmn-js-behaviors/lib/camunda-cloud";
-import MinimapModule from "diagram-js-minimap";
-import LintModule from "bpmn-js-bpmnlint";
-
 function resolveTarget(target: string | HTMLElement): HTMLElement {
   if (!target) throw new Error("Falta el contenedor requerido para inicializar el modelador");
   if (typeof target === "string") {
@@ -19,7 +8,7 @@ function resolveTarget(target: string | HTMLElement): HTMLElement {
   return target;
 }
 
-export function createModeler({
+export async function createModeler({
   container,
   properties,
   keyboardBindToWindow = true,
@@ -27,6 +16,23 @@ export function createModeler({
   propertiesPanel = true,
   zeebeSupport = true,
 }: any) {
+  // Lazy load BPMN dependencies to optimize initial bundle size
+  const [
+    { default: BpmnModeler },
+    { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule, ZeebePropertiesProviderModule },
+    { default: zeebeModdle },
+    { default: ZeebeBehaviorsModule },
+    { default: MinimapModule },
+    { default: LintModule }
+  ] = await Promise.all([
+    import("bpmn-js/lib/Modeler"),
+    import("bpmn-js-properties-panel"),
+    import("zeebe-bpmn-moddle/resources/zeebe.json"),
+    import("camunda-bpmn-js-behaviors/lib/camunda-cloud"),
+    import("diagram-js-minimap"),
+    import("bpmn-js-bpmnlint")
+  ]);
+
   const containerNode = resolveTarget(container);
   const propertiesNode = propertiesPanel ? resolveTarget(properties) : null;
 
@@ -93,5 +99,3 @@ export function detachPropertiesPanel(modeler: any) {
   if (!modeler) return;
   modeler.get("propertiesPanel").detach();
 }
-
-

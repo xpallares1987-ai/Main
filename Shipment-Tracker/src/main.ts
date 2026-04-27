@@ -4,7 +4,7 @@ import { MapService } from "./services/mapService";
 import { UIComponents } from "./ui/components";
 import { ModalUI } from "./ui/modal";
 import { Toast } from "./ui/toast";
-import { qs, on, escapeHTML, debounce } from "shared-utils";
+import { qs, on, debounce } from "shared-utils";
 import { I18nService } from "./services/i18nService";
 import { ExportService } from "./services/exportService";
 import { ChartService } from "./services/chartService";
@@ -20,20 +20,26 @@ interface AppState {
 }
 
 const state: AppState = {
-  allShipments: ShipmentService.getShipments(),
-  allAgents: AgentService.getAgents(),
-  filters: ShipmentService.loadFilters() || { term: "", status: "all" },
+  allShipments: [],
+  allAgents: [],
+  filters: { term: "", status: "all" },
   showAnalytics: false,
   isOnline: navigator.onLine,
   currentView: 'dashboard'
 };
 
 // Global exports for inline HTML handlers
-(window as any).setLanguage = (lang: 'es' | 'en') => { I18nService.setLang(lang); };
+(window as any).setLanguage = (lang: 'es' | 'en') => { 
+  I18nService.setLang(lang); 
+  updateStaticTranslations();
+  updateView();
+};
+
 (window as any).showDetails = (id: string) => {
   const shipment = state.allShipments.find(s => s.id === id);
   if (shipment) ModalUI.open(shipment);
 };
+
 (window as any).closeModal = () => { ModalUI.close(); };
 
 (window as any).switchModalTab = (tab: 'info' | 'notes' | 'audit') => {
@@ -48,15 +54,16 @@ const state: AppState = {
   });
 };
 
-(window as any).submitNote = (id: string) => {
+(window as any).submitNote = async (id: string) => {
   const input = document.getElementById('noteInput') as HTMLTextAreaElement;
   if (!input || !input.value.trim()) return;
-  const updatedShipment = ShipmentService.addNote(id, input.value.trim());
+  const updatedShipment = await ShipmentService.addNote(id, input.value.trim());
   if (updatedShipment) {
-    state.allShipments = ShipmentService.getShipments();
+    state.allShipments = await ShipmentService.getShipments();
     ModalUI.open(updatedShipment);
     (window as any).switchModalTab('notes');
     Toast.show("Nota registrada", "success");
+    updateView();
   }
 };
 
@@ -140,7 +147,11 @@ function updateView() {
   ChartService.update(filtered);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+async function initApp() {
+  state.allShipments = await ShipmentService.getShipments();
+  state.allAgents = AgentService.getAgents();
+  state.filters = await ShipmentService.loadFilters() || { term: "", status: "all" };
+
   MapService.init("map");
   ChartService.init();
   updateStaticTranslations();
@@ -157,10 +168,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateView();
 
-  const handleFilterChange = () => {
+  const handleFilterChange = async () => {
     state.filters.term = searchInput.value;
     state.filters.status = statusFilter.value;
-    ShipmentService.saveFilters(state.filters);
+    await ShipmentService.saveFilters(state.filters);
     updateView();
   };
 
@@ -180,7 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('online', () => { state.isOnline = true; updateView(); });
   window.addEventListener('offline', () => { state.isOnline = false; updateView(); });
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") ModalUI.close(); });
-});
+}
 
-
-
+document.addEventListener("DOMContentLoaded", initApp);

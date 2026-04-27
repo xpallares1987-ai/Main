@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { getBaseViteConfig } from '../Shared-Utils/src/vite.config.shared';
+import { mergeConfig } from 'vite';
 
-export default defineConfig({
-  base: './',
+const baseConfig = getBaseViteConfig(__dirname);
+
+export default defineConfig(mergeConfig(baseConfig, {
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
@@ -27,7 +30,4 @@ export default defineConfig({
       }
     })
   ]
-});
-
-
-
+}));

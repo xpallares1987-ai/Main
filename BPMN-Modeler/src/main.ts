@@ -79,7 +79,7 @@ async function handleSwitchTab(tabId: string) {
   
   if (nextTab) {
     // Re-inicializar modelador para la nueva pestaña
-    state.modeler = createModeler({
+    state.modeler = await createModeler({
       container: APP_CONFIG.selectors.canvas,
       properties: APP_CONFIG.selectors.properties,
       keyboardBindToWindow: true,
@@ -293,7 +293,7 @@ async function init() {
       selectionElement: ui.selectionText,
     });
 
-    state.modeler = createModeler({
+    state.modeler = await createModeler({
       container: APP_CONFIG.selectors.canvas,
       properties: APP_CONFIG.selectors.properties,
       keyboardBindToWindow: true,

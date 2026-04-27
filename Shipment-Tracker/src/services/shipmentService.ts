@@ -1,4 +1,7 @@
 import { Shipment, ShipmentFilters, Note, AuditLog } from '../types';
+import { SharedDatabase } from 'shared-utils';
+
+const db = new SharedDatabase('shipment_tracker_db');
 
 const INITIAL_SHIPMENTS: Shipment[] = [
   {
@@ -50,17 +53,16 @@ const FILTERS_KEY = 'shipment_filters';
 const DATA_KEY = 'shipment_data';
 
 export const ShipmentService = {
-  getShipments(): Shipment[] {
-    const saved = localStorage.getItem(DATA_KEY);
-    return saved ? JSON.parse(saved) : INITIAL_SHIPMENTS;
+  async getShipments(): Promise<Shipment[]> {
+    return await db.get(DATA_KEY, INITIAL_SHIPMENTS);
   },
 
-  saveShipments(shipments: Shipment[]) {
-    localStorage.setItem(DATA_KEY, JSON.stringify(shipments));
+  async saveShipments(shipments: Shipment[]) {
+    await db.set(DATA_KEY, shipments);
   },
 
-  addAuditEntry(shipmentId: string, action: string, details: string, author: string = 'Operador') {
-    const shipments = this.getShipments();
+  async addAuditEntry(shipmentId: string, action: string, details: string, author: string = 'Operador') {
+    const shipments = await this.getShipments();
     const index = shipments.findIndex(s => s.id === shipmentId);
     if (index !== -1) {
       const entry: AuditLog = {
@@ -72,14 +74,14 @@ export const ShipmentService = {
       };
       if (!shipments[index].auditHistory) shipments[index].auditHistory = [];
       shipments[index].auditHistory!.push(entry);
-      this.saveShipments(shipments);
+      await this.saveShipments(shipments);
       return shipments[index];
     }
     return null;
   },
 
-  addNote(shipmentId: string, text: string, author: string = 'Operador') {
-    const shipment = this.addAuditEntry(shipmentId, 'NOTE_ADDED', `Nota: ${text.substring(0, 20)}...`, author);
+  async addNote(shipmentId: string, text: string, author: string = 'Operador') {
+    const shipment = await this.addAuditEntry(shipmentId, 'NOTE_ADDED', `Nota: ${text.substring(0, 20)}...`, author);
     if (!shipment) return null;
     
     const note: Note = {
@@ -91,10 +93,10 @@ export const ShipmentService = {
     if (!shipment.notes) shipment.notes = [];
     shipment.notes.push(note);
     
-    const shipments = this.getShipments();
+    const shipments = await this.getShipments();
     const idx = shipments.findIndex(s => s.id === shipmentId);
     shipments[idx] = shipment;
-    this.saveShipments(shipments);
+    await this.saveShipments(shipments);
     return shipment;
   },
 
@@ -115,9 +117,6 @@ export const ShipmentService = {
     });
   },
 
-  saveFilters(filters: ShipmentFilters): void { localStorage.setItem(FILTERS_KEY, JSON.stringify(filters)); },
-  loadFilters(): ShipmentFilters | null { const saved = localStorage.getItem(FILTERS_KEY); return saved ? JSON.parse(saved) : null; }
+  async saveFilters(filters: ShipmentFilters): Promise<void> { await db.set(FILTERS_KEY, filters); },
+  async loadFilters(): Promise<ShipmentFilters | null> { return await db.get(FILTERS_KEY); }
 };
-
-
-

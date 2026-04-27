@@ -11,16 +11,14 @@ describe('ShipmentService', () => {
     });
   });
 
-  it('should return initial shipments when localStorage is empty', () => {
-    const shipments = ShipmentService.getShipments();
+  it('should return initial shipments when localStorage is empty', async () => {
+    const shipments = await ShipmentService.getShipments();
     expect(shipments.length).toBeGreaterThan(0);
   });
 
-  it('should filter shipments by status', () => {
-    const all = ShipmentService.getShipments();
+  it('should filter shipments by status', async () => {
+    const all = await ShipmentService.getShipments();
     const filtered = ShipmentService.filterShipments(all, { term: '', status: 'transit' });
     expect(filtered.every(s => s.status === 'transit')).toBe(true);
   });
 });
-
-

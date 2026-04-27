@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import { z } from 'zod';
 import { BLACK_COLS, BRANCH_MAP } from '../config';
 import { DataRow } from '../types';
 
@@ -11,8 +12,15 @@ const CATEGORIAS = {
     DOCS: ['SCMAN', 'BL', 'ADMID', 'CUSER', 'DOCC', 'CONLF', 'ADMIO']
 };
 
+// Esquema Zod para validación básica de fila
+const DataRowSchema = z.record(z.string(), z.any());
+
 export function processData(data: any[]): DataRow[] {
     const finalData = data.map(row => {
+        // Validación en tiempo de ejecución
+        const parsed = DataRowSchema.safeParse(row);
+        if (!parsed.success) return {};
+
         const clean: DataRow = {};
         let wt = 0;
         let isKgs = false;
@@ -24,11 +32,10 @@ export function processData(data: any[]): DataRow[] {
             if (BLACK_COLS.includes(key)) continue;
             let val = row[k];
             
-            // Lógica de Categorización de Costes (basada en analytics_excel_v4.js)
             if (key.startsWith('CON:')) {
                 const root = key.replace('CON: ', '');
                 const numVal = parseFloat(val) || 0;
-                const divisa = row[`DIVISA ${root}`] || row['Divisa Flete'] || 'USD';
+                const divisa = row[`DIVISA ${root}`] || row['Divisa flete'] || 'USD';
                 const valEUR = (divisa === 'USD') ? numVal * TASA_USD_EUR : numVal;
 
                 if (CATEGORIAS.ORIGEN.includes(root)) sumaOrigen += valEUR;
@@ -39,10 +46,9 @@ export function processData(data: any[]): DataRow[] {
 
             if (key.startsWith('DOC:')) {
                 const numVal = parseFloat(val) || 0;
-                sumaDocs += (row['Divisa Flete'] === 'USD') ? numVal * TASA_USD_EUR : numVal;
+                sumaDocs += (row['Divisa flete'] === 'USD') ? numVal * TASA_USD_EUR : numVal;
             }
 
-            // ... resto de la lógica de limpieza existente ...
             if (key === "Branch") val = BRANCH_MAP[val] || val;
             let keyUpper = key.toUpperCase();
             if (keyUpper.includes('WEIGHT')) {
@@ -54,7 +60,8 @@ export function processData(data: any[]): DataRow[] {
             clean[key] = val;
         }
 
-        const fletePrincipalEUR = (row['Divisa Flete'] === 'USD') ? (row['Flete Principal'] || 0) * TASA_USD_EUR : (row['Flete Principal'] || 0);
+        const divisaFlete = row['Divisa flete'] || row['Divisa Flete'] || 'EUR';
+        const fletePrincipalEUR = (divisaFlete === 'USD') ? (row['Flete Principal'] || 0) * TASA_USD_EUR : (row['Flete Principal'] || 0);
 
         clean['TOTAL ORIGEN EUR'] = Math.round(sumaOrigen * 100) / 100;
         clean['TOTAL TRANSITO EUR'] = Math.round((fletePrincipalEUR + sumaTransito) * 100) / 100;
@@ -80,8 +87,9 @@ export function processData(data: any[]): DataRow[] {
             );
 
             if (match2025) {
-                const varAbs = row['GRAN TOTAL ESTIMADO EUR'] - match2025['GRAN TOTAL ESTIMADO EUR'];
-                const varPct = (varAbs / match2025['GRAN TOTAL ESTIMADO EUR']) * 100;
+                const varAbs = (Number(row['GRAN TOTAL ESTIMADO EUR']) || 0) - (Number(match2025['GRAN TOTAL ESTIMADO EUR']) || 0);
+                const base2025 = Number(match2025['GRAN TOTAL ESTIMADO EUR']) || 1;
+                const varPct = (varAbs / base2025) * 100;
                 row['VARIACION VS 2025 (EUR)'] = Math.round(varAbs * 100) / 100;
                 row['VARIACION %'] = Math.round(varPct * 10) / 10 + '%';
                 row['TENDENCIA'] = varAbs > 0 ? 'SUBE ▲' : 'BAJA ▼';
@@ -135,5 +143,3 @@ export async function parseExcelFile(file: File): Promise<Record<string, DataRow
         reader.readAsArrayBuffer(file);
     });
 }
-
-

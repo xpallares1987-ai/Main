@@ -1,18 +1,5 @@
 import { defineConfig } from 'vite';
+import { getBaseViteConfig } from '../Shared-Utils/src/vite.config.shared';
 import path from 'path';
 
-export default defineConfig({
-  root: '.',
-  base: './',
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-});
-
-
+export default defineConfig(getBaseViteConfig(__dirname));

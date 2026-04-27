@@ -13,4 +13,7 @@ export {
     hexToRgbA
 } from './utils/dom';
 
+export { getBaseViteConfig } from './vite.config.shared';
+export { SharedDatabase } from './db';
+
 
