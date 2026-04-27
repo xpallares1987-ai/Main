@@ -1,3 +1,4 @@
+import '../assets/css/app.css';
 import { state, resetState } from './state';
 import { generateAIInsights } from './services/aiAnalyzer';
 import { buildDynamicCharts } from './services/chartBuilder';
@@ -180,5 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
 
 

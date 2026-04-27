@@ -1,3 +1,4 @@
+import '../assets/css/app.css';
 import APP_CONFIG from "./config";
 import { state, updateTheme } from "./state";
 import {
@@ -336,6 +337,8 @@ async function init() {
 }
 
 init();
+
+
 
 
 
