@@ -1,4 +1,4 @@
-﻿async function getEncryptionKey(pin: string) {
+async function getEncryptionKey(pin: string) {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
@@ -109,3 +109,5 @@ export function loadUiSession(keys: any) {
     return null;
   }
 }
+
+

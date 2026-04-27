@@ -48,3 +48,5 @@ export interface AppState {
   sidebar: any;
   cleanups: Function[];
 }
+
+

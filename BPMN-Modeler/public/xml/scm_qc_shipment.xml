@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_QC" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_QC" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Proc_QC" isExecutable="false">
     <bpmn:startEvent id="QC_START" name="Muestra de Expedientes">
       <bpmn:outgoing>Q1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="QC_AUDIT" name="Auditoría de Datos Seastep" fms:icon="fa-solid fa-eye" fms:time="10" fms:instances="5" fms:status="normal">
+    <bpmn:userTask id="QC_AUDIT" name="Auditoría de Datos Seastep" App:icon="fa-solid fa-eye" App:time="10" App:instances="5" App:status="normal">
       <bpmn:incoming>Q1</bpmn:incoming>
       <bpmn:outgoing>Q2</bpmn:outgoing>
     </bpmn:userTask>
@@ -13,7 +13,7 @@
       <bpmn:outgoing>QC_OK</bpmn:outgoing>
       <bpmn:outgoing>QC_FAIL</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="QC_CORRECT" name="Solicitar Corrección" fms:icon="fa-solid fa-triangle-exclamation" fms:time="5" fms:status="critical">
+    <bpmn:userTask id="QC_CORRECT" name="Solicitar Corrección" App:icon="fa-solid fa-triangle-exclamation" App:time="5" App:status="critical">
       <bpmn:incoming>QC_FAIL</bpmn:incoming>
       <bpmn:outgoing>Q3</bpmn:outgoing>
     </bpmn:userTask>
@@ -72,3 +72,5 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+
+

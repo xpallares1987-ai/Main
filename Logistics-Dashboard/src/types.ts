@@ -19,3 +19,5 @@ export interface AppState {
 export interface FilterCriteria {
     [column: string]: string[];
 }
+
+

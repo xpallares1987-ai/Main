@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_WMS_Flow" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_WMS_Flow" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:collaboration id="Collab_WMS_Flow">
     <bpmn:participant id="Part_Customer" name="Cliente / Depositante" processRef="Proc_Customer" />
-    <bpmn:participant id="Part_FMS_WMS" name="FMS Warehouse Management" processRef="Proc_WMS_Internal" />
+    <bpmn:participant id="Part_App_WMS" name="App Warehouse Management" processRef="Proc_WMS_Internal" />
     <bpmn:messageFlow id="Msg_ASN" name="ASN / Inbound Order" sourceRef="Part_Customer" targetRef="N_START_INBOUND" />
     <bpmn:messageFlow id="Msg_PICK" name="Outbound Order" sourceRef="Part_Customer" targetRef="N_START_OUTBOUND" />
   </bpmn:collaboration>
@@ -27,34 +27,34 @@
     <bpmn:startEvent id="N_START_INBOUND" name="ASN Recibido">
       <bpmn:outgoing>F1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:manualTask id="N_PHYSICAL_REC" name="Descarga y Verificación" fms:icon="fa-solid fa-box-open" fms:time="45" fms:status="critical">
+    <bpmn:manualTask id="N_PHYSICAL_REC" name="Descarga y Verificación" App:icon="fa-solid fa-box-open" App:time="45" App:status="critical">
       <bpmn:incoming>F1</bpmn:incoming>
       <bpmn:outgoing>F2</bpmn:outgoing>
     </bpmn:manualTask>
-    <bpmn:userTask id="N_GRN_SYSTEM" name="Registrar Inbound (GRN)" fms:icon="fa-solid fa-right-to-bracket" fms:time="10" fms:status="normal">
+    <bpmn:userTask id="N_GRN_SYSTEM" name="Registrar Inbound (GRN)" App:icon="fa-solid fa-right-to-bracket" App:time="10" App:status="normal">
       <bpmn:incoming>F2</bpmn:incoming>
       <bpmn:outgoing>F3</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:manualTask id="N_PUTAWAY" name="Ubicación en Estantería" fms:icon="fa-solid fa-boxes-stacked" fms:time="20" fms:status="normal">
+    <bpmn:manualTask id="N_PUTAWAY" name="Ubicación en Estantería" App:icon="fa-solid fa-boxes-stacked" App:time="20" App:status="normal">
       <bpmn:incoming>F3</bpmn:incoming>
     </bpmn:manualTask>
 
     <bpmn:startEvent id="N_START_OUTBOUND" name="Orden de Salida">
       <bpmn:outgoing>F4</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:manualTask id="N_PICKING" name="Picking de Artículos" fms:icon="fa-solid fa-dolly" fms:time="30" fms:instances="5" fms:status="critical">
+    <bpmn:manualTask id="N_PICKING" name="Picking de Artículos" App:icon="fa-solid fa-dolly" App:time="30" App:instances="5" App:status="critical">
       <bpmn:incoming>F4</bpmn:incoming>
       <bpmn:outgoing>F5</bpmn:outgoing>
     </bpmn:manualTask>
-    <bpmn:manualTask id="N_PACKING" name="Packing / Etiquetado" fms:icon="fa-solid fa-box" fms:time="15" fms:status="normal">
+    <bpmn:manualTask id="N_PACKING" name="Packing / Etiquetado" App:icon="fa-solid fa-box" App:time="15" App:status="normal">
       <bpmn:incoming>F5</bpmn:incoming>
       <bpmn:outgoing>F6</bpmn:outgoing>
     </bpmn:manualTask>
-    <bpmn:userTask id="N_CREATE_SHIPMENT" name="Generar Albarán / B/L" fms:icon="fa-solid fa-file-invoice" fms:time="5" fms:status="normal">
+    <bpmn:userTask id="N_CREATE_SHIPMENT" name="Generar Albarán / B/L" App:icon="fa-solid fa-file-invoice" App:time="5" App:status="normal">
       <bpmn:incoming>F6</bpmn:incoming>
       <bpmn:outgoing>F7</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:manualTask id="N_DISPATCH" name="Carga Camión" fms:icon="fa-solid fa-truck-fast" fms:time="20" fms:status="normal">
+    <bpmn:manualTask id="N_DISPATCH" name="Carga Camión" App:icon="fa-solid fa-truck-fast" App:time="20" App:status="normal">
       <bpmn:incoming>F7</bpmn:incoming>
       <bpmn:endEvent id="N_END" name="Despachado" />
     </bpmn:manualTask>
@@ -73,7 +73,7 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_WMS_Flow">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collab_WMS_Flow">
       <bpmndi:BPMNShape id="Part_Customer_di" bpmnElement="Part_Customer" isHorizontal="true"><dc:Bounds x="160" y="40" width="1100" height="100" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Part_FMS_WMS_di" bpmnElement="Part_FMS_WMS" isHorizontal="true"><dc:Bounds x="160" y="180" width="1100" height="360" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Part_App_WMS_di" bpmnElement="Part_App_WMS" isHorizontal="true"><dc:Bounds x="160" y="180" width="1100" height="360" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Admin_di" bpmnElement="Lane_Admin" isHorizontal="true"><dc:Bounds x="190" y="180" width="1070" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Whse_di" bpmnElement="Lane_Whse" isHorizontal="true"><dc:Bounds x="190" y="360" width="1070" height="180" /></bpmndi:BPMNShape>
 
@@ -98,3 +98,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+

@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_OceanExport" targetNamespace="http://bpmn.io/schema/bpmn">
+<?xml version="1.0" encoding="utf-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_OceanExport" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:collaboration id="OceanExport">
     <bpmn:participant id="CUST" name="Customer" processRef="P_CUST" />
-    <bpmn:participant id="FW" name="Fr. Meyer's Sohn" processRef="P_FW" />
+    <bpmn:participant id="FW" name="Logistics Personal Project" processRef="P_FW" />
     <bpmn:participant id="CAR" name="Carrier" processRef="P_CAR" />
     <bpmn:messageFlow id="Msg_Booking_Req" sourceRef="Customer" targetRef="N_RECEIVE_ORDER" />
     <bpmn:messageFlow id="Msg_SI_Submit" sourceRef="N_SI_PREP" targetRef="CAR" />
   </bpmn:collaboration>
   <bpmn:process id="P_FW" isExecutable="false">
-    <bpmn:laneSet id="FMS">
+    <bpmn:laneSet id="App">
       <bpmn:lane id="OPS" name="Operations">
         <bpmn:flowNodeRef>N_RECEIVE_ORDER</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>N_BOOKING_CARRIER</bpmn:flowNodeRef>
@@ -25,7 +25,7 @@
     <bpmn:startEvent id="N_RECEIVE_ORDER" name="New Order Received">
       <bpmn:outgoing>F1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="N_BOOKING_CARRIER" name="Booking Request" fms:icon="fa-solid fa-ship" fms:time="15" fms:status="critical">
+    <bpmn:userTask id="N_BOOKING_CARRIER" name="Booking Request" App:icon="fa-solid fa-ship" App:time="15" App:status="critical">
       <bpmn:incoming>F1</bpmn:incoming>
       <bpmn:outgoing>F2</bpmn:outgoing>
     </bpmn:userTask>
@@ -34,15 +34,15 @@
       <bpmn:outgoing>F3_CC</bpmn:outgoing>
       <bpmn:outgoing>F3_DOC</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="N_CUSTOMS" name="Custom Clearance" fms:icon="fa-solid fa-file-import" fms:time="30" fms:status="completed">
+    <bpmn:serviceTask id="N_CUSTOMS" name="Custom Clearance" App:icon="fa-solid fa-file-import" App:time="30" App:status="completed">
       <bpmn:incoming>F3_CC</bpmn:incoming>
       <bpmn:outgoing>F4_CC</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="N_SI_PREP" name="Send Shipping Instructions" fms:icon="fa-solid fa-file-signature" fms:time="10" fms:status="normal">
+    <bpmn:userTask id="N_SI_PREP" name="Send Shipping Instructions" App:icon="fa-solid fa-file-signature" App:time="10" App:status="normal">
       <bpmn:incoming>F3_DOC</bpmn:incoming>
       <bpmn:outgoing>F4_DOC</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="N_DRAFT_BL" name="Review Draft B/L" fms:icon="fa-solid fa-clipboard-check" fms:time="15" fms:status="normal">
+    <bpmn:userTask id="N_DRAFT_BL" name="Review Draft B/L" App:icon="fa-solid fa-clipboard-check" App:time="15" App:status="normal">
       <bpmn:incoming>F4_DOC</bpmn:incoming>
       <bpmn:outgoing>F5_DOC</bpmn:outgoing>
     </bpmn:userTask>
@@ -151,3 +151,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+

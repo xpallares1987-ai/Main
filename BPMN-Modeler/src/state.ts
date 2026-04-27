@@ -21,3 +21,5 @@ export function updateTheme(theme: string) {
   document.body.setAttribute("data-theme", theme);
   localStorage.setItem("theme", theme);
 }
+
+

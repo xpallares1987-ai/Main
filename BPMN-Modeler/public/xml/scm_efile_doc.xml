@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_eFile" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_eFile" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Proc_eFile" isExecutable="false">
     <bpmn:startEvent id="EF_START" name="Cierre de Expediente">
       <bpmn:outgoing>E1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="EF_COLLECT" name="Escanear / Bajar Documentos" fms:icon="fa-solid fa-file-import" fms:time="2" fms:instances="10" fms:status="normal">
+    <bpmn:userTask id="EF_COLLECT" name="Escanear / Bajar Documentos" App:icon="fa-solid fa-file-import" App:time="2" App:instances="10" App:status="normal">
       <bpmn:incoming>E1</bpmn:incoming>
       <bpmn:outgoing>E2</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="EF_UPLOAD" name="Cargar en Seastep eFile" fms:icon="fa-solid fa-cloud-arrow-up" fms:time="5" fms:status="completed">
+    <bpmn:userTask id="EF_UPLOAD" name="Cargar en Seastep eFile" App:icon="fa-solid fa-cloud-arrow-up" App:time="5" App:status="completed">
       <bpmn:incoming>E2</bpmn:incoming>
       <bpmn:outgoing>E3</bpmn:outgoing>
     </bpmn:userTask>
@@ -32,3 +32,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+

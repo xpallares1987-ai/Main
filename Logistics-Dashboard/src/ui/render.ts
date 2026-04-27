@@ -174,7 +174,7 @@ export function renderTable() {
     if (!body) return;
 
     if (state.filterRes.length === 0) { 
-        body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding: 3rem; color: var(--fms-gray); font-weight: 500;">Entorno vacío. Ajuste los parámetros de filtro.</td></tr>'; 
+        body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding: 3rem; color: var(--App-gray); font-weight: 500;">Entorno vacío. Ajuste los parámetros de filtro.</td></tr>'; 
         return; 
     }
 
@@ -319,9 +319,9 @@ export function toggleRow(id: string) {
         if (btn) {
             if(el.classList.contains('active')) {
                 btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6"></path></svg>';
-                btn.style.backgroundColor = 'var(--fms-red)';
+                btn.style.backgroundColor = 'var(--App-red)';
                 btn.style.color = 'white';
-                btn.style.borderColor = 'var(--fms-red)';
+                btn.style.borderColor = 'var(--App-red)';
             } else {
                 btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>';
                 btn.style.backgroundColor = '';
@@ -347,3 +347,5 @@ export function showToast(title: string, message: string, isError = true) {
         }, 5000);
     }
 }
+
+

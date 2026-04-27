@@ -10,3 +10,5 @@ export const PALETTES = {
 };
 
 export const PAGE_SIZE = 50;
+
+

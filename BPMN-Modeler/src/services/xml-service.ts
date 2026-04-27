@@ -1,4 +1,4 @@
-﻿import { getDiagramXml as getModelerDiagramXml } from "./modeler-service";
+import { getDiagramXml as getModelerDiagramXml } from "./modeler-service";
 import { downloadFile, openTextFile, resetFileInput } from "./file-service";
 
 function sanitizeXml(xml: string): string {
@@ -53,3 +53,5 @@ export async function getDiagramXml(modeler: any, format = true) {
 export async function downloadXmlFile(fileName: string, xml: string) {
   return downloadFile(fileName, xml, "application/xml;charset=utf-8");
 }
+
+

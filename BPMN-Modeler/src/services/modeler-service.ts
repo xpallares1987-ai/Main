@@ -1,4 +1,4 @@
-﻿import BpmnModeler from "bpmn-js/lib/Modeler";
+import BpmnModeler from "bpmn-js/lib/Modeler";
 import {
   BpmnPropertiesPanelModule,
   BpmnPropertiesProviderModule,
@@ -93,3 +93,5 @@ export function detachPropertiesPanel(modeler: any) {
   if (!modeler) return;
   modeler.get("propertiesPanel").detach();
 }
+
+

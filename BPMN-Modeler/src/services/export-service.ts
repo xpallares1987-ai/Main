@@ -1,4 +1,4 @@
-﻿export async function exportToPng(modeler: any, fileName: string) {
+export async function exportToPng(modeler: any, fileName: string) {
   const { svg } = await modeler.saveSVG();
   const canvas = document.createElement("canvas");
   const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
@@ -20,3 +20,5 @@
   };
   img.src = url;
 }
+
+

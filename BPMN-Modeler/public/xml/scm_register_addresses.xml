@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_MD" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_MD" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Proc_MasterData" isExecutable="false">
     <bpmn:startEvent id="MD_START" name="Solicitud Nueva Dirección">
       <bpmn:outgoing>M1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="MD_SEARCH" name="Búsqueda en Seastep Global" fms:icon="fa-solid fa-magnifying-glass" fms:time="5" fms:status="normal">
+    <bpmn:userTask id="MD_SEARCH" name="Búsqueda en Seastep Global" App:icon="fa-solid fa-magnifying-glass" App:time="5" App:status="normal">
       <bpmn:incoming>M1</bpmn:incoming>
       <bpmn:outgoing>M2</bpmn:outgoing>
     </bpmn:userTask>
@@ -13,11 +13,11 @@
       <bpmn:outgoing>M_VAT</bpmn:outgoing>
       <bpmn:outgoing>M_MAP</bpmn:outgoing>
     </bpmn:inclusiveGateway>
-    <bpmn:serviceTask id="MD_VIES" name="Hugo AI: Validación VIES" fms:icon="fa-solid fa-stamp" fms:time="0" fms:status="completed">
+    <bpmn:serviceTask id="MD_VIES" name="Hugo AI: Validación VIES" App:icon="fa-solid fa-stamp" App:time="0" App:status="completed">
       <bpmn:incoming>M_VAT</bpmn:incoming>
       <bpmn:outgoing>M3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="MD_MAPS" name="Verificar en Google Maps" fms:icon="fa-solid fa-location-dot" fms:time="5" fms:status="normal">
+    <bpmn:userTask id="MD_MAPS" name="Verificar en Google Maps" App:icon="fa-solid fa-location-dot" App:time="5" App:status="normal">
       <bpmn:incoming>M_MAP</bpmn:incoming>
       <bpmn:outgoing>M4</bpmn:outgoing>
     </bpmn:userTask>
@@ -51,3 +51,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+

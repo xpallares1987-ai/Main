@@ -122,3 +122,5 @@ export const I18nService = {
   setLang(lang: Language) { currentLang = lang; localStorage.setItem('app_lang', lang); window.location.reload(); }
 };
 
+
+

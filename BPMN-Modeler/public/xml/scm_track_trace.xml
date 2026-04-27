@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_TT" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_TT" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Proc_TrackTrace" isExecutable="false">
     <bpmn:startEvent id="TT_START" name="Vessel Departed">
       <bpmn:outgoing>T1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="TT_CHECK_CARRIER" name="Check Carrier Web" fms:icon="fa-solid fa-magnifying-glass" fms:time="5" fms:status="normal">
+    <bpmn:userTask id="TT_CHECK_CARRIER" name="Check Carrier Web" App:icon="fa-solid fa-magnifying-glass" App:time="5" App:status="normal">
       <bpmn:incoming>T1</bpmn:incoming>
       <bpmn:outgoing>T2</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="TT_UPDATE_SEASTEP" name="Actualizar Eventos Seastep" fms:icon="fa-solid fa-clock-rotate-left" fms:time="3" fms:instances="10" fms:status="critical">
+    <bpmn:userTask id="TT_UPDATE_SEASTEP" name="Actualizar Eventos Seastep" App:icon="fa-solid fa-clock-rotate-left" App:time="3" App:instances="10" App:status="critical">
       <bpmn:incoming>T2</bpmn:incoming>
       <bpmn:outgoing>T3</bpmn:outgoing>
     </bpmn:userTask>
@@ -32,3 +32,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+

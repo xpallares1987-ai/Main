@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_Invoicing" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_Invoicing" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:collaboration id="Collab_Inv">
-    <bpmn:participant id="Part_Acc" name="FMS Accounting" processRef="Proc_Accounting" />
-    <bpmn:participant id="Part_Ops" name="FMS Operations" processRef="Proc_Ops_Verify" />
+    <bpmn:participant id="Part_Acc" name="App Accounting" processRef="Proc_Accounting" />
+    <bpmn:participant id="Part_Ops" name="App Operations" processRef="Proc_Ops_Verify" />
     <bpmn:messageFlow id="Msg_Discrepancy" name="Consulta Discrepancia" sourceRef="Part_Acc" targetRef="N_START_OPS" />
   </bpmn:collaboration>
 
@@ -10,7 +10,7 @@
     <bpmn:startEvent id="INV_START" name="Factura Proveedor Recibida">
       <bpmn:outgoing>I1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="INV_MATCH" name="Casar Factura vs Provisión" fms:icon="fa-solid fa-file-invoice-dollar" fms:time="10" fms:status="normal">
+    <bpmn:userTask id="INV_MATCH" name="Casar Factura vs Provisión" App:icon="fa-solid fa-file-invoice-dollar" App:time="10" App:status="normal">
       <bpmn:incoming>I1</bpmn:incoming>
       <bpmn:outgoing>I2</bpmn:outgoing>
     </bpmn:userTask>
@@ -25,7 +25,7 @@
     <bpmn:startEvent id="N_START_OPS" name="Aviso Contabilidad">
       <bpmn:outgoing>P1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="N_FIX_PROV" name="Ajustar Provisión Seastep" fms:icon="fa-solid fa-calculator" fms:time="5" fms:status="critical">
+    <bpmn:userTask id="N_FIX_PROV" name="Ajustar Provisión Seastep" App:icon="fa-solid fa-calculator" App:time="5" App:status="critical">
       <bpmn:incoming>P1</bpmn:incoming>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="P1" sourceRef="N_START_OPS" targetRef="N_FIX_PROV" />
@@ -47,3 +47,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+

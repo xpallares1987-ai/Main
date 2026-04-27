@@ -1,5 +1,5 @@
 {
-  "name": "ict-opex-monorepo",
+  "name": "Personal-Dev-monorepo",
   "private": true,
   "workspaces": [
     "BPMN-Modeler",
@@ -44,3 +44,4 @@
     "xlsx": "^0.18.5"
   }
 }
+

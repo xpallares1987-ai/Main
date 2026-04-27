@@ -1,4 +1,4 @@
-﻿export function readFileAsText(file: File): Promise<string> {
+export function readFileAsText(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
@@ -32,3 +32,5 @@ export async function openTextFile(fileInput: HTMLInputElement): Promise<{ text:
 export function resetFileInput(fileInput: HTMLInputElement) {
   fileInput.value = "";
 }
+
+

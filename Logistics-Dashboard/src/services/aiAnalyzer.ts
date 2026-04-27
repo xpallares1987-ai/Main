@@ -102,3 +102,5 @@ export function generateAIInsights(filterRes: DataRow[]): string {
     return html;
 }
 
+
+

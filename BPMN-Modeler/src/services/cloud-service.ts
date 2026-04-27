@@ -1,4 +1,4 @@
-﻿export async function saveToGitHub(token: string, fileName: string, content: string, gistId: string | null = null) {
+export async function saveToGitHub(token: string, fileName: string, content: string, gistId: string | null = null) {
   const url = gistId ? `https://api.github.com/gists/${gistId}` : "https://api.github.com/gists";
   const method = gistId ? "PATCH" : "POST";
   
@@ -19,3 +19,5 @@
   if (!response.ok) throw new Error(`GitHub API Error: ${response.statusText}`);
   return await response.json();
 }
+
+

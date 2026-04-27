@@ -106,7 +106,7 @@ export function buildDynamicCharts(filterRes: DataRow[], gridId: string) {
     const distinctCols = ['Customer Order', 'Item Number'].filter(k => keys.includes(k));
 
     if (catCols.length === 0 && dateCols.length === 0) {
-        grid.innerHTML = '<div style="padding: 2rem; text-align:center; color: var(--fms-gray); font-weight: 600; width: 100%;">Dimensionalidad insuficiente para vectorizar gráficos.</div>';
+        grid.innerHTML = '<div style="padding: 2rem; text-align:center; color: var(--App-gray); font-weight: 600; width: 100%;">Dimensionalidad insuficiente para vectorizar gráficos.</div>';
         return;
     }
 
@@ -168,4 +168,6 @@ export function buildDynamicCharts(filterRes: DataRow[], gridId: string) {
         }
     }
 }
+
+
 

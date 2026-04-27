@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "Shipment Control Tower",
   "short_name": "ShipmentTracker",
   "description": "Enterprise Control Tower for Freight Forwarding",
@@ -21,3 +21,5 @@
     }
   ]
 }
+
+

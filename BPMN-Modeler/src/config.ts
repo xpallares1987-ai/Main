@@ -1,4 +1,4 @@
-﻿const APP_CONFIG = {
+const APP_CONFIG = {
   app: {
     name: "BPMN 2.0 Interactive Modeler",
     version: "1.0.0",
@@ -92,3 +92,5 @@
 };
 
 export default APP_CONFIG;
+
+

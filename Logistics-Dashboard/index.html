@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self';">
     <meta name="referrer" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
-    <title>Universal Logistics BI Dashboard - ICT-OPEX</title>
+    <title>Universal Logistics BI Dashboard - Personal-Dev</title>
     <link rel="stylesheet" href="./src/assets/css/app.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
             </svg>
             <div>
                 <h1>Logistics Intelligence</h1>
-                <span>Fr. Meyer's Sohn • ICT-OPEX Spain</span>
+                <span>Logistics Personal Project • Personal-Dev Spain</span>
             </div>
         </div>
         <div class="nav-status">
@@ -35,8 +35,8 @@
                     <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                 </div>
                 <div>
-                    <h3 style="color: var(--fms-dark); font-size: 1.5rem; font-weight: 800; margin-bottom: 0.75rem;">Importar Datos Corporativos</h3>
-                    <p style="color: var(--fms-gray); font-size: 1rem; max-width: 600px; margin: 0 auto;">Cargue su reporte estructurado de Seastep, WMS, Finanzas o cualquier dataset matricial (.xlsx, .csv). El sistema identificará y procesará las entidades dinámicamente.</p>
+                    <h3 style="color: var(--App-dark); font-size: 1.5rem; font-weight: 800; margin-bottom: 0.75rem;">Importar Datos Corporativos</h3>
+                    <p style="color: var(--App-gray); font-size: 1rem; max-width: 600px; margin: 0 auto;">Cargue su reporte estructurado de Seastep, WMS, Finanzas o cualquier dataset matricial (.xlsx, .csv). El sistema identificará y procesará las entidades dinámicamente.</p>
                 </div>
                 <input type="file" id="excelInput" accept=".xlsx, .xls, .csv">
             </label>
@@ -44,8 +44,8 @@
 
         <div id="loader">
             <div class="spinner"></div>
-            <h2 style="color: var(--fms-dark); font-weight: 800; margin-bottom: 0.5rem; font-size: 1.5rem;">Procesando Auditoría Analítica...</h2>
-            <p style="color: var(--fms-gray); font-size: 1rem; font-weight: 500;">Validando estructura multidimensional, computando métricas financieras/logísticas y parametrizando la IA.</p>
+            <h2 style="color: var(--App-dark); font-weight: 800; margin-bottom: 0.5rem; font-size: 1.5rem;">Procesando Auditoría Analítica...</h2>
+            <p style="color: var(--App-gray); font-size: 1rem; font-weight: 500;">Validando estructura multidimensional, computando métricas financieras/logísticas y parametrizando la IA.</p>
         </div>
 
         <div id="dashboardUI" style="display: none;">
@@ -57,9 +57,9 @@
                         Parámetros de Auditoría
                     </h3>
                     <div style="display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--fms-gray-light); padding: 0.25rem 0.5rem 0.25rem 1rem; border-radius: 12px; border: 1px solid var(--border);">
-                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--fms-gray);">VISTA ACTIVA:</span>
-                            <select id="sheetSelect" style="font-weight: 800; border: none; background: transparent; color: var(--fms-red); padding-left: 0.5rem; cursor: pointer;"></select>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--App-gray-light); padding: 0.25rem 0.5rem 0.25rem 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--App-gray);">VISTA ACTIVA:</span>
+                            <select id="sheetSelect" style="font-weight: 800; border: none; background: transparent; color: var(--App-red); padding-left: 0.5rem; cursor: pointer;"></select>
                         </div>
                         <button class="btn btn-secondary" id="btnReset">
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -107,7 +107,7 @@
                 <div class="card chart-card" id="cardChart5" style="display:none; grid-column: 1 / -1; margin-top: 2rem;">
                     <div class="chart-header">
                         <h3 class="chart-title">
-                            <svg width="24" height="24" fill="none" stroke="var(--fms-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            <svg width="24" height="24" fill="none" stroke="var(--App-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                             Análisis Avanzado Multivariante
                         </h3>
                         <div class="chart-controls">
@@ -122,7 +122,7 @@
                 <div class="data-table-container">
                     <div class="table-toolbar">
                         <div style="position: relative; width: 100%; max-width: 400px;">
-                            <svg width="18" height="18" fill="none" stroke="var(--fms-gray)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <svg width="18" height="18" fill="none" stroke="var(--App-gray)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             <input type="text" id="tableSearch" class="input-base" style="width: 100%; padding-left: 2.5rem;" placeholder="Búsqueda global en registros de tabla...">
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                         </table>
                     </div>
                     <div class="pagination-bar">
-                        <span id="pageLabel" style="font-weight: 700; color: var(--fms-gray); font-size: 0.9rem;">Paginación</span>
+                        <span id="pageLabel" style="font-weight: 700; color: var(--App-gray); font-size: 0.9rem;">Paginación</span>
                         <div style="display: flex; gap: 0.75rem;">
                             <button class="btn btn-secondary" id="btnPrev">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
@@ -155,3 +155,5 @@
     <script type="module" src="./src/main.ts"></script>
 </body>
 </html>
+
+

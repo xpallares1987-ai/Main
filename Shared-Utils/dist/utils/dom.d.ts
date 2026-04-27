@@ -13,3 +13,5 @@ export declare function safeTrim(str: any, fallback: string): string;
 export declare function ensureElement<T extends HTMLElement>(element: T | null, name?: string): T;
 export declare function getFileNameFromPath(path: string, fallback?: string): string;
 export declare function hexToRgbA(hex: string, alpha?: number): string;
+
+

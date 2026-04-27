@@ -17,3 +17,5 @@ export function resetState() {
     state.sortCol = "";
     state.sortAsc = true;
 }
+
+

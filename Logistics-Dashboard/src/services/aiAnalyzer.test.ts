@@ -16,3 +16,5 @@ describe('AI Analyzer', () => {
     expect(result).toContain('Socio Comercial Frecuente');
   });
 });
+
+

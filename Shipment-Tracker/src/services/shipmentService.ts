@@ -119,3 +119,5 @@ export const ShipmentService = {
   loadFilters(): ShipmentFilters | null { const saved = localStorage.getItem(FILTERS_KEY); return saved ? JSON.parse(saved) : null; }
 };
 
+
+

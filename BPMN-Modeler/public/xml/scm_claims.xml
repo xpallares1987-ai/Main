@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fms="http://fms" id="Definitions_Claims" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:App="http://App" id="Definitions_Claims" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Proc_Claims_Internal" isExecutable="false">
     <bpmn:laneSet id="LaneSet_Claims">
       <bpmn:lane id="Lane_Ops_Claim" name="Operaciones (Registro)">
@@ -15,11 +15,11 @@
     <bpmn:startEvent id="N_START_CLAIM" name="Incidencia Reportada">
       <bpmn:outgoing>C1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="N_IDENTIFY_FILE" name="Identificar Shipment" fms:icon="fa-solid fa-file-magnifying-glass" fms:time="5" fms:status="normal">
+    <bpmn:userTask id="N_IDENTIFY_FILE" name="Identificar Shipment" App:icon="fa-solid fa-file-magnifying-glass" App:time="5" App:status="normal">
       <bpmn:incoming>C1</bpmn:incoming>
       <bpmn:outgoing>C2</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="N_EVALUATE_CLAIM" name="Evaluar Responsabilidad" fms:icon="fa-solid fa-scale-balanced" fms:time="20" fms:status="critical">
+    <bpmn:userTask id="N_EVALUATE_CLAIM" name="Evaluar Responsabilidad" App:icon="fa-solid fa-scale-balanced" App:time="20" App:status="critical">
       <bpmn:incoming>C2</bpmn:incoming>
       <bpmn:outgoing>C3</bpmn:outgoing>
     </bpmn:userTask>
@@ -46,3 +46,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+
