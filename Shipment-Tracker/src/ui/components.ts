@@ -1,7 +1,7 @@
 import { Shipment, Milestone, Agent } from '../types';
-import { qs, on, escapeHTML, debounce } from "shared-utils";
+import { escapeHTML } from "shared-utils";
 import { ShipmentService } from '../services/shipmentService';
-import { I18nService } from '../services/i18nService';
+import { I18nService, TranslationKey } from '../services/i18nService';
 import { ValidationUtils } from '../utils/validation';
 
 const getIconPath = (mode: string) => {
@@ -54,12 +54,12 @@ export const UIComponents = {
 
     return `
       <div class="card ${exceptions.length > 0 ? 'card--exception' : ''}" data-id="${s.id}">
-        <div class="card-status" style="color: ${statusColor}">${(t as any)[s.status]?.toUpperCase() || s.status.toUpperCase()}</div>
+        <div class="card-status" style="color: ${statusColor}">${(t[s.status as TranslationKey] || s.status).toUpperCase()}</div>
         <h3>
           <span class="icon-cyan">${renderIcon(s.mode)}</span>
           ${escapeHTML(s.reference)}
         </h3>
-        ${exceptions.map(e => `<div class="exception-badge ${e.type === 'delay' ? 'delay' : 'critical'}">⚠️ ${(t as any)[e.type + 'Alert'] || e.message}</div>`).join('')}
+        ${exceptions.map(e => `<div class="exception-badge ${e.type === 'delay' ? 'delay' : 'critical'}">⚠️ ${t[`${e.type}Alert` as TranslationKey] || e.message}</div>`).join('')}
         <div class="info-row"><span class="info-label">${t.route}:</span><span>${escapeHTML(s.origin)} ➔ ${escapeHTML(s.destination)}</span></div>
         <div class="info-row"><span class="info-label">${t.container}:</span><span class="${!isContainerValid ? 'text-danger' : ''}">${escapeHTML(s.container)}</span></div>
         <div class="info-row"><span class="info-label">${t.eta}:</span><span class="eta-value">${escapeHTML(s.eta)}</span></div>
@@ -71,7 +71,7 @@ export const UIComponents = {
 
   renderMilestone(m: Milestone) {
     const t = I18nService.t;
-    const label = (t as any)[m.key] || m.label;
+    const label = t[m.key as TranslationKey] || m.label;
     return `
       <div class="milestone ${m.completed ? 'milestone--completed' : ''}">
         <div class="dot"></div>

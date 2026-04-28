@@ -1,17 +1,18 @@
 import * as XLSX from 'xlsx';
 import { processData } from './excelParser';
+import { DataRow } from '../types';
 
 self.onmessage = async (e: MessageEvent) => {
     const { data: fileBuffer } = e;
     
     try {
         const workbook = XLSX.read(fileBuffer, { type: 'array', cellDates: true });
-        const db: Record<string, any[]> = {};
+        const db: Record<string, DataRow[]> = {};
         
-        let listData: any[] = [], contentData: any[] = [];
+        let listData: Record<string, unknown>[] = [], contentData: Record<string, unknown>[] = [];
 
         workbook.SheetNames.forEach(name => {
-            const json = XLSX.utils.sheet_to_json(workbook.Sheets[name], { defval: "" });
+            const json = XLSX.utils.sheet_to_json(workbook.Sheets[name], { defval: "" }) as Record<string, unknown>[];
             if (json.length === 0) return;
 
             if (name.includes('Pending Receptions List')) listData = json;
@@ -32,8 +33,9 @@ self.onmessage = async (e: MessageEvent) => {
         }
 
         self.postMessage({ success: true, db });
-    } catch (err: any) {
-        self.postMessage({ success: false, error: err.message });
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+        self.postMessage({ success: false, error: errorMessage });
     }
 };
 

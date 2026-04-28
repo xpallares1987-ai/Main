@@ -115,6 +115,8 @@ export const translations = {
     dashboard: 'Dashboard'
   }
 };
+
+export type TranslationKey = keyof typeof translations.es;
 let currentLang: Language = (localStorage.getItem('app_lang') as Language) || 'es';
 export const I18nService = {
   get t() { return translations[currentLang]; },

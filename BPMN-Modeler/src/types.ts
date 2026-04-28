@@ -1,4 +1,6 @@
 import Modeler from "bpmn-js/lib/Modeler";
+import { Sidebar } from "./ui/sidebar";
+import { Toolbar } from "./ui/toolbar";
 
 export interface DiagramTab {
   id: string;
@@ -44,9 +46,7 @@ export interface AppState {
   activeTabId: string;
   propertiesPanelOpen: boolean;
   theme: string;
-  toolbar: any;
-  sidebar: any;
-  cleanups: Function[];
+  toolbar: Toolbar | null;
+  sidebar: Sidebar | null;
+  cleanups: (() => void)[];
 }
-
-

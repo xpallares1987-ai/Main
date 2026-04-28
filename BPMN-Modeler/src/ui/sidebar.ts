@@ -1,13 +1,33 @@
-import { ensureElement } from "shared-utils";
+import { ensureElement, qs } from "shared-utils";
+
+export interface Sidebar {
+  toggle: () => void;
+  setOpen: (value: boolean) => void;
+  isOpen: () => boolean;
+  destroy: () => void;
+}
 
 export function createSidebar({
   sidebarElement,
   toggleButton = null,
   initialOpen = true,
   onChange = (_isOpen: boolean) => {},
-}: any) {
-  const sidebar = ensureElement(sidebarElement, "panel lateral");
-  const button = toggleButton ? ensureElement(toggleButton, "botón del panel lateral") : null;
+}: {
+  sidebarElement: HTMLElement | string;
+  toggleButton?: HTMLElement | string | null;
+  initialOpen?: boolean;
+  onChange?: (isOpen: boolean) => void;
+}): Sidebar {
+  const sidebar =
+    typeof sidebarElement === "string"
+      ? ensureElement(qs(sidebarElement), "panel lateral")
+      : ensureElement(sidebarElement, "panel lateral");
+
+  const button =
+    typeof toggleButton === "string"
+      ? qs<HTMLElement>(toggleButton)
+      : toggleButton;
+
   let isOpen = Boolean(initialOpen);
 
   function render() {
@@ -37,10 +57,8 @@ export function createSidebar({
     setOpen,
     isOpen: () => isOpen,
     destroy: () => {
-      if (button) ["aria-expanded"].forEach(attr => button.removeAttribute(attr));
+      if (button)
+        ["aria-expanded"].forEach((attr) => button.removeAttribute(attr));
     },
   };
 }
-
-
-

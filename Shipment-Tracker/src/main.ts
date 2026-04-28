@@ -5,7 +5,7 @@ import { MapService } from "./services/mapService";
 import { UIComponents } from "./ui/components";
 import { ModalUI } from "./ui/modal";
 import { Toast } from "./ui/toast";
-import { qs, on, debounce } from "shared-utils";
+import { debounce } from "shared-utils";
 import { I18nService } from "./services/i18nService";
 import { ExportService } from "./services/exportService";
 import { ChartService } from "./services/chartService";
@@ -29,40 +29,51 @@ const state: AppState = {
   currentView: 'dashboard'
 };
 
+// Custom interface for window to avoid 'any'
+interface CustomWindow extends Window {
+  setLanguage: (lang: 'es' | 'en') => void;
+  showDetails: (id: string) => void;
+  closeModal: () => void;
+  switchModalTab: (tab: 'info' | 'notes' | 'audit') => void;
+  submitNote: (id: string) => Promise<void>;
+}
+
+const customWindow = (window as unknown as CustomWindow);
+
 // Global exports for inline HTML handlers
-(window as any).setLanguage = (lang: 'es' | 'en') => { 
+customWindow.setLanguage = (lang: 'es' | 'en') => { 
   I18nService.setLang(lang); 
   updateStaticTranslations();
   updateView();
 };
 
-(window as any).showDetails = (id: string) => {
+customWindow.showDetails = (id: string) => {
   const shipment = state.allShipments.find(s => s.id === id);
   if (shipment) ModalUI.open(shipment);
 };
 
-(window as any).closeModal = () => { ModalUI.close(); };
+customWindow.closeModal = () => { ModalUI.close(); };
 
-(window as any).switchModalTab = (tab: 'info' | 'notes' | 'audit') => {
-  const tabs = ['info', 'notes', 'audit'];
+customWindow.switchModalTab = (tab: 'info' | 'notes' | 'audit') => {
+  const tabs = ['info', 'notes', 'audit'] as const;
   tabs.forEach(t => {
     const el = document.getElementById(`modal-tab-${t}`);
     if (el) el.style.display = t === tab ? 'block' : 'none';
   });
   document.querySelectorAll('.modal-tab-btn').forEach(btn => {
     const isTarget = btn.getAttribute('onclick')?.includes(`'${tab}'`);
-    btn.classList.toggle('active', isTarget);
+    btn.classList.toggle('active', !!isTarget);
   });
 };
 
-(window as any).submitNote = async (id: string) => {
+customWindow.submitNote = async (id: string) => {
   const input = document.getElementById('noteInput') as HTMLTextAreaElement;
   if (!input || !input.value.trim()) return;
   const updatedShipment = await ShipmentService.addNote(id, input.value.trim());
   if (updatedShipment) {
     state.allShipments = await ShipmentService.getShipments();
     ModalUI.open(updatedShipment);
-    (window as any).switchModalTab('notes');
+    customWindow.switchModalTab('notes');
     Toast.show("Nota registrada", "success");
     updateView();
   }

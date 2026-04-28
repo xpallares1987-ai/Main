@@ -13,9 +13,9 @@ const CATEGORIAS = {
 };
 
 // Esquema Zod para validación básica de fila
-const DataRowSchema = z.record(z.string(), z.any());
+const DataRowSchema = z.record(z.string(), z.unknown());
 
-export function processData(data: any[]): DataRow[] {
+export function processData(data: Record<string, unknown>[]): DataRow[] {
     const finalData = data.map(row => {
         // Validación en tiempo de ejecución
         const parsed = DataRowSchema.safeParse(row);
@@ -27,15 +27,15 @@ export function processData(data: any[]): DataRow[] {
         
         let sumaOrigen = 0, sumaTransito = 0, sumaDestino = 0, sumaDocs = 0;
 
-        for (let k in row) {
-            let key = k.trim();
+        for (const k in row) {
+            const key = k.trim();
             if (BLACK_COLS.includes(key)) continue;
             let val = row[k];
             
             if (key.startsWith('CON:')) {
                 const root = key.replace('CON: ', '');
-                const numVal = parseFloat(val) || 0;
-                const divisa = row[`DIVISA ${root}`] || row['Divisa flete'] || 'USD';
+                const numVal = parseFloat(String(val)) || 0;
+                const divisa = String(row[`DIVISA ${root}`] || row['Divisa flete'] || 'USD');
                 const valEUR = (divisa === 'USD') ? numVal * TASA_USD_EUR : numVal;
 
                 if (CATEGORIAS.ORIGEN.includes(root)) sumaOrigen += valEUR;
@@ -45,23 +45,23 @@ export function processData(data: any[]): DataRow[] {
             }
 
             if (key.startsWith('DOC:')) {
-                const numVal = parseFloat(val) || 0;
+                const numVal = parseFloat(String(val)) || 0;
                 sumaDocs += (row['Divisa flete'] === 'USD') ? numVal * TASA_USD_EUR : numVal;
             }
 
-            if (key === "Branch") val = BRANCH_MAP[val] || val;
-            let keyUpper = key.toUpperCase();
+            if (key === "Branch") val = BRANCH_MAP[String(val)] || val;
+            const keyUpper = key.toUpperCase();
             if (keyUpper.includes('WEIGHT')) {
-                let valNum = Number(val) || 0;
+                const valNum = Number(val) || 0;
                 if (keyUpper.includes('KG')) { wt = valNum; isKgs = true; }
                 else if (keyUpper.includes('TON')) { wt = valNum; isKgs = false; }
                 else { wt = valNum; }
             }
-            clean[key] = val;
+            clean[key] = val as string | number | boolean | Date | undefined;
         }
 
-        const divisaFlete = row['Divisa flete'] || row['Divisa Flete'] || 'EUR';
-        const fletePrincipalEUR = (divisaFlete === 'USD') ? (row['Flete Principal'] || 0) * TASA_USD_EUR : (row['Flete Principal'] || 0);
+        const divisaFlete = String(row['Divisa flete'] || row['Divisa Flete'] || 'EUR');
+        const fletePrincipalEUR = (divisaFlete === 'USD') ? (Number(row['Flete Principal']) || 0) * TASA_USD_EUR : (Number(row['Flete Principal']) || 0);
 
         clean['TOTAL ORIGEN EUR'] = Math.round(sumaOrigen * 100) / 100;
         clean['TOTAL TRANSITO EUR'] = Math.round((fletePrincipalEUR + sumaTransito) * 100) / 100;
@@ -70,7 +70,7 @@ export function processData(data: any[]): DataRow[] {
         
         const granTotal = fletePrincipalEUR + sumaOrigen + sumaTransito + sumaDestino + sumaDocs;
         clean['GRAN TOTAL ESTIMADO EUR'] = Math.round(granTotal * 100) / 100;
-        clean['RIESGO DEMORAS'] = (row['Días Libres Destino'] < 14) ? 'ALTO' : 'NORMAL';
+        clean['RIESGO DEMORAS'] = (Number(row['Días Libres Destino']) < 14) ? 'ALTO' : 'NORMAL';
 
         clean['Weight (Tons)'] = isKgs ? wt / 1000 : wt;
         return clean;
@@ -111,10 +111,10 @@ export async function parseExcelFile(file: File): Promise<Record<string, DataRow
                 const workbook = XLSX.read(data, { type: 'array', cellDates: true });
                 const db: Record<string, DataRow[]> = {};
                 
-                let listData: any[] = [], contentData: any[] = [];
+                let listData: Record<string, unknown>[] = [], contentData: Record<string, unknown>[] = [];
 
                 workbook.SheetNames.forEach(name => {
-                    const json = XLSX.utils.sheet_to_json(workbook.Sheets[name], { defval: "" });
+                    const json = XLSX.utils.sheet_to_json(workbook.Sheets[name], { defval: "" }) as Record<string, unknown>[];
                     if (json.length === 0) return;
 
                     if (name.includes('Pending Receptions List')) listData = json;

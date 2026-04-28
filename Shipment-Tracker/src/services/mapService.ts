@@ -3,9 +3,9 @@ import 'leaflet/dist/leaflet.css';
 import { Shipment } from '../types';
 
 export class MapService {
-  private static instance: any;
-  private static markers: any[] = [];
-  private static lines: any[] = [];
+  private static instance: L.Map | null = null;
+  private static markers: (L.Marker | L.CircleMarker)[] = [];
+  private static lines: L.Polyline[] = [];
 
   static init(containerId: string) {
     this.instance = L.map(containerId, { zoomControl: false }).setView([20, 0], 2);
@@ -18,6 +18,7 @@ export class MapService {
     const bounds = L.latLngBounds([]);
 
     shipments.forEach(s => {
+      if (!this.instance) return;
       const origin = L.circleMarker(s.originCoords, { 
         radius: 5, 
         color: '#64748b',
@@ -52,8 +53,9 @@ export class MapService {
   }
 
   private static clearMap() {
-    this.markers.forEach(m => this.instance.removeLayer(m));
-    this.lines.forEach(l => this.instance.removeLayer(l));
+    if (!this.instance) return;
+    this.markers.forEach(m => this.instance?.removeLayer(m));
+    this.lines.forEach(l => this.instance?.removeLayer(l));
     this.markers = [];
     this.lines = [];
   }

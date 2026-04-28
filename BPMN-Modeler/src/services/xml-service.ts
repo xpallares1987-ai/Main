@@ -1,3 +1,4 @@
+import Modeler from "bpmn-js/lib/Modeler";
 import { getDiagramXml as getModelerDiagramXml } from "./modeler-service";
 import { downloadFile, openTextFile, resetFileInput } from "./file-service";
 
@@ -46,12 +47,10 @@ export async function openLocalXmlFromInput(fileInput: HTMLInputElement) {
   }
 }
 
-export async function getDiagramXml(modeler: any, format = true) {
+export async function getDiagramXml(modeler: Modeler, format = true) {
   return await getModelerDiagramXml(modeler, format);
 }
 
 export async function downloadXmlFile(fileName: string, xml: string) {
   return downloadFile(fileName, xml, "application/xml;charset=utf-8");
 }
-
-

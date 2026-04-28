@@ -1,5 +1,5 @@
 export interface DataRow {
-    [key: string]: any;
+    [key: string]: string | number | boolean | Date | DataRow[] | undefined;
     _children?: DataRow[];
 }
 

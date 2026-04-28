@@ -1,6 +1,6 @@
 import { Shipment } from "../types";
-import { qs, on, escapeHTML, debounce } from "shared-utils";
-import { I18nService } from "../services/i18nService";
+import { escapeHTML } from "shared-utils";
+import { I18nService, TranslationKey } from "../services/i18nService";
 
 const getIconPath = (mode: string) => {
   switch(mode) {
@@ -52,17 +52,18 @@ export const ModalUI = {
             </div>
           </div>
           <div class="history-section" style="margin-top: 1.5rem;">
-            <h4 style="color: var(--cyan); margin-bottom:0.5rem;">${t.milestoneHistory}</h4>
-            <div class="full-timeline">
-              ${shipment.milestones.map(m => `
-                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; opacity: ${m.completed ? 1 : 0.4}">
-                  <div style="width: 8px; height: 8px; border-radius: 50%; background: ${m.completed ? "var(--success)" : "var(--border)"}"></div>
-                  <span style="font-size: 0.85rem;">${escapeHTML((t as any)[m.key] || m.label)}</span>
-                  <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-soft)">${m.date || t.pending}</span>
-                </div>
-              `).join("")}
-            </div>
+          <h4 style="color: var(--cyan); margin-bottom:0.5rem;">${t.milestoneHistory}</h4>
+          <div class="full-timeline">
+            ${shipment.milestones.map(m => `
+              <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; opacity: ${m.completed ? 1 : 0.4}">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${m.completed ? "var(--success)" : "var(--border)"}"></div>
+                <span style="font-size: 0.85rem;">${escapeHTML(t[m.key as TranslationKey] || m.label)}</span>
+                <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-soft)">${m.date || t.pending}</span>
+              </div>
+            `).join("")}
           </div>
+          </div>
+
       </div>
 
       <div id="modal-tab-notes" class="modal-tab-content" style="display: none; margin-top: 1rem;">

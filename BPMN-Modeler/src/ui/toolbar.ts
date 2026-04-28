@@ -1,25 +1,36 @@
 import { ensureElement } from "shared-utils";
+import { AppUi } from "../types";
 
-function bindClick(element: HTMLElement, handler: Function) {
-  if (typeof handler !== "function") return () => {};
-  element.addEventListener("click", handler as any);
-  return () => element.removeEventListener("click", handler as any);
+export interface Toolbar {
+  destroy: () => void;
 }
 
-export function createToolbar(elements: any = {}, handlers: any = {}) {
+function bindClick(element: HTMLElement, handler: ((ev: MouseEvent) => void) | undefined) {
+  if (typeof handler !== "function") return () => {};
+  element.addEventListener("click", handler);
+  return () => element.removeEventListener("click", handler);
+}
+
+export function createToolbar(
+  elements: Partial<AppUi> = {},
+  handlers: Record<string, (ev: MouseEvent) => void> = {},
+): Toolbar {
   const btns = {
-    btnNew: ensureElement(elements.btnNew, "botón Nuevo"),
-    btnOpen: ensureElement(elements.btnOpen, "botón Abrir"),
-    btnSave: ensureElement(elements.btnSave, "botón Guardar"),
-    btnExport: ensureElement(elements.btnExport, "botón Exportar"),
-    btnTheme: ensureElement(elements.btnTheme, "botón Tema"),
-    btnShortcuts: ensureElement(elements.btnShortcuts, "botón Atajos"),
-    btnCloud: ensureElement(elements.btnCloud, "botón Nube"),
-    btnLogistics: ensureElement(elements.btnLogistics, "botón Logística"),
-    btnFit: ensureElement(elements.btnFit, "botón Ajustar"),
-    btnZoomIn: ensureElement(elements.btnZoomIn, "botón Zoom +"),
-    btnZoomOut: ensureElement(elements.btnZoomOut, "botón Zoom -"),
-    btnToggleProperties: ensureElement(elements.btnToggleProperties, "botón Propiedades"),
+    btnNew: ensureElement(elements.btnNew as HTMLButtonElement, "botón Nuevo"),
+    btnOpen: ensureElement(elements.btnOpen as HTMLButtonElement, "botón Abrir"),
+    btnSave: ensureElement(elements.btnSave as HTMLButtonElement, "botón Guardar"),
+    btnExport: ensureElement(elements.btnExport as HTMLButtonElement, "botón Exportar"),
+    btnTheme: ensureElement(elements.btnTheme as HTMLButtonElement, "botón Tema"),
+    btnShortcuts: ensureElement(elements.btnShortcuts as HTMLButtonElement, "botón Atajos"),
+    btnCloud: ensureElement(elements.btnCloud as HTMLButtonElement, "botón Nube"),
+    btnLogistics: ensureElement(elements.btnLogistics as HTMLButtonElement, "botón Logística"),
+    btnFit: ensureElement(elements.btnFit as HTMLButtonElement, "botón Ajustar"),
+    btnZoomIn: ensureElement(elements.btnZoomIn as HTMLButtonElement, "botón Zoom +"),
+    btnZoomOut: ensureElement(elements.btnZoomOut as HTMLButtonElement, "botón Zoom -"),
+    btnToggleProperties: ensureElement(
+      elements.btnToggleProperties as HTMLButtonElement,
+      "botón Propiedades",
+    ),
   };
 
   const cleanups = [
@@ -38,9 +49,6 @@ export function createToolbar(elements: any = {}, handlers: any = {}) {
   ];
 
   return {
-    destroy: () => cleanups.forEach(cleanup => cleanup()),
+    destroy: () => cleanups.forEach((cleanup) => cleanup()),
   };
 }
-
-
-

@@ -17,7 +17,7 @@ export function showToast(
 
   container.appendChild(toast);
 
-  toast.offsetHeight;
+  void toast.offsetHeight;
   toast.classList.add("toast--visible");
 
   const removeToast = () => {

@@ -21,7 +21,7 @@ import {
 import { encryptToken, decryptToken } from "./services/storage-service";
 import { setDiagramName, renderTabs } from "./ui/render";
 import { createSidebar } from "./ui/sidebar";
-import { createStatusbar } from "./ui/statusbar";
+import { createStatusbar, Statusbar } from "./ui/statusbar";
 import { createToolbar } from "./ui/toolbar";
 import {
   on,
@@ -35,14 +35,14 @@ import { showToast } from "./toast";
 import { AppUi, DiagramTab } from "./types";
 
 let ui: AppUi;
-let statusbar: any;
+let statusbar: Statusbar;
 
 function resolveUi(selectors: Record<string, string>): AppUi {
-  return Object.entries(selectors).reduce((acc: any, [key, selector]) => {
+  return Object.entries(selectors).reduce((acc, [key, selector]) => {
     const element = qs(selector);
     if (!element)
       throw new Error(`No se encontró el elemento requerido: ${selector}`);
-    acc[key] = element;
+    (acc as unknown as Record<string, HTMLElement>)[key] = element;
     return acc;
   }, {} as AppUi);
 }
@@ -165,7 +165,7 @@ async function handleLogisticsTemplate() {
   try {
     const xml = await loadXmlFromUrl(templatePath);
     await loadDiagramInNewTab(xml, templateName);
-  } catch (error) {
+  } catch {
     showToast("Error al cargar la plantilla", "error");
   }
 }
@@ -245,7 +245,7 @@ async function handleOpenCloudModal() {
       try {
         const token = await decryptToken(encryptedToken, pin);
         ui.githubTokenInput.value = token;
-      } catch (e) {
+      } catch {
         showToast("PIN incorrecto", "error");
         ui.githubTokenInput.value = "";
       }
@@ -280,12 +280,12 @@ async function handleCloudSync() {
       ui.cloudModal.close();
       showToast("Sincronizado con GitHub", "success");
     }
-  } catch (error) {
+  } catch {
     showToast("Error de sincronización", "error");
   }
 }
 
-async function runAction(action: Function, errorPrefix: string) {
+async function runAction(action: () => Promise<void> | void, errorPrefix: string) {
   try {
     await action();
   } catch (error) {
@@ -306,7 +306,7 @@ function bindModelerEvents() {
     }, 500),
   );
 
-  state.modeler.on("selection.changed", (event: any) => {
+  state.modeler.on("selection.changed", (event: { newSelection?: Array<{ type: string }> }) => {
     const element = event.newSelection?.[0] || null;
     const type = element
       ? String(element.type).replace("bpmn:", "")
@@ -353,7 +353,14 @@ async function init() {
     on(ui.btnAddTab, "click", handleNewTab);
     on(ui.btnCloseModal, "click", () => ui.shortcutsModal.close());
     on(ui.btnCloseCloudModal, "click", () => ui.cloudModal.close());
-    on(ui.btnCloudSync, "click", handleCloudSync);
+    
+    const cloudForm = qs("#cloudForm");
+    if (cloudForm) {
+      on(cloudForm, "submit", (e: Event) => {
+        e.preventDefault();
+        handleCloudSync();
+      });
+    }
 
     const canvasEl = ui.canvas;
     on(canvasEl, "dragover", handleDragOver);

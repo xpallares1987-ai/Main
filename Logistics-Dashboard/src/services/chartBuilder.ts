@@ -1,11 +1,11 @@
-import { Chart, registerables } from 'chart.js';
+import { Chart, registerables, ChartType } from 'chart.js';
 import { DataRow } from '../types';
 import { BLACK_FILTERS, PALETTES } from '../config';
 import { escapeHTML, hexToRgbA } from "shared-utils";
 
 Chart.register(...registerables);
 
-let chartInstances: Record<string, Chart> = {};
+const chartInstances: Record<string, Chart> = {};
 
 export function destroyCharts() {
     Object.keys(chartInstances).forEach(id => {
@@ -15,29 +15,37 @@ export function destroyCharts() {
 }
 
 export function groupData(data: DataRow[], catCol: string, numCol: string) {
-    const groups: Record<string, any> = {};
+    const groups: Record<string, number | Set<unknown>> = {};
     data.forEach(r => {
         const k = String(r[catCol] || "N/D");
         if (!groups[k]) groups[k] = (BLACK_FILTERS.includes(numCol) && (numCol==='Customer Order' || numCol==='Item Number')) ? new Set() : 0;
         
-        if (groups[k] instanceof Set) { if(r[numCol]) groups[k].add(r[numCol]); }
-        else if (numCol === '_Count') { groups[k] += 1; }
-        else { groups[k] += (Number(r[numCol]) || 0); }
+        const groupValue = groups[k];
+        if (groupValue instanceof Set) { 
+            const val = r[numCol];
+            if(val) groupValue.add(val); 
+        }
+        else if (numCol === '_Count') { 
+            groups[k] = (groupValue as number) + 1; 
+        }
+        else { 
+            groups[k] = (groupValue as number) + (Number(r[numCol]) || 0); 
+        }
     });
 
     const sorted = Object.keys(groups).sort((a,b) => {
-        const vA = (groups[a] instanceof Set) ? groups[a].size : groups[a];
-        const vB = (groups[b] instanceof Set) ? groups[b].size : groups[b];
+        const vA = (groups[a] instanceof Set) ? (groups[a] as Set<unknown>).size : (groups[a] as number);
+        const vB = (groups[b] instanceof Set) ? (groups[b] as Set<unknown>).size : (groups[b] as number);
         return vB - vA;
     }).slice(0, 12);
 
     return {
         labels: sorted,
-        values: sorted.map(k => (groups[k] instanceof Set) ? groups[k].size : groups[k])
+        values: sorted.map(k => (groups[k] instanceof Set) ? (groups[k] as Set<unknown>).size : (groups[k] as number))
     };
 }
 
-export function renderCJS(id: string, type: any, labels: string[], data: number[], label: string, colorConfig: any, fillArea=false, horizontal=false) {
+export function renderCJS(id: string, type: ChartType, labels: string[], data: number[], label: string, colorConfig: string | string[], fillArea=false, horizontal=false) {
     const canvas = document.getElementById(id) as HTMLCanvasElement;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -45,8 +53,8 @@ export function renderCJS(id: string, type: any, labels: string[], data: number[
 
     const isPie = type === 'pie' || type === 'doughnut' || type === 'polarArea';
     
-    let bgColors = colorConfig;
-    let borderColors = '#ffffff';
+    let bgColors: string | string[] = colorConfig;
+    let borderColors: string | string[] = '#ffffff';
 
     if (!isPie) {
         bgColors = fillArea ? hexToRgbA(Array.isArray(colorConfig) ? colorConfig[0] : colorConfig, 0.1) : colorConfig;
@@ -67,7 +75,7 @@ export function renderCJS(id: string, type: any, labels: string[], data: number[
                 tension: 0.4,
                 borderRadius: type==='bar' ? 6 : 0,
                 pointRadius: type==='line' ? 3 : 0,
-                pointBackgroundColor: colorConfig
+                pointBackgroundColor: colorConfig as unknown as string[]
             }]
         },
         options: {
@@ -79,7 +87,7 @@ export function renderCJS(id: string, type: any, labels: string[], data: number[
                 tooltip: { padding: 12, cornerRadius: 8, titleFont: {size: 14}, bodyFont: {size: 13}, backgroundColor: 'rgba(15, 23, 42, 0.9)' }
             },
             scales: isPie ? {} : {
-                y: { beginAtZero: true, grid: { color: '#E2E8F0', drawBorder: false, borderDash: [4, 4] } },
+                y: { beginAtZero: true, grid: { color: '#E2E8F0' } },
                 x: { grid: { display: false } }
             }
         }
@@ -145,8 +153,8 @@ export function buildDynamicCharts(filterRes: DataRow[], gridId: string) {
         }
     }
 
-    let cat1 = catCols.includes('Warehouse') ? 'Warehouse' : (catCols.includes('Final Destination') ? 'Final Destination' : (catCols.includes('Charge (desc)') ? 'Charge (desc)' : catCols[0]));
-    let met1 = numCols.includes('Receivables') ? 'Receivables' : (numCols.includes('Weight (Tons)') ? 'Weight (Tons)' : (numCols.includes('Quantity') ? 'Quantity' : '_Count'));
+    const cat1 = catCols.includes('Warehouse') ? 'Warehouse' : (catCols.includes('Final Destination') ? 'Final Destination' : (catCols.includes('Charge (desc)') ? 'Charge (desc)' : catCols[0]));
+    const met1 = numCols.includes('Receivables') ? 'Receivables' : (numCols.includes('Weight (Tons)') ? 'Weight (Tons)' : (numCols.includes('Quantity') ? 'Quantity' : '_Count'));
     
     if (cat1) {
         const dataGroup = groupData(filterRes, cat1, met1);
@@ -156,7 +164,7 @@ export function buildDynamicCharts(filterRes: DataRow[], gridId: string) {
         }
     }
 
-    let cat2 = catCols.find(c => c !== cat1 && (c === 'Customer Name' || c === 'Debitor/Creditor' || c === 'Branch')) || catCols.find(c => c !== cat1);
+    const cat2 = catCols.find(c => c !== cat1 && (c === 'Customer Name' || c === 'Debitor/Creditor' || c === 'Branch')) || catCols.find(c => c !== cat1);
     if (cat2) {
         let met2 = distinctCols.length > 0 ? distinctCols[0] : (numCols.find(n => n !== met1) || met1);
         if(numCols.includes('GP Ops.')) met2 = 'GP Ops.';
@@ -168,6 +176,3 @@ export function buildDynamicCharts(filterRes: DataRow[], gridId: string) {
         }
     }
 }
-
-
-

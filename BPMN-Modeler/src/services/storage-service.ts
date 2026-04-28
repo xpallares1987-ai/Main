@@ -52,7 +52,7 @@ export async function decryptToken(encrypted: string, pin: string): Promise<stri
     );
     
     return new TextDecoder().decode(decrypted);
-  } catch (e) {
+  } catch {
     throw new Error("PIN incorrecto o datos corruptos");
   }
 }
@@ -64,7 +64,7 @@ function isStorageAvailable(): boolean {
     storage.setItem(testKey, "1");
     storage.removeItem(testKey);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -74,7 +74,7 @@ function safeSetItem(key: string, value: string): boolean {
   try {
     window.localStorage.setItem(key, value);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -83,12 +83,23 @@ function safeGetItem(key: string): string | null {
   if (!isStorageAvailable()) return null;
   try {
     return window.localStorage.getItem(key);
-  } catch (error) {
+  } catch {
     return null;
   }
 }
 
-export function saveUiSession(keys: any, uiState: any = {}) {
+export interface StorageKeys {
+  diagramXml: string;
+  diagramName: string;
+  uiState: string;
+  appConfig: string;
+  elementTemplates: string;
+  githubToken: string;
+  gistId: string;
+  tabsState: string;
+}
+
+export function saveUiSession(keys: StorageKeys, uiState: { propertiesPanelOpen?: boolean } = {}) {
   if (!keys.uiState) return false;
   const payload = JSON.stringify({
     propertiesPanelOpen: Boolean(uiState.propertiesPanelOpen),
@@ -96,7 +107,7 @@ export function saveUiSession(keys: any, uiState: any = {}) {
   return safeSetItem(keys.uiState, payload);
 }
 
-export function loadUiSession(keys: any) {
+export function loadUiSession(keys: StorageKeys) {
   if (!keys.uiState) return null;
   const raw = safeGetItem(keys.uiState);
   if (!raw) return null;
@@ -105,9 +116,7 @@ export function loadUiSession(keys: any) {
     return {
       propertiesPanelOpen: Boolean(parsed.propertiesPanelOpen),
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
-
-

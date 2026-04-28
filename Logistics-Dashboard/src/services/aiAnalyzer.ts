@@ -4,7 +4,13 @@ import { escapeHTML } from "shared-utils";
 export function getTop(data: DataRow[], col: string): string | null {
     if(!data.length || data[0][col] === undefined) return null;
     const counts: Record<string, number> = {};
-    data.forEach(r => { if(r[col] && r[col]!=="") counts[r[col]] = (counts[r[col]] || 0) + 1; });
+    data.forEach(r => { 
+        const val = r[col];
+        if(val !== undefined && val !== null && val !== "") {
+            const key = String(val);
+            counts[key] = (counts[key] || 0) + 1; 
+        }
+    });
     const keys = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
     return keys.length > 0 ? keys[0] : null;
 }
@@ -52,7 +58,7 @@ export function generateAIInsights(filterRes: DataRow[]): string {
         html += `El módulo de tráfico evalúa <strong>${totTEU.toLocaleString('es-ES')} TEUs</strong> gestionados en ${filterRes.length} operaciones. `;
         html += `El Beneficio Bruto (GP) proyectado asciende a <strong>${totGP.toLocaleString('es-ES', {style:'currency', currency:'EUR'})}</strong>. `;
         
-        let avgTeuGP = totTEU > 0 ? (totGP / totTEU) : 0;
+        const avgTeuGP = totTEU > 0 ? (totGP / totTEU) : 0;
         if (avgTeuGP > 0) {
             html += `<br><br><span style="color:var(--success); font-weight:800;">💡 Eficiencia Rentable:</span> El rendimiento promedio se establece en <strong>${avgTeuGP.toLocaleString('es-ES', {maximumFractionDigits:2})} € por TEU operado</strong>.`;
         }
@@ -69,8 +75,11 @@ export function generateAIInsights(filterRes: DataRow[]): string {
             totalQty = filterRes.reduce((a,b)=>a+(Number(b['Quantity'])||0), 0);
             measureName = "unidades operativas";
         } else if (filterRes[0] && filterRes[0]['Item Number'] !== undefined) {
-            const s = new Set();
-            filterRes.forEach(r => { if(r['Item Number']) s.add(r['Item Number']); });
+            const s = new Set<string>();
+            filterRes.forEach(r => { 
+                const item = r['Item Number'];
+                if(item) s.add(String(item)); 
+            });
             totalQty = s.size;
             measureName = "bobinas/ítems únicos";
         }
@@ -88,7 +97,7 @@ export function generateAIInsights(filterRes: DataRow[]): string {
         html += `A través de las dimensiones filtradas, la IA consolida un flujo logístico de <strong>${totalQty.toLocaleString('es-ES')} ${escapeHTML(measureName)}</strong>. `;
         
         if (filterRes[0] && filterRes[0]['Pending'] !== undefined) {
-            let completionRate = totalQty > 0 ? (((totalQty - totalPending) / totalQty) * 100).toFixed(1) : 100;
+            const completionRate = totalQty > 0 ? (((totalQty - totalPending) / totalQty) * 100).toFixed(1) : "100";
             html += `El ratio de cumplimiento operativo se sitúa en un <strong>${completionRate}%</strong>. `;
             
             if(totalPending > 0) {
@@ -101,6 +110,3 @@ export function generateAIInsights(filterRes: DataRow[]): string {
     html += `</div>`;
     return html;
 }
-
-
-

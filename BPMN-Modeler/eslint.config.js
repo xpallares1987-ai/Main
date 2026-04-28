@@ -1,29 +1,21 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import pluginImport from "eslint-plugin-import";
+import tseslint from 'typescript-eslint';
 
-/** @type {import('eslint').Linter.Config[]} */
-export default [
+export default tseslint.config(
   {
-    files: ["**/*.js"],
+    ignores: ['dist', 'node_modules']
+  },
+  ...tseslint.configs.recommended,
+  {
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      globals: {
-        ...globals.browser,
-        ...globals.es2021,
-      },
-    },
-    plugins: {
-      import: pluginImport,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module'
+      }
     },
     rules: {
-      ...pluginJs.configs.recommended.rules,
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-      "no-console": ["warn", { allow: ["warn", "error"] }],
-      "eqeqeq": ["error", "always"],
-      "curly": "error",
-      "import/no-unresolved": "off", // bpmn-js is loaded from unpkg in some places or as modules
-    },
-  },
-];
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }]
+    }
+  }
+);

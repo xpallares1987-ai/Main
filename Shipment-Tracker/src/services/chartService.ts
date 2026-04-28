@@ -2,8 +2,8 @@ import { Shipment } from '../types';
 import { I18nService } from './i18nService';
 import ApexCharts from 'apexcharts';
 
-let statusChart: any;
-let modeChart: any;
+let statusChart: ApexCharts | null = null;
+let modeChart: ApexCharts | null = null;
 
 export const ChartService = {
   init() {
@@ -43,8 +43,8 @@ export const ChartService = {
       delivered: shipments.filter(s => s.status === 'delivered').length
     };
 
-    statusChart.updateSeries(Object.values(statusCounts));
-    statusChart.updateOptions({ labels: [t.booking, t.transit, t.customs, t.delivered] });
+    statusChart?.updateSeries(Object.values(statusCounts));
+    statusChart?.updateOptions({ labels: [t.booking, t.transit, t.customs, t.delivered] });
 
     // Mode Data
     const modeCounts = {
@@ -53,8 +53,8 @@ export const ChartService = {
       land: shipments.filter(s => s.mode === 'land').length
     };
 
-    modeChart.updateSeries(Object.values(modeCounts));
-    modeChart.updateOptions({ labels: ['Ocean', 'Air', 'Land'] });
+    modeChart?.updateSeries(Object.values(modeCounts));
+    modeChart?.updateOptions({ labels: ['Ocean', 'Air', 'Land'] });
   }
 };
 
