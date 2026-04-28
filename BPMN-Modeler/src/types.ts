@@ -44,7 +44,7 @@ export interface AppState {
   activeTabId: string;
   propertiesPanelOpen: boolean;
   theme: string;
-  toolbar: any; // Defer specialized types if complex
+  toolbar: any;
   sidebar: any;
   cleanups: Function[];
 }
