@@ -29,4 +29,8 @@ export class SharedDatabase extends Dexie {
     const item = await this.settings.where({ key }).first();
     return item ? (item.value as T) : fallback;
   }
+
+  async clear() {
+    return this.settings.clear();
+  }
 }

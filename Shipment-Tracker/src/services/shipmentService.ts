@@ -66,7 +66,7 @@ export const ShipmentService = {
     const index = shipments.findIndex(s => s.id === shipmentId);
     if (index !== -1) {
       const entry: AuditLog = {
-        id: Math.random().toString(36).slice(2, 10),
+        id: crypto.randomUUID(),
         action,
         author,
         timestamp: new Date().toLocaleString(),
@@ -85,7 +85,7 @@ export const ShipmentService = {
     if (!shipment) return null;
     
     const note: Note = {
-      id: Math.random().toString(36).slice(2, 10),
+      id: crypto.randomUUID(),
       text,
       author,
       date: new Date().toLocaleString()
@@ -120,3 +120,5 @@ export const ShipmentService = {
   async saveFilters(filters: ShipmentFilters): Promise<void> { await db.set(FILTERS_KEY, filters); },
   async loadFilters(): Promise<ShipmentFilters | null> { return await db.get(FILTERS_KEY, null); }
 };
+
+

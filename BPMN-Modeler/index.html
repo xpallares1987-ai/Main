@@ -6,7 +6,9 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self'; connect-src 'self' https://api.github.com;">
     <meta name="referrer" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
-    <title>BPMN 2.0 Interactive Modeler</title>
+    <title>
+      BPMN 2.0 Interactive Modeler
+    </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -67,12 +69,16 @@
         <section class="canvas-panel">
           <div class="tabs-bar">
             <div id="tabsContainer" class="tabs-container"></div>
-            <button id="btnAddTab" class="btn" style="border:none; background:transparent; font-size:1.2rem;">+</button>
+            <button id="btnAddTab" class="btn" style="border:none; background:transparent; font-size:1.2rem;">
+              +
+            </button>
           </div>
           <div class="canvas-panel__header">
-            <span>Editor de Procesos Logísticos</span>
+            <span>
+              Editor de Procesos
+            </span>
             <span id="diagramName">
-              Blank Process
+              Proceso en blanco
             </span>
           </div>
           <div id="canvas" class="canvas-panel__body"></div>
@@ -117,21 +123,41 @@
       <div class="modal__body">
         <table class="shortcuts-table">
           <tr>
-            <td>Deshacer / Rehacer</td>
             <td>
-              <kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd>
+              Deshacer / Rehacer
+            </td>
+            <td>
+              <kbd>
+                Ctrl+Z
+              </kbd>
+              /
+              <kbd>
+                Ctrl+Y
+              </kbd>
             </td>
           </tr>
           <tr>
-            <td>Copiar / Pegar</td>
             <td>
-              <kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>
+              Copiar / Pegar
+            </td>
+            <td>
+              <kbd>
+                Ctrl+C
+              </kbd>
+              /
+              <kbd>
+                Ctrl+V
+              </kbd>
             </td>
           </tr>
           <tr>
-            <td>Eliminar</td>
             <td>
-              <kbd>Supr</kbd>
+              Eliminar
+            </td>
+            <td>
+              <kbd>
+                Supr
+              </kbd>
             </td>
           </tr>
         </table>
@@ -148,10 +174,12 @@
       <div class="modal__body">
         <div class="form-group">
           <label for="githubToken">
-            GitHub Personal Access Token
+            Personal Access Token
           </label>
           <input type="password" id="githubToken" class="input" placeholder="ghp_xxxxxxxxxxxx">
-          <p class="help-text">Los diagramas se guardarán de forma privada en tus Gists.</p>
+          <p class="help-text">
+            Los diagramas se guardarán de forma privada.
+          </p>
         </div>
         <button id="btnCloudSync" class="btn btn--primary" style="width: 100%; margin-top: 1rem;">
           Sincronizar ahora
@@ -162,5 +190,6 @@
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
+
 
 

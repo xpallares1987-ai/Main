@@ -385,7 +385,14 @@ kbd {
   box-shadow: var(--shadow-md);
   border-left: 4px solid var(--primary);
   min-width: 250px;
-  animation: slideIn 0.3s ease-out;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease-out;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .toast--success { border-left-color: var(--success); }

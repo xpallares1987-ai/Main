@@ -1,5 +1,5 @@
 {
-  "name": "Personal-Dev-monorepo",
+  "name": "Personal-Logistics-Monorepo",
   "private": true,
   "packageManager": "npm@10.8.2",
   "workspaces": [
@@ -46,6 +46,6 @@
     "apexcharts": "^5.10.6",
     "dexie": "^4.4.2",
     "leaflet": "^1.9.4",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz"
   }
 }
