@@ -34,6 +34,21 @@ import {
 import { showToast } from "./toast";
 import { AppUi, DiagramTab } from "./types";
 
+// Passive Event Listener Patch for performance
+(function patchPassiveEvents() {
+  const originalAddEventListener = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    let opts = options;
+    if (typeof options === "boolean") {
+      opts = { capture: options };
+    }
+    if (["wheel", "mousewheel", "touchstart", "touchmove"].includes(type)) {
+      opts = { ...(opts as object), passive: true };
+    }
+    return originalAddEventListener.call(this, type, listener, opts);
+  };
+})();
+
 let ui: AppUi;
 let statusbar: Statusbar;
 
