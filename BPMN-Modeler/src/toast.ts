@@ -3,7 +3,11 @@ import { qs } from "shared-utils";
 
 export type ToastType = "info" | "success" | "warning" | "error";
 
-export function showToast(message: string, type: ToastType = "info", duration: number = 4000) {
+export function showToast(
+  message: string,
+  type: ToastType = "info",
+  duration: number = 4000,
+) {
   const container = qs(APP_CONFIG.selectors.toastContainer);
   if (!container) return;
 
@@ -13,18 +17,17 @@ export function showToast(message: string, type: ToastType = "info", duration: n
 
   container.appendChild(toast);
 
-  // Trigger animation
-  requestAnimationFrame(() => {
-    toast.classList.add("toast--visible");
-  });
+  toast.offsetHeight;
+  toast.classList.add("toast--visible");
 
-  setTimeout(() => {
+  const removeToast = () => {
     toast.classList.remove("toast--visible");
-    toast.addEventListener("transitionend", () => {
-      toast.remove();
-    }, { once: true });
-  }, duration);
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.remove();
+      }
+    }, 400);
+  };
+
+  setTimeout(removeToast, duration);
 }
-
-
-

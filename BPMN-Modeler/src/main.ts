@@ -1,3 +1,4 @@
+import "../assets/css/app.css";
 import APP_CONFIG from "./config";
 import { state, updateTheme } from "./state";
 import {
@@ -39,7 +40,8 @@ let statusbar: any;
 function resolveUi(selectors: Record<string, string>): AppUi {
   return Object.entries(selectors).reduce((acc: any, [key, selector]) => {
     const element = qs(selector);
-    if (!element) throw new Error(`No se encontró el elemento requerido: ${selector}`);
+    if (!element)
+      throw new Error(`No se encontró el elemento requerido: ${selector}`);
     acc[key] = element;
     return acc;
   }, {} as AppUi);
@@ -47,7 +49,7 @@ function resolveUi(selectors: Record<string, string>): AppUi {
 
 function createTab(name: string, xml: string): DiagramTab {
   return {
-    id: Math.random().toString(36).slice(2, 10),
+    id: crypto.randomUUID(),
     name: getSafeDiagramName(name),
     xml,
     isDirty: false,
@@ -60,25 +62,29 @@ function getSafeDiagramName(name: string) {
 }
 
 function updateTabsUi() {
-  renderTabs(ui.tabsContainer, state.tabs, state.activeTabId, handleSwitchTab, handleCloseTab);
+  renderTabs(
+    ui.tabsContainer,
+    state.tabs,
+    state.activeTabId,
+    handleSwitchTab,
+    handleCloseTab,
+  );
 }
 
 async function handleSwitchTab(tabId: string) {
   if (tabId === state.activeTabId) return;
 
-  const currentTab = state.tabs.find(t => t.id === state.activeTabId);
+  const currentTab = state.tabs.find((t) => t.id === state.activeTabId);
   if (currentTab && state.modeler) {
     currentTab.xml = await getDiagramXml(state.modeler);
-    // Limpieza de instancia antigua para liberar RAM
     cleanupModeler(state.modeler);
     state.modeler = null;
   }
 
   state.activeTabId = tabId;
-  const nextTab = state.tabs.find(t => t.id === tabId);
-  
+  const nextTab = state.tabs.find((t) => t.id === tabId);
+
   if (nextTab) {
-    // Re-inicializar modelador para la nueva pestaña
     state.modeler = await createModeler({
       container: APP_CONFIG.selectors.canvas,
       properties: APP_CONFIG.selectors.properties,
@@ -87,7 +93,7 @@ async function handleSwitchTab(tabId: string) {
       propertiesPanel: state.propertiesPanelOpen,
       zeebeSupport: true,
     });
-    
+
     bindModelerEvents();
     await importDiagram(state.modeler, nextTab.xml);
     setDiagramName(ui.diagramName, nextTab.name);
@@ -97,13 +103,18 @@ async function handleSwitchTab(tabId: string) {
 }
 
 async function handleCloseTab(tabId: string) {
-  const tab = state.tabs.find(t => t.id === tabId);
+  const tab = state.tabs.find((t) => t.id === tabId);
   if (tab?.isDirty) {
-    if (!confirm(`El diagrama "${tab.name}" tiene cambios sin guardar. ¿Cerrar de todos modos?`)) return;
+    if (
+      !confirm(
+        `El diagrama "${tab.name}" tiene cambios sin guardar. ¿Cerrar de todos modos?`,
+      )
+    )
+      return;
   }
 
-  const index = state.tabs.findIndex(t => t.id === tabId);
-  state.tabs = state.tabs.filter(t => t.id !== tabId);
+  const index = state.tabs.findIndex((t) => t.id === tabId);
+  state.tabs = state.tabs.filter((t) => t.id !== tabId);
 
   if (state.tabs.length === 0) {
     await handleNewDiagram();
@@ -141,12 +152,15 @@ async function handleOpenDiagram() {
 }
 
 async function handleLogisticsTemplate() {
-  const activeTab = state.tabs.find(t => t.id === state.activeTabId);
-  const templatePath = activeTab?.name === "exportacion-maritima.bpmn"
-    ? APP_CONFIG.paths.logisticsSeaImport
-    : APP_CONFIG.paths.logisticsSeaExport;
-  
-  const templateName = templatePath.includes("export") ? "exportacion-maritima.bpmn" : "importacion-maritima.bpmn";
+  const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
+  const templatePath =
+    activeTab?.name === "exportacion-maritima.bpmn"
+      ? APP_CONFIG.paths.logisticsSeaImport
+      : APP_CONFIG.paths.logisticsSeaExport;
+
+  const templateName = templatePath.includes("export")
+    ? "exportacion-maritima.bpmn"
+    : "importacion-maritima.bpmn";
 
   try {
     const xml = await loadXmlFromUrl(templatePath);
@@ -159,7 +173,7 @@ async function handleLogisticsTemplate() {
 async function handleSaveDiagram() {
   if (!state.modeler) return;
   const xml = await getDiagramXml(state.modeler);
-  const activeTab = state.tabs.find(t => t.id === state.activeTabId);
+  const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
   if (!activeTab) return;
 
   await downloadXmlFile(activeTab.name, xml);
@@ -171,7 +185,7 @@ async function handleSaveDiagram() {
 
 async function handleExportDiagram() {
   if (!state.modeler) return;
-  const activeTab = state.tabs.find(t => t.id === state.activeTabId);
+  const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
   const fileName = activeTab ? activeTab.name.replace(".bpmn", "") : "diagrama";
   await exportToPng(state.modeler, fileName);
   showToast("Imagen exportada", "success");
@@ -199,7 +213,8 @@ async function handleDrop(e: DragEvent) {
 
 function bindToolbar() {
   state.toolbar = createToolbar(ui, {
-    onNew: () => runAction(handleNewDiagram, "Error al crear un diagrama nuevo"),
+    onNew: () =>
+      runAction(handleNewDiagram, "Error al crear un diagrama nuevo"),
     onOpen: () => runAction(handleOpenDiagram, "Error al abrir el archivo"),
     onSave: () => runAction(handleSaveDiagram, "Error al guardar"),
     onExport: () => runAction(handleExportDiagram, "Error al exportar imagen"),
@@ -221,7 +236,9 @@ function handleToggleTheme() {
 }
 
 async function handleOpenCloudModal() {
-  const encryptedToken = sessionStorage.getItem(APP_CONFIG.storage.keys.githubToken);
+  const encryptedToken = sessionStorage.getItem(
+    APP_CONFIG.storage.keys.githubToken,
+  );
   if (encryptedToken) {
     const pin = prompt("Introduce tu PIN para desbloquear el token:");
     if (pin) {
@@ -240,18 +257,24 @@ async function handleOpenCloudModal() {
 async function handleCloudSync() {
   const token = ui.githubTokenInput.value.trim();
   if (!token) return showToast("Introduce un token de GitHub", "error");
-  
+
   const pin = prompt("Crea un PIN para proteger tu token en esta sesión:");
-  if (!pin) return showToast("El PIN es obligatorio para proteger el token", "warning");
+  if (!pin)
+    return showToast("El PIN es obligatorio para proteger el token", "warning");
 
   try {
     const encrypted = await encryptToken(token, pin);
     sessionStorage.setItem(APP_CONFIG.storage.keys.githubToken, encrypted);
-    
+
     if (!state.modeler) return;
     const xml = await getDiagramXml(state.modeler);
-    const activeTab = state.tabs.find(t => t.id === state.activeTabId);
-    const result = await saveToGitHub(token, activeTab?.name || "diagram.bpmn", xml, sessionStorage.getItem(APP_CONFIG.storage.keys.gistId));
+    const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
+    const result = await saveToGitHub(
+      token,
+      activeTab?.name || "diagram.bpmn",
+      xml,
+      sessionStorage.getItem(APP_CONFIG.storage.keys.gistId),
+    );
     if (result?.id) {
       sessionStorage.setItem(APP_CONFIG.storage.keys.gistId, result.id);
       ui.cloudModal.close();
@@ -263,22 +286,31 @@ async function handleCloudSync() {
 }
 
 async function runAction(action: Function, errorPrefix: string) {
-  try { await action(); } catch (error) { showToast(formatError(error, errorPrefix), "error"); }
+  try {
+    await action();
+  } catch (error) {
+    showToast(formatError(error, errorPrefix), "error");
+  }
 }
 
 function bindModelerEvents() {
   if (!state.modeler) return;
-  state.modeler.on("commandStack.changed", debounce(() => {
-    const activeTab = state.tabs.find(t => t.id === state.activeTabId);
-    if (activeTab) {
-      activeTab.isDirty = true;
-      updateTabsUi();
-    }
-  }, 500));
+  state.modeler.on(
+    "commandStack.changed",
+    debounce(() => {
+      const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
+      if (activeTab) {
+        activeTab.isDirty = true;
+        updateTabsUi();
+      }
+    }, 500),
+  );
 
   state.modeler.on("selection.changed", (event: any) => {
     const element = event.newSelection?.[0] || null;
-    const type = element ? String(element.type).replace("bpmn:", "") : "Sin selección";
+    const type = element
+      ? String(element.type).replace("bpmn:", "")
+      : "Sin selección";
     statusbar.setSelection(type);
   });
 }
@@ -287,7 +319,7 @@ async function init() {
   try {
     document.body.setAttribute("data-theme", state.theme);
     ui = resolveUi(APP_CONFIG.selectors);
-    
+
     statusbar = createStatusbar({
       statusElement: ui.statusText,
       selectionElement: ui.selectionText,
@@ -301,10 +333,10 @@ async function init() {
       propertiesPanel: true,
       zeebeSupport: true,
     });
-    
+
     bindModelerEvents();
     bindToolbar();
-    
+
     state.sidebar = createSidebar({
       sidebarElement: ui.propertiesSidebar,
       toggleButton: ui.btnToggleProperties,
@@ -315,19 +347,17 @@ async function init() {
           if (isOpen) attachPropertiesPanel(state.modeler, ui.properties);
           else detachPropertiesPanel(state.modeler);
         }
-      }
+      },
     });
 
     on(ui.btnAddTab, "click", handleNewTab);
     on(ui.btnCloseModal, "click", () => ui.shortcutsModal.close());
     on(ui.btnCloseCloudModal, "click", () => ui.cloudModal.close());
     on(ui.btnCloudSync, "click", handleCloudSync);
-    
-    // Drag & Drop
+
     const canvasEl = ui.canvas;
     on(canvasEl, "dragover", handleDragOver);
     on(canvasEl, "drop", handleDrop);
-
     await handleNewTab();
     showToast("Bienvenido al Modelador BPMN", "success");
   } catch (error) {
@@ -336,5 +366,3 @@ async function init() {
 }
 
 init();
-
-

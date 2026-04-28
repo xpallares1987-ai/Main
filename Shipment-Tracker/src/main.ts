@@ -1,3 +1,4 @@
+import '../assets/css/style.css';
 import { ShipmentService } from "./services/shipmentService";
 import { AgentService } from "./services/agentService";
 import { MapService } from "./services/mapService";
@@ -194,3 +195,5 @@ async function initApp() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+
+
