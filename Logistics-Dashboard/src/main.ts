@@ -173,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAll();
     });
 
-    // Global click listener to close multi-selects
     window.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
         if (!target.matches('.ms-anchor') && !target.closest('.ms-anchor') && !target.closest('.ms-list')) {
