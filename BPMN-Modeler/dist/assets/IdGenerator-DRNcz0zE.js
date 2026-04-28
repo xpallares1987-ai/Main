@@ -1,0 +1,1 @@
+function e(e){return e.childNodes[0]}function t(e){return e.parentNode.childNodes[1]}function n(e){this._counter=0,this._prefix=(e?e+`-`:``)+Math.floor(Math.random()*1e9)+`-`}n.prototype.next=function(){return this._prefix+ ++this._counter};export{t as n,e as r,n as t};
