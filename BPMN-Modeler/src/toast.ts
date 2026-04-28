@@ -3,7 +3,11 @@ import { qs } from "shared-utils";
 
 export type ToastType = "info" | "success" | "warning" | "error";
 
-export function showToast(message: string, type: ToastType = "info", duration: number = 4000) {
+export function showToast(
+  message: string,
+  type: ToastType = "info",
+  duration: number = 4000,
+) {
   const container = qs(APP_CONFIG.selectors.toastContainer);
   if (!container) return;
 
@@ -13,13 +17,11 @@ export function showToast(message: string, type: ToastType = "info", duration: n
 
   container.appendChild(toast);
 
-  // Forzar reflow para animación
   toast.offsetHeight;
   toast.classList.add("toast--visible");
 
   const removeToast = () => {
     toast.classList.remove("toast--visible");
-    // Usar un temporizador de seguridad además del transitionend
     setTimeout(() => {
       if (toast.parentNode) {
         toast.remove();
