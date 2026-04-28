@@ -14,6 +14,7 @@ export const getBaseViteConfig = (basePath: string): UserConfigExport => ({
               return 'vendor';
             }
           }
+          return null;
         }
       }
     }
