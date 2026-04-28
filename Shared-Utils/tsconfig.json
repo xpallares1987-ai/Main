@@ -8,7 +8,13 @@
     "strict": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "shared-utils": [
+        "shared-utils/src"
+      ]
+    }
   },
   "include": ["src"]
 }
