@@ -1,4 +1,4 @@
-# Torre de Control - Monorepo
+# Torre de Control
 
 Este es el repositorio central (Monorepo) que agrupa diversas aplicaciones industriales y de logística desarrolladas con estándares de alta calidad, Vanilla CSS y TypeScript estricto.
 
