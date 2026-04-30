@@ -1,1 +1,0 @@
-function e(e){return CSS.escape(e)}var t={"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`,"'":`&#39;`};function n(e){return e=``+e,e&&e.replace(/[&<>"']/g,function(e){return t[e]})}export{n,e as t};
