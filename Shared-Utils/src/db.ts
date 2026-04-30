@@ -3,7 +3,7 @@ import Dexie, { Table } from 'dexie';
 export interface LocalData {
   id?: number;
   key: string;
-  value: any;
+  value: unknown;
   updatedAt: number;
 }
 
@@ -17,7 +17,7 @@ export class SharedDatabase extends Dexie {
     });
   }
 
-  async set(key: string, value: any) {
+  async set(key: string, value: unknown) {
     const existing = await this.settings.where({ key }).first();
     if (existing) {
       return this.settings.update(existing.id!, { value, updatedAt: Date.now() });

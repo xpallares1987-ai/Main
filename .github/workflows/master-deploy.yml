@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
 
+# Cancelar ejecuciones en curso si se pushea algo nuevo a la misma rama
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pages: write

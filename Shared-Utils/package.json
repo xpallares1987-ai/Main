@@ -13,6 +13,9 @@
   },
   "scripts": {
     "build": "tsc",
+    "type-check": "tsc",
+    "lint": "eslint \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "test": "vitest --environment jsdom"
   }
 }

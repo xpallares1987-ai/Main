@@ -9,6 +9,7 @@
     "type-check": "tsc",
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"index.html\"",
     "test": "vitest"
   },
   "dependencies": {

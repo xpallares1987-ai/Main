@@ -11,6 +11,13 @@
     },
     "lint": {
       "outputs": []
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"],
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
     }
   }
 }

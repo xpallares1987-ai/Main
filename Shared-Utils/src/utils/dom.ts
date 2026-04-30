@@ -10,7 +10,12 @@ export function qsa(selector: string, context: HTMLElement | Document = document
   return context.querySelectorAll(selector);
 }
 
-export function on(element: HTMLElement | Window | Document | null, event: string, handler: any, options?: any): Function {
+export function on(
+  element: HTMLElement | Window | Document | null,
+  event: string,
+  handler: (e: Event) => void,
+  options?: boolean | AddEventListenerOptions
+): () => void {
   if (!element) return () => {};
   element.addEventListener(event, handler, options);
   return () => element.removeEventListener(event, handler, options);
@@ -25,17 +30,17 @@ export function escapeHTML(str: string): string {
         .replace(/'/g, "&#039;");
 }
 
-export function debounce(fn: Function, delay: number = 250) {
-    let timeoutId: any;
-    return (...args: any[]) => {
+export function debounce<T extends (...args: unknown[]) => void>(fn: T, delay: number = 250) {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return (...args: Parameters<T>) => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => fn(...args), delay);
     };
 }
 
-export function throttle(fn: Function, delay: number = 250) {
+export function throttle<T extends (...args: unknown[]) => void>(fn: T, delay: number = 250) {
     let waiting = false;
-    return (...args: any[]) => {
+    return (...args: Parameters<T>) => {
       if (waiting) return;
       waiting = true;
       fn(...args);
@@ -50,12 +55,12 @@ export function ensureExtension(fileName: string, ext: string = ".bpmn"): string
     return safeName.toLowerCase().endsWith(ext.toLowerCase()) ? safeName : `${safeName}${ext}`;
 }
 
-export function formatError(error: any, prefix = "Error"): string {
+export function formatError(error: unknown, prefix = "Error"): string {
     const msg = error instanceof Error ? error.message : String(error);
     return `${prefix}: ${msg}`;
 }
 
-export function safeTrim(str: any, fallback: string): string {
+export function safeTrim(str: unknown, fallback: string): string {
     if (typeof str !== "string") return fallback;
     const trimmed = str.trim();
     return trimmed.length > 0 ? trimmed : fallback;

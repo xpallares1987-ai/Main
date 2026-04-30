@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { qs, on, escapeHTML, ensureExtension, formatError, safeTrim, getFileNameFromPath } from './dom';
+import { describe, it, expect } from 'vitest';
+import { qs, escapeHTML, ensureExtension, safeTrim, getFileNameFromPath } from './dom';
 
 describe('DOM and String Utilities', () => {
   it('qs should return an element or null', () => {

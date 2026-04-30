@@ -1,0 +1,29 @@
+name: Propuesta de Mejora / Feature Request
+description: Sugiere una idea o funcionalidad para el ecosistema Torre de Control.
+title: "[FEAT]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: ¿Qué problema resuelve esta funcionalidad?
+      description: Explica brevemente el caso de uso o la necesidad.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Descripción de la Solución
+      description: Una descripción clara de lo que quieres que suceda.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas Consideradas
+      description: ¿Has pensado en otras formas de resolverlo?
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto Adicional
+      description: Capturas de pantalla, prototipos o cualquier otra información.
