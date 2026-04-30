@@ -7,7 +7,7 @@
     <meta name="referrer" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
     <title>
-      BPMN 2.0 Interactive Modeler
+      BPMN Modeler - Logistics Operations
     </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -185,6 +185,23 @@
           Sincronizar ahora
         </button>
       </form>
+    </dialog>
+
+    <dialog id="logisticsModal" class="modal" style="max-width: 800px;">
+      <div class="modal__header">
+        <h2 class="modal__title">
+          Plantillas de Freight Forwarding
+        </h2>
+        <button id="btnCloseLogisticsModal" class="btn--close" type="button">&times;</button>
+      </div>
+      <div class="modal__body">
+        <p style="margin-bottom: 1.5rem; color: var(--text-color); opacity: 0.8;">
+          Selecciona un proceso predefinido para comenzar rápidamente con tus operaciones logísticas.
+        </p>
+        <div id="logisticsTemplatesList" class="templates-grid">
+          <!-- Las plantillas se renderizarán dinámicamente -->
+        </div>
+      </div>
     </dialog>
 
     <script type="module" src="./src/main.ts"></script>

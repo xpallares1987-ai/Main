@@ -1,3 +1,4 @@
+import '../../Shared-Utils/src/theme.css';
 import '../assets/css/style.css';
 import { ShipmentService } from "./services/shipmentService";
 import { AgentService } from "./services/agentService";

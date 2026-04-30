@@ -1,16 +1,16 @@
 :root {
-    --bg: #0f172a;
-    --card: #1e293b;
-    --primary: #0ea5e9; /* Cyan 600 */
-    --cyan: #22d3ee;
-    --emerald: #10b981;
-    --slate: #94a3b8;
-    --text: #f8fafc;
-    --text-soft: #94a3b8;
-    --border: #334155;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
+    --bg: var(--ff-bg-app, #f8fafc);
+    --card: var(--ff-bg-card, #ffffff);
+    --primary: var(--ff-blue, #2563eb);
+    --cyan: var(--ff-blue, #2563eb);
+    --emerald: var(--ff-success, #10b981);
+    --slate: var(--ff-text-soft, #64748b);
+    --text: var(--ff-text-main, #1e293b);
+    --text-soft: var(--ff-text-soft, #64748b);
+    --border: var(--ff-border, #e2e8f0);
+    --success: var(--ff-success, #10b981);
+    --warning: var(--ff-orange, #f97316);
+    --danger: var(--ff-danger, #ef4444);
 }
 
 body { 
@@ -22,18 +22,64 @@ body {
 }
 
 .header { 
-    background: #020617; 
+    background: var(--ff-navy, #0f172a); 
     padding: 1rem 2rem; 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-    border-bottom: 1px solid var(--border); 
+    border-bottom: 3px solid var(--primary); 
     position: sticky;
     top: 0;
     z-index: 1000;
+    color: white;
 }
 
-.header__brand { display: flex; align-items: center; gap: 12px; }
+.header__brand h1 {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.nav-link.active {
+    background: var(--ff-blue-light);
+    color: var(--ff-blue-dark);
+}
+
+.stat-card { 
+    background: var(--card); 
+    padding: 1.5rem; 
+    border-radius: var(--ff-radius); 
+    border: 1px solid var(--border); 
+    border-top: 5px solid var(--primary);
+    box-shadow: var(--ff-shadow-sm);
+}
+
+.card { 
+    background: var(--card); 
+    padding: 1.75rem; 
+    border-radius: var(--ff-radius); 
+    border: 1px solid var(--border); 
+    position: relative; 
+    box-shadow: var(--ff-shadow-sm);
+}
+
+.card:hover { 
+    border-color: var(--primary); 
+    box-shadow: var(--ff-shadow-md);
+}
+
+.btn-primary {
+    background: var(--ff-blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--ff-blue-dark);
+}
+
+.btn-secondary:active, .btn-secondary.active {
+    background: var(--ff-blue);
+    color: white;
+}
 
 .live-indicator {
     display: flex;

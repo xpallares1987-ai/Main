@@ -1,3 +1,4 @@
+import '../../Shared-Utils/src/theme.css';
 import '../assets/css/app.css';
 import { state, resetState } from './state';
 import { generateAIInsights } from './services/aiAnalyzer';
@@ -141,8 +142,32 @@ async function handleFileUpload(e: Event) {
     }
 }
 
+import { sampleFreightForwardingData } from './services/sampleData';
+
+function loadSampleData() {
+    resetState();
+    state.db = sampleFreightForwardingData;
+    const sheets = Object.keys(state.db);
+    
+    if (sheets.length > 0) {
+        state.currentTab = sheets[0];
+        renderSheetSelect(sheets);
+        state.filterRes = [...state.db[state.currentTab]];
+        buildFilters(applyFilters);
+        renderAll();
+        
+        const dashboardUI = qs('#dashboardUI');
+        const uploadPanel = qs('#uploadPanel');
+        if (dashboardUI) dashboardUI.style.display = 'block';
+        if (uploadPanel) uploadPanel.style.display = 'none';
+        
+        showToast("Datos de Ejemplo Cargados", "Se ha estructurado un ecosistema de Freight Forwarding ficticio para demostración.", false);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const excelInput = qs('#excelInput');
+    const btnLoadSample = qs('#btnLoadSample');
     const btnReset = qs('#btnReset');
     const btnApply = qs('#btnApply');
     const tabChartsBtn = qs('#tabChartsBtn');
@@ -153,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sheetSelect = qs('#sheetSelect');
 
     excelInput?.addEventListener('change', handleFileUpload);
+    btnLoadSample?.addEventListener('click', loadSampleData);
     btnReset?.addEventListener('click', resetFilters);
     btnApply?.addEventListener('click', applyFilters);
     tabChartsBtn?.addEventListener('click', () => switchTab('tab-charts'));

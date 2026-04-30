@@ -38,6 +38,9 @@ export interface AppUi {
   tabsContainer: HTMLElement;
   btnAddTab: HTMLButtonElement;
   toastContainer: HTMLElement;
+  logisticsModal: HTMLDialogElement;
+  btnCloseLogisticsModal: HTMLButtonElement;
+  logisticsTemplatesList: HTMLElement;
 }
 
 export interface AppState {

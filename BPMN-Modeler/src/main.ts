@@ -167,22 +167,91 @@ async function handleOpenDiagram() {
 }
 
 async function handleLogisticsTemplate() {
-  const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
-  const templatePath =
-    activeTab?.name === "exportacion-maritima.bpmn"
-      ? APP_CONFIG.paths.logisticsSeaImport
-      : APP_CONFIG.paths.logisticsSeaExport;
+  const templates = [
+    {
+      name: "Exportación Marítima",
+      path: APP_CONFIG.paths.logisticsSeaExport,
+      icon: "🚢",
+      desc: "Gestión de envíos FCL/LCL vía mar.",
+    },
+    {
+      name: "Importación Marítima",
+      path: APP_CONFIG.paths.logisticsSeaImport,
+      icon: "⚓",
+      desc: "Recepción y seguimiento de carga.",
+    },
+    {
+      name: "Exportación Aérea",
+      path: APP_CONFIG.paths.logisticsAirExport,
+      icon: "✈️",
+      desc: "Procesos para carga aérea urgente.",
+    },
+    {
+      name: "Importación Aérea",
+      path: APP_CONFIG.paths.logisticsAirImport,
+      icon: "🛬",
+      desc: "Recepción y despacho de carga aérea.",
+    },
+    {
+      name: "Despacho de Aduanas",
+      path: APP_CONFIG.paths.logisticsCustoms,
+      icon: "🛂",
+      desc: "Validación y liberación de mercancía.",
+    },
+    {
+      name: "Recepción Almacén",
+      path: APP_CONFIG.paths.logisticsWarehouse,
+      icon: "🏢",
+      desc: "Control de entrada en bodega.",
+    },
+    {
+      name: "Consolidación LCL",
+      path: APP_CONFIG.paths.logisticsLclConsol,
+      icon: "📦",
+      desc: "Agrupación de carga parcial en contenedor.",
+    },
+    {
+      name: "Última Milla",
+      path: APP_CONFIG.paths.logisticsLastMile,
+      icon: "🚚",
+      desc: "Entrega final al cliente consignatario.",
+    },
+  ];
 
-  const templateName = templatePath.includes("export")
-    ? "exportacion-maritima.bpmn"
-    : "importacion-maritima.bpmn";
+  ui.logisticsTemplatesList.innerHTML = templates
+    .map(
+      (t) => `
+    <div class="template-card" data-path="${t.path}" data-name="${t.name}">
+      <div class="template-card__icon">${t.icon}</div>
+      <div class="template-card__name">${t.name}</div>
+      <div class="template-card__desc">${t.desc}</div>
+    </div>
+  `,
+    )
+    .join("");
 
-  try {
-    const xml = await loadXmlFromUrl(templatePath);
-    await loadDiagramInNewTab(xml, templateName);
-  } catch {
-    showToast("Error al cargar la plantilla", "error");
-  }
+  ui.logisticsTemplatesList
+    .querySelectorAll(".template-card")
+    .forEach((card) => {
+      on(card as HTMLElement, "click", async () => {
+        const path = card.getAttribute("data-path")!;
+        const name = card.getAttribute("data-name")!;
+        try {
+          const xml = await loadXmlFromUrl(path);
+          await loadDiagramInNewTab(
+            xml,
+            name.toLowerCase().replace(/ /g, "-") + ".bpmn",
+          );
+          ui.logisticsModal.close();
+          showToast(`Plantilla cargada: ${name}`, "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Error al cargar la plantilla", "error");
+        }
+      });
+    });
+
+  ui.logisticsModal.showModal();
 }
 
 async function handleSaveDiagram() {
@@ -368,6 +437,7 @@ async function init() {
     on(ui.btnAddTab, "click", handleNewTab);
     on(ui.btnCloseModal, "click", () => ui.shortcutsModal.close());
     on(ui.btnCloseCloudModal, "click", () => ui.cloudModal.close());
+    on(ui.btnCloseLogisticsModal, "click", () => ui.logisticsModal.close());
     
     const cloudForm = qs("#cloudForm");
     if (cloudForm) {

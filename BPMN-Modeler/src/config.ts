@@ -11,6 +11,12 @@ const APP_CONFIG = {
     mainDiagram: "./xml/diagrams/process-main.bpmn",
     logisticsSeaExport: "./xml/templates/sea-export.bpmn",
     logisticsSeaImport: "./xml/templates/sea-import.bpmn",
+    logisticsAirExport: "./xml/templates/air-export.bpmn",
+    logisticsAirImport: "./xml/templates/air-import.bpmn",
+    logisticsCustoms: "./xml/templates/customs-clearance.bpmn",
+    logisticsWarehouse: "./xml/templates/warehouse-receiving.bpmn",
+    logisticsLclConsol: "./xml/templates/lcl-consolidation.bpmn",
+    logisticsLastMile: "./xml/templates/last-mile.bpmn",
     appConfig: "./xml/config/app-config.xml",
     elementTemplates: "./.camunda/element-templates/",
   },
@@ -44,6 +50,9 @@ const APP_CONFIG = {
     tabsContainer: "#tabsContainer",
     btnAddTab: "#btnAddTab",
     toastContainer: "#toastContainer",
+    logisticsModal: "#logisticsModal",
+    btnCloseLogisticsModal: "#btnCloseLogisticsModal",
+    logisticsTemplatesList: "#logisticsTemplatesList",
   },
 
   storage: {
