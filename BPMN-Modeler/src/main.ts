@@ -18,7 +18,12 @@ import {
   openLocalXmlFromInput,
   downloadXmlFile,
 } from "./services/xml-service";
-import { encryptToken, decryptToken } from "./services/storage-service";
+import {
+  encryptToken,
+  decryptToken,
+  loadTabsSession,
+  saveTabsSession,
+} from "./services/storage-service";
 import { setDiagramName, renderTabs } from "./ui/render";
 import { createSidebar } from "./ui/sidebar";
 import { createStatusbar, Statusbar } from "./ui/statusbar";
@@ -113,6 +118,7 @@ async function handleSwitchTab(tabId: string) {
     await importDiagram(state.modeler, nextTab.xml);
     setDiagramName(ui.diagramName, nextTab.name);
     updateTabsUi();
+    saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
     showToast(`Cambiado a: ${nextTab.name}`, "info");
   }
 }
@@ -138,6 +144,7 @@ async function handleCloseTab(tabId: string) {
     await handleSwitchTab(nextTab.id);
   } else {
     updateTabsUi();
+    saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
   }
 }
 
@@ -381,13 +388,15 @@ function bindModelerEvents() {
   if (!state.modeler) return;
   state.modeler.on(
     "commandStack.changed",
-    debounce(() => {
+    debounce(async () => {
       const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
-      if (activeTab) {
+      if (activeTab && state.modeler) {
         activeTab.isDirty = true;
+        activeTab.xml = await getDiagramXml(state.modeler);
+        saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
         updateTabsUi();
       }
-    }, 500),
+    }, 1000),
   );
 
   state.modeler.on("selection.changed", (event: { newSelection?: Array<{ type: string }> }) => {
@@ -427,6 +436,11 @@ async function init() {
       initialOpen: state.propertiesPanelOpen,
       onChange: (isOpen: boolean) => {
         state.propertiesPanelOpen = isOpen;
+        const workspace = qs(".workspace");
+        if (workspace) {
+          if (isOpen) workspace.classList.remove("workspace--sidebar-hidden");
+          else workspace.classList.add("workspace--sidebar-hidden");
+        }
         if (state.modeler) {
           if (isOpen) attachPropertiesPanel(state.modeler, ui.properties);
           else detachPropertiesPanel(state.modeler);
@@ -438,7 +452,7 @@ async function init() {
     on(ui.btnCloseModal, "click", () => ui.shortcutsModal.close());
     on(ui.btnCloseCloudModal, "click", () => ui.cloudModal.close());
     on(ui.btnCloseLogisticsModal, "click", () => ui.logisticsModal.close());
-    
+
     const cloudForm = qs("#cloudForm");
     if (cloudForm) {
       on(cloudForm, "submit", (e: Event) => {
@@ -450,7 +464,15 @@ async function init() {
     const canvasEl = ui.canvas;
     on(canvasEl, "dragover", handleDragOver);
     on(canvasEl, "drop", handleDrop);
-    await handleNewTab();
+
+    const savedSession = loadTabsSession(APP_CONFIG.storage.keys);
+    if (savedSession && savedSession.tabs && savedSession.tabs.length > 0) {
+      state.tabs = savedSession.tabs;
+      await handleSwitchTab(savedSession.activeTabId || state.tabs[0].id);
+    } else {
+      await handleNewTab();
+    }
+
     showToast("Bienvenido al Modelador BPMN", "success");
   } catch (error) {
     console.error(error);

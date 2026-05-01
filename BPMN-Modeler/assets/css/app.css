@@ -139,6 +139,12 @@ body {
   gap: 12px;
   min-height: 0;
   padding: 12px;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.workspace--sidebar-hidden {
+  grid-template-columns: 1fr 0px;
+  gap: 0;
 }
 
 .canvas-panel,
@@ -150,6 +156,10 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+
+.sidebar--hidden {
+  display: none !important;
 }
 
 .canvas-panel {

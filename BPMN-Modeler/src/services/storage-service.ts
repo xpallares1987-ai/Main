@@ -120,3 +120,27 @@ export function loadUiSession(keys: StorageKeys) {
     return null;
   }
 }
+
+export function saveTabsSession(
+  keys: StorageKeys,
+  tabs: any[],
+  activeTabId: string,
+) {
+  if (!keys.tabsState) return false;
+  const payload = JSON.stringify({ tabs, activeTabId });
+  return safeSetItem(keys.tabsState, payload);
+}
+
+export function loadTabsSession(keys: StorageKeys): {
+  tabs: any[];
+  activeTabId: string;
+} | null {
+  if (!keys.tabsState) return null;
+  const raw = safeGetItem(keys.tabsState);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}

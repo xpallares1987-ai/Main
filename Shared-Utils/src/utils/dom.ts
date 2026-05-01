@@ -10,10 +10,28 @@ export function qsa(selector: string, context: HTMLElement | Document = document
   return context.querySelectorAll(selector);
 }
 
+export function on<K extends keyof HTMLElementEventMap>(
+  element: HTMLElement | null,
+  event: K,
+  handler: (e: HTMLElementEventMap[K]) => any,
+  options?: boolean | AddEventListenerOptions
+): () => void;
+export function on<K extends keyof WindowEventMap>(
+  element: Window | null,
+  event: K,
+  handler: (e: WindowEventMap[K]) => any,
+  options?: boolean | AddEventListenerOptions
+): () => void;
+export function on<K extends keyof DocumentEventMap>(
+  element: Document | null,
+  event: K,
+  handler: (e: DocumentEventMap[K]) => any,
+  options?: boolean | AddEventListenerOptions
+): () => void;
 export function on(
   element: HTMLElement | Window | Document | null,
   event: string,
-  handler: (e: Event) => void,
+  handler: (e: any) => any,
   options?: boolean | AddEventListenerOptions
 ): () => void {
   if (!element) return () => {};
