@@ -10,6 +10,7 @@ import { debounce } from "shared-utils";
 import { I18nService } from "./services/i18nService";
 import { ExportService } from "./services/exportService";
 import { ChartService } from "./services/chartService";
+import { ExcelService } from "./services/excelService";
 import { Shipment, Agent, ShipmentFilters } from "./types";
 
 interface AppState {
@@ -196,6 +197,25 @@ async function initApp() {
     state.showAnalytics = !state.showAnalytics;
     const panel = document.getElementById("analyticsPanel");
     if (panel) panel.style.display = state.showAnalytics ? 'grid' : 'none';
+  });
+
+  const btnImport = document.getElementById("btnImport");
+  const excelInput = document.getElementById("excelInput") as HTMLInputElement;
+
+  btnImport?.addEventListener("click", () => excelInput?.click());
+  excelInput?.addEventListener("change", async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    try {
+      const newShipments = await ExcelService.parseShipments(file);
+      state.allShipments = [...state.allShipments, ...newShipments];
+      await ShipmentService.saveShipments(state.allShipments);
+      updateView();
+      Toast.show(`Importados ${newShipments.length} embarques`, "success");
+    } catch (err) {
+      console.error(err);
+      Toast.show("Error al importar archivo", "error");
+    }
   });
 
   navDash?.addEventListener('click', () => switchView('dashboard'));

@@ -31,13 +31,14 @@ export interface Agent {
   specialties: string[];
 }
 
-export type ShipmentStatus = 'booking' | 'transit' | 'customs' | 'delivered';
+export type ShipmentStatus = 'booking' | 'transit' | 'customs' | 'delivered' | 'delayed';
 export type ShipmentMode = 'sea' | 'air' | 'land';
 
 export interface Shipment {
   id: string;
   reference: string;
   container: string;
+  carrier?: string;
   origin: string;
   destination: string;
   originCoords: [number, number];

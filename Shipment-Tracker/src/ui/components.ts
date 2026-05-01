@@ -52,6 +52,8 @@ export const UIComponents = {
     const statusColor = s.status === 'delivered' ? 'var(--success)' :
                        s.status === 'customs' ? 'var(--warning)' : 'var(--primary)';
 
+    const trackingLink = this.getTrackingLink(s.container, s.carrier);
+
     return `
       <div class="card ${exceptions.length > 0 ? 'card--exception' : ''}" data-id="${s.id}">
         <div class="card-status" style="color: ${statusColor}">${(t[s.status as TranslationKey] || s.status).toUpperCase()}</div>
@@ -62,11 +64,32 @@ export const UIComponents = {
         ${exceptions.map(e => `<div class="exception-badge ${e.type === 'delay' ? 'delay' : 'critical'}">⚠️ ${t[`${e.type}Alert` as TranslationKey] || e.message}</div>`).join('')}
         <div class="info-row"><span class="info-label">${t.route}:</span><span>${escapeHTML(s.origin)} ➔ ${escapeHTML(s.destination)}</span></div>
         <div class="info-row"><span class="info-label">${t.container}:</span><span class="${!isContainerValid ? 'text-danger' : ''}">${escapeHTML(s.container)}</span></div>
+        ${s.carrier ? `<div class="info-row"><span class="info-label">Carrier:</span><span>${escapeHTML(s.carrier)}</span></div>` : ''}
         <div class="info-row"><span class="info-label">${t.eta}:</span><span class="eta-value">${escapeHTML(s.eta)}</span></div>
         <div class="timeline">${s.milestones.map(m => this.renderMilestone(m)).join('')}</div>
-        <div class="card-actions"><button class="btn-details" onclick="window.showDetails('${s.id}')">${exceptions.length > 0 ? t.analyzeException : t.viewDetails}</button></div>
+        <div class="card-actions" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+          <button class="btn-details" style="flex: 2;" onclick="window.showDetails('${s.id}')">${exceptions.length > 0 ? t.analyzeException : t.viewDetails}</button>
+          ${trackingLink ? `<a href="${trackingLink}" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; background: rgba(0,255,255,0.1); border: 1px solid var(--cyan); color: var(--cyan);">🌐 Track</a>` : ''}
+        </div>
       </div>
     `;
+  },
+
+  getTrackingLink(container: string, carrier?: string): string | null {
+    if (!container) return null;
+    const c = (carrier || '').toLowerCase();
+    const cont = container.trim();
+
+    if (c.includes('msc')) return `https://www.msc.com/en/track-a-shipment?query=${cont}`;
+    if (c.includes('maersk')) return `https://www.maersk.com/tracking/${cont}`;
+    if (c.includes('hapag') || c.includes('hl')) return `https://www.hapag-lloyd.com/en/online-business/track-and-trace/container-tracing.html?container=${cont}`;
+    if (c.includes('cosco')) return `https://world.lines.coscoshipping.com/track/container/${cont}`;
+    if (c.includes('cma')) return `https://www.cma-cgm.com/ebusiness/tracking/search?SearchBy=Container&Reference=${cont}`;
+    
+    // Generic search as fallback if carrier is known but not mapped
+    if (carrier) return `https://www.google.com/search?q=${encodeURIComponent(carrier + ' tracking ' + cont)}`;
+    
+    return null;
   },
 
   renderMilestone(m: Milestone) {
