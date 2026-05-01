@@ -172,6 +172,10 @@
         <button id="btnCloseCloudModal" class="btn--close" type="button">&times;</button>
       </div>
       <form id="cloudForm" class="modal__body" autocomplete="on">
+        <!-- Accessibility: Hidden username field for password manager compatibility -->
+        <div style="display:none;">
+          <input type="text" name="username" autocomplete="username" value="GitHub-User">
+        </div>
         <div class="form-group">
           <label for="githubToken">
             Personal Access Token
