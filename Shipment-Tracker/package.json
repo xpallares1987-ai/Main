@@ -14,12 +14,9 @@
   },
   "dependencies": {
     "lucide-static": "^0.372.0",
-    "vite-plugin-pwa": "^1.2.0",
-    "shared-utils": "*"
+    "vite-plugin-pwa": "^1.2.0"
   },
   "devDependencies": {
     "vite": "^8.0.10"
   }
 }
-
-

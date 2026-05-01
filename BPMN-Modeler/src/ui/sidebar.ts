@@ -1,4 +1,4 @@
-import { ensureElement, qs } from "shared-utils";
+import { ensureElement, qs } from "../utils/dom";
 
 export interface Sidebar {
   toggle: () => void;

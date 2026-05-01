@@ -1,4 +1,4 @@
-import { ensureElement } from "shared-utils";
+import { ensureElement } from "../utils/dom";
 import { DiagramTab } from "../types";
 
 export function setDiagramName(element: HTMLElement, fileName: string) {

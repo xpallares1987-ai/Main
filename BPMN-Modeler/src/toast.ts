@@ -1,5 +1,5 @@
 import APP_CONFIG from "./config";
-import { qs } from "shared-utils";
+import { qs } from "./utils/dom";
 
 export type ToastType = "info" | "success" | "warning" | "error";
 

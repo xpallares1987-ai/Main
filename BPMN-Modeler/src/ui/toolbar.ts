@@ -1,4 +1,4 @@
-import { ensureElement } from "shared-utils";
+import { ensureElement } from "../utils/dom";
 import { AppUi } from "../types";
 
 export interface Toolbar {

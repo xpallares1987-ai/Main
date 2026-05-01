@@ -1,4 +1,4 @@
-import '../../Shared-Utils/src/theme.css';
+import '../assets/css/shared-theme.css';
 import '../assets/css/app.css';
 import { state, resetState } from './state';
 import { generateAIInsights } from './services/aiAnalyzer';
@@ -11,7 +11,7 @@ import {
     updateActiveFiltersDisplay,
     showToast
 } from './ui/render';
-import { qs } from "shared-utils";
+import { qs } from "./utils/dom";
 import { FilterCriteria } from './types';
 
 function applyFilters() {
@@ -64,7 +64,7 @@ function resetFilters() {
 function renderAll() {
     updateKPIs();
     renderTable();
-    buildDynamicCharts(state.filterRes, 'chartsGrid');
+    buildDynamicCharts(state.filterRes);
     const aiSummary = qs('#aiSummary');
     if (aiSummary) aiSummary.innerHTML = generateAIInsights(state.filterRes);
 }
@@ -72,7 +72,7 @@ function renderAll() {
 function switchTab(tabId: string) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    
+
     qs(`#${tabId}`)?.classList.add('active');
     if (tabId === 'tab-charts') qs('#tabChartsBtn')?.classList.add('active');
     else qs('#tabDataBtn')?.classList.add('active');
@@ -92,11 +92,11 @@ async function handleFileUpload(e: Event) {
 
     try {
         resetState();
-        
+
         // Uso de Web Worker para procesamiento off-thread
         const worker = new Worker(new URL('./services/excelWorker.ts', import.meta.url), { type: 'module' });
         const arrayBuffer = await file.arrayBuffer();
-        
+
         worker.postMessage(arrayBuffer, [arrayBuffer]); // Transferencia de buffer para máxima eficiencia
 
         worker.onmessage = (event) => {
@@ -104,7 +104,7 @@ async function handleFileUpload(e: Event) {
             if (success) {
                 state.db = db;
                 const sheets = Object.keys(state.db);
-                
+
                 if (sheets.length > 0) {
                     state.currentTab = sheets[0];
                     renderSheetSelect(sheets);
@@ -148,19 +148,19 @@ function loadSampleData() {
     resetState();
     state.db = sampleFreightForwardingData;
     const sheets = Object.keys(state.db);
-    
+
     if (sheets.length > 0) {
         state.currentTab = sheets[0];
         renderSheetSelect(sheets);
         state.filterRes = [...state.db[state.currentTab]];
         buildFilters(applyFilters);
         renderAll();
-        
+
         const dashboardUI = qs('#dashboardUI');
         const uploadPanel = qs('#uploadPanel');
         if (dashboardUI) dashboardUI.style.display = 'block';
         if (uploadPanel) uploadPanel.style.display = 'none';
-        
+
         showToast("Datos de Ejemplo Cargados", "Se ha estructurado un ecosistema de Freight Forwarding ficticio para demostración.", false);
     }
 }
@@ -184,9 +184,9 @@ document.addEventListener('DOMContentLoaded', () => {
     tabChartsBtn?.addEventListener('click', () => switchTab('tab-charts'));
     tabDataBtn?.addEventListener('click', () => switchTab('tab-data'));
     btnPrev?.addEventListener('click', () => { if (state.pIndex > 1) { state.pIndex--; renderTable(); } });
-    btnNext?.addEventListener('click', () => { 
+    btnNext?.addEventListener('click', () => {
         const total = Math.ceil(state.filterRes.length / 50);
-        if (state.pIndex < total) { state.pIndex++; renderTable(); } 
+        if (state.pIndex < total) { state.pIndex++; renderTable(); }
     });
     tableSearch?.addEventListener('input', () => { state.pIndex = 1; renderTable(); });
 
@@ -206,7 +206,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
-
-
-

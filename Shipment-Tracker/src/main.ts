@@ -1,4 +1,4 @@
-import '../../Shared-Utils/src/theme.css';
+import '../assets/css/shared-theme.css';
 import '../assets/css/style.css';
 import { ShipmentService } from "./services/shipmentService";
 import { AgentService } from "./services/agentService";
@@ -6,7 +6,7 @@ import { MapService } from "./services/mapService";
 import { UIComponents } from "./ui/components";
 import { ModalUI } from "./ui/modal";
 import { Toast } from "./ui/toast";
-import { debounce } from "shared-utils";
+import { debounce } from "./utils/dom";
 import { I18nService } from "./services/i18nService";
 import { ExportService } from "./services/exportService";
 import { ChartService } from "./services/chartService";
@@ -43,8 +43,8 @@ interface CustomWindow extends Window {
 const customWindow = (window as unknown as CustomWindow);
 
 // Global exports for inline HTML handlers
-customWindow.setLanguage = (lang: 'es' | 'en') => { 
-  I18nService.setLang(lang); 
+customWindow.setLanguage = (lang: 'es' | 'en') => {
+  I18nService.setLang(lang);
   updateStaticTranslations();
   updateView();
 };
@@ -120,7 +120,7 @@ function updateStaticTranslations() {
     navCont: document.getElementById('nav-contacts'),
     agentsTitle: document.getElementById('txt-agents-title')
   };
-  
+
   if (els.title) els.title.textContent = t.title;
   if (els.live) els.live.textContent = t.liveData;
   if (els.search) (els.search as HTMLInputElement).placeholder = t.searchPlaceholder;
@@ -130,7 +130,7 @@ function updateStaticTranslations() {
   if (els.navDash) els.navDash.textContent = t.dashboard;
   if (els.navCont) els.navCont.textContent = t.contacts;
   if (els.agentsTitle) els.agentsTitle.textContent = t.agents;
-  
+
   const filterSelect = els.filter as HTMLSelectElement | null;
   if (filterSelect) {
     const currentVal = filterSelect.value || state.filters.status;
@@ -143,8 +143,8 @@ function updateStaticTranslations() {
     `;
     filterSelect.value = currentVal;
   }
-  document.querySelectorAll('.btn-lang').forEach(btn => { 
-    btn.classList.toggle('active', btn.textContent?.toLowerCase() === I18nService.lang); 
+  document.querySelectorAll('.btn-lang').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent?.toLowerCase() === I18nService.lang);
   });
 }
 
@@ -169,7 +169,7 @@ async function initApp() {
   MapService.init("map");
   ChartService.init();
   updateStaticTranslations();
-  
+
   const searchInput = document.getElementById("searchInput") as HTMLInputElement;
   const statusFilter = document.getElementById("statusFilter") as HTMLSelectElement;
   const btnExport = document.getElementById("btnExport");
@@ -192,7 +192,7 @@ async function initApp() {
   searchInput?.addEventListener("input", debounce(handleFilterChange, 300));
   statusFilter?.addEventListener("change", handleFilterChange);
   btnExport?.addEventListener("click", () => ExportService.exportToCSV(ShipmentService.filterShipments(state.allShipments, state.filters)));
-  
+
   btnAnalytics?.addEventListener("click", () => {
     state.showAnalytics = !state.showAnalytics;
     const panel = document.getElementById("analyticsPanel");
@@ -214,7 +214,7 @@ async function initApp() {
       Toast.show(`Importados ${newShipments.length} embarques`, "success");
     } catch (err) {
       console.error(err);
-      Toast.show("Error al importar archivo", "error");
+      Toast.show("Error al importar archivo", "error" as any);
     }
   });
 
@@ -227,5 +227,3 @@ async function initApp() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
-
-

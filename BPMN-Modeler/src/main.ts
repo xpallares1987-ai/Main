@@ -35,7 +35,7 @@ import {
   ensureExtension,
   formatError,
   safeTrim,
-} from "shared-utils";
+} from "./utils/dom";
 import { showToast } from "./toast";
 import { AppUi, DiagramTab } from "./types";
 

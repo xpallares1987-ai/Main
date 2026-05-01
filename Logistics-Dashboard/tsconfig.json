@@ -18,12 +18,8 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "shared-utils": ["../Shared-Utils/src/index.ts"]
+      "@/*": ["src/*"]
     }
   },
-  "references": [{ "path": "../Shared-Utils" }],
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.js"]
 }
-
-
