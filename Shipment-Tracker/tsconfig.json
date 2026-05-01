@@ -14,12 +14,14 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true,
+    "allowJs": true,
     "baseUrl": ".",
     "paths": {
       "shared-utils": ["../Shared-Utils/src"]
     }
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.js"]
 }
 
 
