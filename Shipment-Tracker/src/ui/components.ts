@@ -1,5 +1,5 @@
 import { Shipment, Milestone, Agent } from '../types';
-import { escapeHTML } from "../../Shared-Utils/src/index";
+import { escapeHTML } from "shared-utils";
 import { ShipmentService } from '../services/shipmentService';
 import { I18nService, TranslationKey } from '../services/i18nService';
 import { ValidationUtils } from '../utils/validation';

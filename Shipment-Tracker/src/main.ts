@@ -6,7 +6,7 @@ import { MapService } from "./services/mapService";
 import { UIComponents } from "./ui/components";
 import { ModalUI } from "./ui/modal";
 import { Toast } from "./ui/toast";
-import { debounce } from "../../Shared-Utils/src/index";
+import { debounce } from "shared-utils";
 import { I18nService } from "./services/i18nService";
 import { ExportService } from "./services/exportService";
 import { ChartService } from "./services/chartService";

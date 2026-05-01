@@ -1,5 +1,5 @@
 import { DataRow } from '../types';
-import { escapeHTML } from "../../../Shared-Utils/src/index";
+import { escapeHTML } from "shared-utils";
 
 export function getTop(data: DataRow[], col: string): string | null {
     if(!data.length || data[0][col] === undefined) return null;

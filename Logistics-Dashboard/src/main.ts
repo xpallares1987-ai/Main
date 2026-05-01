@@ -11,7 +11,7 @@ import {
     updateActiveFiltersDisplay,
     showToast
 } from './ui/render';
-import { qs } from "../../Shared-Utils/src/index";
+import { qs } from "shared-utils";
 import { FilterCriteria } from './types';
 
 function applyFilters() {

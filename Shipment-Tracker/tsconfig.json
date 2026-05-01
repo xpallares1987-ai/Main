@@ -19,11 +19,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "shared-utils": ["../Shared-Utils/src/index"]
-    },
-    "rootDirs": [".", "../Shared-Utils"]
+      "shared-utils": ["../Shared-Utils/src/index.ts"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.js", "../Shared-Utils/src/**/*.ts"]
+  "references": [{ "path": "../Shared-Utils" }],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.js"]
 }
 
 

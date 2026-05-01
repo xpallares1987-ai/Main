@@ -1,7 +1,7 @@
 import { Chart, registerables, ChartType } from 'chart.js';
 import { DataRow } from '../types';
 import { BLACK_FILTERS, PALETTES } from '../config';
-import { escapeHTML, hexToRgbA } from "../../../Shared-Utils/src/index";
+import { escapeHTML, hexToRgbA } from "shared-utils";
 
 Chart.register(...registerables);
 
