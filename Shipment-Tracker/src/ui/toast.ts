@@ -1,5 +1,5 @@
 export const Toast = {
-  show(message: string, type: 'success' | 'info' | 'warning' = 'info') {
+  show(message: string, type: 'success' | 'info' | 'warning' | 'error' = 'info') {
     const container = document.getElementById('toast-container') || this.createContainer();
     const toast = document.createElement('div');
     toast.className = `toast toast--${type}`;

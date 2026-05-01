@@ -252,6 +252,7 @@ body {
 .toast--visible { transform: translateX(0); }
 .toast--success { border-left-color: var(--emerald); }
 .toast--warning { border-left-color: var(--warning); }
+.toast--error { border-left-color: var(--danger); }
 
 /* Modal Simulation */
 .modal-overlay {
