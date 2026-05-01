@@ -1,11 +1,28 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { getBaseViteConfig } from '../Shared-Utils/src/vite.config.shared';
-import { mergeConfig } from 'vite';
+import path from 'path';
 
-const baseConfig = getBaseViteConfig(__dirname);
-
-export default defineConfig(mergeConfig(baseConfig, {
+export default defineConfig({
+  base: './',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules') && (id.includes('leaflet') || id.includes('apexcharts') || id.includes('xlsx'))) {
+            return 'vendor';
+          }
+          return null;
+        }
+      }
+    }
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
@@ -30,4 +47,4 @@ export default defineConfig(mergeConfig(baseConfig, {
       }
     })
   ]
-}));
+});
