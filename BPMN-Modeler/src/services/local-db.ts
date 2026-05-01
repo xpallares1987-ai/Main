@@ -34,3 +34,5 @@ export class SharedDatabase extends Dexie {
     return this.settings.clear();
   }
 }
+
+export const db = new SharedDatabase("BpmnModelerDB");

@@ -118,7 +118,7 @@ async function handleSwitchTab(tabId: string) {
     await importDiagram(state.modeler, nextTab.xml);
     setDiagramName(ui.diagramName, nextTab.name);
     updateTabsUi();
-    saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
+    await saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
     showToast(`Cambiado a: ${nextTab.name}`, "info");
   }
 }
@@ -144,7 +144,7 @@ async function handleCloseTab(tabId: string) {
     await handleSwitchTab(nextTab.id);
   } else {
     updateTabsUi();
-    saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
+    await saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
   }
 }
 
@@ -393,7 +393,7 @@ function bindModelerEvents() {
       if (activeTab && state.modeler) {
         activeTab.isDirty = true;
         activeTab.xml = await getDiagramXml(state.modeler);
-        saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
+        await saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
         updateTabsUi();
       }
     }, 1000),
@@ -465,7 +465,7 @@ async function init() {
     on(canvasEl, "dragover", handleDragOver);
     on(canvasEl, "drop", handleDrop);
 
-    const savedSession = loadTabsSession(APP_CONFIG.storage.keys);
+    const savedSession = await loadTabsSession(APP_CONFIG.storage.keys);
     if (savedSession && savedSession.tabs && savedSession.tabs.length > 0) {
       state.tabs = savedSession.tabs;
       await handleSwitchTab(savedSession.activeTabId || state.tabs[0].id);

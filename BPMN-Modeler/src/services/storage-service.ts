@@ -1,4 +1,6 @@
-async function getEncryptionKey(pin: string) {
+import { db } from "./local-db";
+
+async function getEncryptionKey(pin: string, salt: Uint8Array) {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
@@ -10,7 +12,7 @@ async function getEncryptionKey(pin: string) {
   return crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
-      salt: enc.encode("bpmn-modeler-salt"),
+      salt: salt as any,
       iterations: 100000,
       hash: "SHA-256",
     },
@@ -22,7 +24,8 @@ async function getEncryptionKey(pin: string) {
 }
 
 export async function encryptToken(token: string, pin: string): Promise<string> {
-  const key = await getEncryptionKey(pin);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const key = await getEncryptionKey(pin, salt);
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encodedToken = new TextEncoder().encode(token);
   const ciphertext = await crypto.subtle.encrypt(
@@ -31,9 +34,10 @@ export async function encryptToken(token: string, pin: string): Promise<string> 
     encodedToken
   );
   
-  const combined = new Uint8Array(iv.length + ciphertext.byteLength);
-  combined.set(iv);
-  combined.set(new Uint8Array(ciphertext), iv.length);
+  const combined = new Uint8Array(salt.length + iv.length + ciphertext.byteLength);
+  combined.set(salt);
+  combined.set(iv, salt.length);
+  combined.set(new Uint8Array(ciphertext), salt.length + iv.length);
   
   return btoa(String.fromCharCode(...combined));
 }
@@ -41,9 +45,10 @@ export async function encryptToken(token: string, pin: string): Promise<string> 
 export async function decryptToken(encrypted: string, pin: string): Promise<string> {
   try {
     const combined = new Uint8Array(atob(encrypted).split("").map(c => c.charCodeAt(0)));
-    const iv = combined.slice(0, 12);
-    const ciphertext = combined.slice(12);
-    const key = await getEncryptionKey(pin);
+    const salt = combined.slice(0, 16);
+    const iv = combined.slice(16, 28);
+    const ciphertext = combined.slice(28);
+    const key = await getEncryptionKey(pin, salt);
     
     const decrypted = await crypto.subtle.decrypt(
       { name: "AES-GCM", iv },
@@ -121,25 +126,24 @@ export function loadUiSession(keys: StorageKeys) {
   }
 }
 
-export function saveTabsSession(
+export async function saveTabsSession(
   keys: StorageKeys,
   tabs: any[],
   activeTabId: string,
 ) {
   if (!keys.tabsState) return false;
-  const payload = JSON.stringify({ tabs, activeTabId });
-  return safeSetItem(keys.tabsState, payload);
+  const payload = { tabs, activeTabId };
+  await db.set(keys.tabsState, payload);
+  return true;
 }
 
-export function loadTabsSession(keys: StorageKeys): {
+export async function loadTabsSession(keys: StorageKeys): Promise<{
   tabs: any[];
   activeTabId: string;
-} | null {
+} | null> {
   if (!keys.tabsState) return null;
-  const raw = safeGetItem(keys.tabsState);
-  if (!raw) return null;
   try {
-    return JSON.parse(raw);
+    return await db.get(keys.tabsState, null);
   } catch {
     return null;
   }
