@@ -37,6 +37,10 @@ jobs:
       - name: Prepare Out Dir
         run: mkdir -p out
 
+      # BUILD Shared Utils (REQUIRED by other projects)
+      - name: Build Shared Utils
+        run: npm run build --workspace=shared-utils
+
       # BUILD BPMN Modeler
       - name: Build BPMN Modeler
         run: |
