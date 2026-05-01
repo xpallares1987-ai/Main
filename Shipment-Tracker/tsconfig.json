@@ -13,7 +13,11 @@
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "baseUrl": ".",
+    "paths": {
+      "shared-utils": ["../Shared-Utils/src"]
+    }
   },
   "include": ["src"]
 }
