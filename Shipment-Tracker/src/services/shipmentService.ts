@@ -1,5 +1,5 @@
 import { Shipment, ShipmentFilters, Note, AuditLog } from '../types';
-import { SharedDatabase } from 'shared-utils';
+import { SharedDatabase } from '../../Shared-Utils/src/index';
 
 const db = new SharedDatabase('shipment_tracker_db');
 

@@ -1,5 +1,5 @@
 import { Shipment } from "../types";
-import { escapeHTML } from "shared-utils";
+import { escapeHTML } from "../../Shared-Utils/src/index";
 import { I18nService, TranslationKey } from "../services/i18nService";
 
 const getIconPath = (mode: string) => {

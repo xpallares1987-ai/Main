@@ -1,7 +1,7 @@
 import { state } from '../state';
 import { FilterCriteria } from '../types';
 import { BLACK_COLS, BLACK_FILTERS, PAGE_SIZE } from '../config';
-import { escapeHTML, qs } from "shared-utils";
+import { escapeHTML, qs } from "../../../Shared-Utils/src/index";
 import { UIComponents } from './components';
 
 export function renderSheetSelect(names: string[]) {
