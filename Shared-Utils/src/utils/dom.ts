@@ -10,33 +10,16 @@ export function qsa(selector: string, context: HTMLElement | Document = document
   return context.querySelectorAll(selector);
 }
 
-export function on<K extends keyof HTMLElementEventMap>(
-  element: HTMLElement | null,
-  event: K,
-  handler: (e: HTMLElementEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions
-): () => void;
-export function on<K extends keyof WindowEventMap>(
-  element: Window | null,
-  event: K,
-  handler: (e: WindowEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions
-): () => void;
-export function on<K extends keyof DocumentEventMap>(
-  element: Document | null,
-  event: K,
-  handler: (e: DocumentEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions
-): () => void;
-export function on(
+export function on<E extends Event = Event>(
   element: HTMLElement | Window | Document | null,
   event: string,
-  handler: (e: any) => any,
+  handler: (e: E) => any,
   options?: boolean | AddEventListenerOptions
 ): () => void {
   if (!element) return () => {};
-  element.addEventListener(event, handler, options);
-  return () => element.removeEventListener(event, handler, options);
+  element.addEventListener(event, handler as EventListener, options);
+  return () =>
+    element.removeEventListener(event, handler as EventListener, options);
 }
 
 export function escapeHTML(str: string): string {
