@@ -19,23 +19,31 @@ export class MapService {
 
     shipments.forEach(s => {
       if (!this.instance) return;
+      
+      const iconUrl = s.mode === 'air' ? './assets/icons/plane.svg' : 
+                      s.mode === 'sea' ? './assets/icons/ship.svg' : 
+                      './assets/icons/truck.svg';
+
+      const customIcon = L.icon({
+        iconUrl,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        popupAnchor: [0, -12],
+        className: `map-icon-${s.mode}`
+      });
+
       const origin = L.circleMarker(s.originCoords, { 
-        radius: 5, 
+        radius: 4, 
         color: '#64748b',
         fillColor: '#64748b',
         fillOpacity: 0.5 
       }).addTo(this.instance);
 
-      const dest = L.circleMarker(s.destCoords, { 
-        radius: 7, 
-        color: '#06b6d4', // Cyan
-        fillColor: '#06b6d4',
-        fillOpacity: 0.8 
-      }).addTo(this.instance)
-        .bindPopup(`<b>${s.reference}</b><br>${s.origin} ➔ ${s.destination}`);
+      const dest = L.marker(s.destCoords, { icon: customIcon }).addTo(this.instance)
+        .bindPopup(`<b>${s.reference}</b><br>${s.origin} ➔ ${s.destination}<br>Status: ${s.status.toUpperCase()}`);
 
       const line = L.polyline([s.originCoords, s.destCoords], {
-        color: s.mode === 'air' ? '#ec4899' : '#06b6d4',
+        color: s.mode === 'air' ? '#ec4899' : s.mode === 'sea' ? '#06b6d4' : '#10b981',
         weight: 2, 
         dashArray: '5, 10', 
         opacity: 0.6

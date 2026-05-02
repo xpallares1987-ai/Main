@@ -10,10 +10,10 @@ export function qsa(selector: string, context: HTMLElement | Document = document
   return context.querySelectorAll(selector);
 }
 
-export function on(
+export function on<T extends Event>(
   element: HTMLElement | Window | Document | null,
   event: string,
-  handler: (e: any) => any,
+  handler: (e: T) => void,
   options?: boolean | AddEventListenerOptions
 ): () => void {
   if (!element) return () => {};

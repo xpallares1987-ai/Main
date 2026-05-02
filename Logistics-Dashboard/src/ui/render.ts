@@ -31,8 +31,8 @@ export function buildFilters(onFilterChange: () => void) {
                     <span style="overflow: hidden; text-overflow: ellipsis;">Todas las entidades</span>
                 </div>
                 <div class="ms-list">
-                    <input type="text" class="input-base ms-search" placeholder="Filtrar dimensión...">
-                    ${unique.map(v => `<label class="ms-option"><input type="checkbox" value="${escapeHTML(v)}" data-col="${escapeHTML(h)}"> <span style="word-break: break-word;">${escapeHTML(v)}</span></label>`).join('')}
+                    <input type="text" name="ms-search-${escapeHTML(h)}" class="input-base ms-search" placeholder="Filtrar dimensión..." autocomplete="off">
+                    ${unique.map(v => `<label class="ms-option"><input type="checkbox" name="ms-check-${escapeHTML(h)}" value="${escapeHTML(v)}" data-col="${escapeHTML(h)}" autocomplete="off"> <span style="word-break: break-word;">${escapeHTML(v)}</span></label>`).join('')}
                 </div>
             </div>`;
 
@@ -75,7 +75,7 @@ export function buildFilters(onFilterChange: () => void) {
     container.appendChild(fragment);
 }
 
-export function updateActiveFiltersDisplay(criteria: FilterCriteria, onRemove: (col: string, val: string) => void) {
+export function updateActiveFiltersDisplay(criteria: FilterCriteria, onRemove: (col: string, val: string) => void, onClearAll: () => void) {
     const container = qs('#activeFilters');
     if (!container) return;
     container.innerHTML = '';
@@ -97,6 +97,17 @@ export function updateActiveFiltersDisplay(criteria: FilterCriteria, onRemove: (
             });
         }
     }
+
+    if (hasFilters) {
+        const clearAllBtn = document.createElement('button');
+        clearAllBtn.className = 'btn btn-secondary';
+        clearAllBtn.style.fontSize = '0.7rem';
+        clearAllBtn.style.padding = '0.2rem 0.6rem';
+        clearAllBtn.innerHTML = 'Limpiar Todo';
+        clearAllBtn.onclick = onClearAll;
+        container.appendChild(clearAllBtn);
+    }
+
     container.style.display = hasFilters ? 'flex' : 'none';
 }
 
@@ -206,27 +217,23 @@ export function renderTable() {
     const data = filteredTableData.slice((state.pIndex - 1) * PAGE_SIZE, state.pIndex * PAGE_SIZE);
 
     body.innerHTML = '';
+    let rowsHtml = '';
+    
     data.forEach((row, idx) => {
         const hasChildren = !!(row._children && row._children.length > 0);
         const rowId = `row_${state.pIndex}_${idx}`;
 
-        const tr = document.createElement('tr');
-        tr.className = 'row-parent';
-        if (hasChildren) {
-            tr.onclick = () => toggleRow(rowId);
-        }
+        let rowHtml = `<tr class="row-parent" ${hasChildren ? `onclick="window.toggleRow('${rowId}')"` : ''}>`;
 
         if (hasExpandable) {
-            const td = document.createElement('td');
-            td.style.textAlign = 'center';
+            rowHtml += `<td style="text-align: center;">`;
             if (hasChildren) {
-                td.innerHTML = `<button class="expand-btn" aria-label="Expandir"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></button>`;
+                rowHtml += `<button class="expand-btn" aria-label="Expandir"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></button>`;
             }
-            tr.appendChild(td);
+            rowHtml += `</td>`;
         }
 
         keys.forEach(k => {
-            const td = document.createElement('td');
             const v = row[k];
             let safeV = escapeHTML(String(v || ""));
 
@@ -236,40 +243,39 @@ export function renderTable() {
             }
 
             let formatHtml = safeV;
-            if (k === 'Pending' && Number(v) > 0) formatHtml = `<span class="badge badge-danger"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${safeV}</span>`;      
-            else if (k === 'Pending' && Number(v) === 0) formatHtml = `<span class="badge badge-success"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg> OK</span>`;
+            if (k === 'Pending' && Number(v) > 0) formatHtml = `<span class="badge badge-danger"><svg width="12" height="12" fill="none" stroke="var(--App-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${safeV}</span>`;      
+            else if (k === 'Pending' && Number(v) === 0) formatHtml = `<span class="badge badge-success"><svg width="12" height="12" fill="none" stroke="var(--ff-success)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg> OK</span>`;
 
-            td.innerHTML = formatHtml || '<span style="color:#CBD5E0;">-</span>';
-            td.title = safeV;
-            tr.appendChild(td);
+            rowHtml += `<td title="${safeV}">${formatHtml || '<span style="color:#CBD5E0;">-</span>'}</td>`;
         });
-        body.appendChild(tr);
+        rowHtml += `</tr>`;
 
         if (hasChildren && row._children) {
             const childKeys = Object.keys(row._children[0]).filter(k => !k.startsWith('_') && k !== 'Load Code');
-            const childTr = document.createElement('tr');
-            childTr.className = 'row-child';
-            childTr.id = `child_${rowId}`;
-            childTr.innerHTML = `
-                <td colspan="${keys.length + (hasExpandable ? 1 : 0)}" style="padding:0;">
-                    <div class="sub-table-wrap">
-                        <table class="sub-table">
-                            <thead><tr>${childKeys.map(k => `<th>${escapeHTML(String(k))}</th>`).join('')}</tr></thead>
-                            <tbody>
-                                ${row._children.map(c => `<tr>${childKeys.map(k => {
-                                    let cv = c[k];
-                                    if (cv instanceof Date) cv = cv.toLocaleDateString('es-ES');
-                                    else if (typeof cv === 'number') cv = cv.toLocaleString('es-ES', { maximumFractionDigits: 2 });
-                                    return `<td>${escapeHTML(String(cv || '-'))}</td>`;
-                                }).join('')}</tr>`).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
+            rowHtml += `
+                <tr class="row-child" id="child_${rowId}">
+                    <td colspan="${keys.length + (hasExpandable ? 1 : 0)}" style="padding:0;">
+                        <div class="sub-table-wrap">
+                            <table class="sub-table">
+                                <thead><tr>${childKeys.map(k => `<th>${escapeHTML(String(k))}</th>`).join('')}</tr></thead>
+                                <tbody>
+                                    ${row._children.map(c => `<tr>${childKeys.map(k => {
+                                        let cv = c[k];
+                                        if (cv instanceof Date) cv = cv.toLocaleDateString('es-ES');
+                                        else if (typeof cv === 'number') cv = cv.toLocaleString('es-ES', { maximumFractionDigits: 2 });
+                                        return `<td>${escapeHTML(String(cv || '-'))}</td>`;
+                                    }).join('')}</tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
             `;
-            body.appendChild(childTr);
         }
+        rowsHtml += rowHtml;
     });
+
+    body.innerHTML = rowsHtml;
 
     const total = Math.ceil(filteredTableData.length / PAGE_SIZE) || 1;
     const pageLabel = qs('#pageLabel');

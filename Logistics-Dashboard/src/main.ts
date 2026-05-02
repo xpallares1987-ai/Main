@@ -9,10 +9,14 @@ import {
     updateKPIs, 
     renderTable, 
     updateActiveFiltersDisplay,
-    showToast
+    showToast,
+    toggleRow
 } from './ui/render';
 import { qs } from "./utils/dom";
 import { FilterCriteria } from './types';
+
+// Attach to window for string-based onclick handlers
+(window as any).toggleRow = toggleRow;
 
 function applyFilters() {
     const criteria: FilterCriteria = {};
@@ -27,7 +31,7 @@ function applyFilters() {
         return Object.keys(criteria).every(col => criteria[col].includes(String(row[col] || "")));
     });
 
-    updateActiveFiltersDisplay(criteria, removeFilter);
+    updateActiveFiltersDisplay(criteria, removeFilter, resetFilters);
     state.sortCol = '';
     state.pIndex = 1;
     renderAll();
@@ -66,7 +70,20 @@ function renderAll() {
     renderTable();
     buildDynamicCharts(state.filterRes);
     const aiSummary = qs('#aiSummary');
-    if (aiSummary) aiSummary.innerHTML = generateAIInsights(state.filterRes);
+    if (aiSummary) {
+        aiSummary.innerHTML = generateAIInsights(state.filterRes);
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'btn btn-secondary';
+        copyBtn.style.marginTop = '1rem';
+        copyBtn.style.fontSize = '0.75rem';
+        copyBtn.innerHTML = '📋 Copiar Resumen';
+        copyBtn.onclick = () => {
+            const text = aiSummary.innerText.replace('📋 Copiar Resumen', '').trim();
+            navigator.clipboard.writeText(text);
+            showToast('Copiado', 'Resumen copiado al portapapeles', false);
+        };
+        aiSummary.appendChild(copyBtn);
+    }
 }
 
 function switchTab(tabId: string) {
@@ -176,6 +193,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnNext = qs('#btnNext');
     const tableSearch = qs('#tableSearch');
     const sheetSelect = qs('#sheetSelect');
+
+    const btnTheme = qs('#btnTheme');
+    const btnPrint = qs('#btnPrint');
+
+    function updateTheme() {
+        document.body.setAttribute('data-theme', state.theme);
+        localStorage.setItem('theme', state.theme);
+        if (btnTheme) {
+            btnTheme.innerHTML = state.theme === 'light' ? 
+                `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>` :
+                `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>`;
+        }
+    }
+
+    btnTheme?.addEventListener('click', () => {
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        updateTheme();
+    });
+
+    btnPrint?.addEventListener('click', () => {
+        window.print();
+    });
+
+    updateTheme();
 
     excelInput?.addEventListener('change', handleFileUpload);
     btnLoadSample?.addEventListener('click', loadSampleData);

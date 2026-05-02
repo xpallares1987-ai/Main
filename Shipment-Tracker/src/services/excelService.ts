@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { Shipment, Milestone } from '../types';
+import { Shipment, Milestone, ShipmentStatus, ShipmentMode } from '../types';
 
 export const ExcelService = {
   async parseShipments(file: File): Promise<Shipment[]> {
@@ -10,10 +10,10 @@ export const ExcelService = {
           const data = new Uint8Array(e.target?.result as ArrayBuffer);
           const workbook = XLSX.read(data, { type: 'array' });
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(firstSheet) as any[];
+          const rows = XLSX.utils.sheet_to_json(firstSheet) as Record<string, unknown>[];
 
           const shipments: Shipment[] = rows.map((row, idx) => ({
-            id: row.id || crypto.randomUUID(),
+            id: (row.id as string) || crypto.randomUUID(),
             reference: String(row.reference || row.Reference || `REF-${idx}`),
             container: String(row.container || row.Container || ''),
             carrier: String(row.carrier || row.Carrier || ''),
@@ -21,8 +21,8 @@ export const ExcelService = {
             destination: String(row.destination || row.Destination || 'Unknown'),
             originCoords: this.parseCoords(row.originCoords || row.OriginCoords, [0, 0]),
             destCoords: this.parseCoords(row.destCoords || row.DestCoords, [0, 0]),
-            status: (row.status || 'transit').toLowerCase(),
-            mode: (row.mode || 'sea').toLowerCase(),
+            status: ((row.status as string) || 'transit').toLowerCase() as ShipmentStatus,
+            mode: ((row.mode as string) || 'sea').toLowerCase() as ShipmentMode,
             eta: String(row.eta || row.ETA || ''),
             freeTimeDays: Number(row.freeTimeDays || 7),
             demurrageRate: Number(row.demurrageRate || 100),
@@ -46,7 +46,7 @@ export const ExcelService = {
     });
   },
 
-  parseCoords(val: any, fallback: [number, number]): [number, number] {
+  parseCoords(val: unknown, fallback: [number, number]): [number, number] {
     if (Array.isArray(val) && val.length === 2) return val as [number, number];
     if (typeof val === 'string') {
       const parts = val.split(',').map(p => parseFloat(p.trim()));
@@ -55,8 +55,8 @@ export const ExcelService = {
     return fallback;
   },
 
-  parseMilestones(val: any): Milestone[] {
-    if (Array.isArray(val)) return val;
+  parseMilestones(val: unknown): Milestone[] {
+    if (Array.isArray(val)) return val as Milestone[];
     // Default milestones if none provided
     return [
       { label: 'Booking', key: 'booking', completed: true },

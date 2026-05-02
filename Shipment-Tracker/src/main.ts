@@ -42,16 +42,42 @@ interface CustomWindow extends Window {
 
 const customWindow = (window as unknown as CustomWindow);
 
-// Global exports for inline HTML handlers
+// Event Delegation for dynamic elements
+document.addEventListener('click', async (e) => {
+  const target = e.target as HTMLElement;
+  
+  // Show Details
+  const detailsBtn = target.closest('[data-action="show-details"]');
+  if (detailsBtn) {
+    const id = detailsBtn.getAttribute('data-id');
+    if (id) {
+      const shipment = state.allShipments.find(s => s.id === id);
+      if (shipment) ModalUI.open(shipment);
+    }
+    return;
+  }
+
+  // Switch Modal Tab
+  const tabBtn = target.closest('.modal-tab-btn');
+  if (tabBtn) {
+    const tab = tabBtn.getAttribute('data-tab') as 'info' | 'notes' | 'audit';
+    if (tab) customWindow.switchModalTab(tab);
+    return;
+  }
+
+  // Close Modal
+  const closeBtn = target.closest('[data-action="close-modal"]');
+  if (closeBtn) {
+    customWindow.closeModal();
+    return;
+  }
+});
+
+// Global exports only for legacy inline handlers (if any remain in HTML)
 customWindow.setLanguage = (lang: 'es' | 'en') => {
   I18nService.setLang(lang);
   updateStaticTranslations();
   updateView();
-};
-
-customWindow.showDetails = (id: string) => {
-  const shipment = state.allShipments.find(s => s.id === id);
-  if (shipment) ModalUI.open(shipment);
 };
 
 customWindow.closeModal = () => { ModalUI.close(); };
@@ -63,7 +89,7 @@ customWindow.switchModalTab = (tab: 'info' | 'notes' | 'audit') => {
     if (el) el.style.display = t === tab ? 'block' : 'none';
   });
   document.querySelectorAll('.modal-tab-btn').forEach(btn => {
-    const isTarget = btn.getAttribute('onclick')?.includes(`'${tab}'`);
+    const isTarget = btn.getAttribute('data-tab') === tab;
     btn.classList.toggle('active', !!isTarget);
   });
 };
@@ -101,8 +127,16 @@ function switchView(view: 'dashboard' | 'contacts') {
 
 function renderAgents() {
   const list = document.getElementById('agentList');
+  const searchInput = document.getElementById('agentSearch') as HTMLInputElement;
+  const term = searchInput?.value.toLowerCase() || "";
+
   if (list) {
-    list.innerHTML = state.allAgents.map(a => UIComponents.renderAgentCard(a)).join('');
+    const filtered = state.allAgents.filter(a => 
+      a.name.toLowerCase().includes(term) || 
+      a.email.toLowerCase().includes(term) ||
+      a.specialties.some(s => s.toLowerCase().includes(term))
+    );
+    list.innerHTML = filtered.map(a => UIComponents.renderAgentCard(a)).join('');
   }
 }
 
@@ -122,7 +156,11 @@ function updateStaticTranslations() {
   };
 
   if (els.title) els.title.textContent = t.title;
-  if (els.live) els.live.textContent = t.liveData;
+  if (els.live) {
+    const now = new Date().toLocaleTimeString();
+    els.live.textContent = `${t.liveData} - Last update: ${now}`;
+  }
+
   if (els.search) (els.search as HTMLInputElement).placeholder = t.searchPlaceholder;
   if (els.export) els.export.textContent = t.exportReport;
   if (els.chartStatus) els.chartStatus.textContent = t.statusDist;
@@ -176,11 +214,13 @@ async function initApp() {
   const btnAnalytics = document.getElementById("btnAnalytics");
   const navDash = document.getElementById('nav-dashboard');
   const navCont = document.getElementById('nav-contacts');
+  const agentSearch = document.getElementById('agentSearch');
 
   if (searchInput) searchInput.value = state.filters.term;
   if (statusFilter) statusFilter.value = state.filters.status;
 
   updateView();
+  setInterval(updateStaticTranslations, 60000);
 
   const handleFilterChange = async () => {
     state.filters.term = searchInput.value;
@@ -192,6 +232,7 @@ async function initApp() {
   searchInput?.addEventListener("input", debounce(handleFilterChange, 300));
   statusFilter?.addEventListener("change", handleFilterChange);
   btnExport?.addEventListener("click", () => ExportService.exportToCSV(ShipmentService.filterShipments(state.allShipments, state.filters)));
+  agentSearch?.addEventListener("input", debounce(renderAgents, 300));
 
   btnAnalytics?.addEventListener("click", () => {
     state.showAnalytics = !state.showAnalytics;
@@ -214,7 +255,7 @@ async function initApp() {
       Toast.show(`Importados ${newShipments.length} embarques`, "success");
     } catch (err) {
       console.error(err);
-      Toast.show("Error al importar archivo", "error" as any);
+      Toast.show("Error al importar archivo", "error");
     }
   });
 

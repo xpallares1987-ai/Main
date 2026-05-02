@@ -14,6 +14,7 @@ export interface AppState {
     pIndex: number;
     sortCol: string;
     sortAsc: boolean;
+    theme: 'light' | 'dark';
 }
 
 export interface FilterCriteria {

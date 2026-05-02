@@ -31,9 +31,9 @@ export const ModalUI = {
       </div>
       
       <div class="modal-tabs" style="display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border); margin-top: 1rem;">
-          <button class="modal-tab-btn active" onclick="window.switchModalTab('info')">${t.generalInfo}</button>
-          <button class="modal-tab-btn" onclick="window.switchModalTab('notes')">${t.notes} (${shipment.notes?.length || 0})</button>
-          <button class="modal-tab-btn" onclick="window.switchModalTab('audit')">${t.auditTrail}</button>
+          <button class="modal-tab-btn active" data-tab="info">${t.generalInfo}</button>
+          <button class="modal-tab-btn" data-tab="notes">${t.notes} (${shipment.notes?.length || 0})</button>
+          <button class="modal-tab-btn" data-tab="audit">${t.auditTrail}</button>
       </div>
 
       <div id="modal-tab-info" class="modal-tab-content">
@@ -79,10 +79,9 @@ export const ModalUI = {
               `).reverse().join("") : `<p class="text-soft" style="text-align: center; font-size:0.9rem;">${t.noNotes}</p>`}
           </div>
           <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
-              <textarea id="noteInput" placeholder="${t.notePlaceholder}" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: white; padding: 0.6rem; height: 60px; resize: none; font-size:0.85rem;"></textarea>
+              <textarea id="noteInput" name="noteInput" placeholder="${t.notePlaceholder}" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: white; padding: 0.6rem; height: 60px; resize: none; font-size:0.85rem;" autocomplete="off"></textarea>
               <button class="btn-primary" style="margin-top: 0.5rem; width: 100%; font-size:0.85rem;" onclick="window.submitNote('${shipment.id}')">${t.addNote}</button>
-          </div>
-      </div>
+          </div>      </div>
 
       <div id="modal-tab-audit" class="modal-tab-content" style="display: none; margin-top: 1rem;">
           <div class="audit-list" style="max-height: 300px; overflow-y: auto;">
@@ -110,7 +109,7 @@ export const ModalUI = {
       </div>
 
       <div class="modal-actions" style="margin-top: 1.5rem; text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
-        <button class="btn-details" style="width: auto; padding: 0.5rem 1.5rem; font-size:0.85rem;" onclick="window.closeModal()">Cerrar</button>
+        <button class="btn-details" style="width: auto; padding: 0.5rem 1.5rem; font-size:0.85rem;" data-action="close-modal">Cerrar</button>
       </div>
     `;
 

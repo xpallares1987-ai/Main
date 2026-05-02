@@ -56,20 +56,42 @@ export const UIComponents = {
 
     return `
       <div class="card ${exceptions.length > 0 ? 'card--exception' : ''}" data-id="${s.id}">
-        <div class="card-status" style="color: ${statusColor}">${(t[s.status as TranslationKey] || s.status).toUpperCase()}</div>
-        <h3>
-          <span class="icon-cyan">${renderIcon(s.mode)}</span>
-          ${escapeHTML(s.reference)}
+        <div class="card-status" style="color: ${statusColor}; background: ${statusColor}15; padding: 4px 10px; border-radius: 20px;">
+          ${(t[s.status as TranslationKey] || s.status).toUpperCase()}
+        </div>
+        <h3 style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
+          <div class="icon-cyan" style="background: var(--primary)15; padding: 10px; border-radius: 10px; display: flex;">
+            ${renderIcon(s.mode)}
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 1.1rem; color: var(--text);">${escapeHTML(s.reference)}</span>
+            <span style="font-size: 0.75rem; color: var(--text-soft); font-weight: 500;">ID: ${s.id.slice(0,8)}</span>
+          </div>
         </h3>
         ${exceptions.map(e => `<div class="exception-badge ${e.type === 'delay' ? 'delay' : 'critical'}">⚠️ ${t[`${e.type}Alert` as TranslationKey] || e.message}</div>`).join('')}
-        <div class="info-row"><span class="info-label">${t.route}:</span><span>${escapeHTML(s.origin)} ➔ ${escapeHTML(s.destination)}</span></div>
-        <div class="info-row"><span class="info-label">${t.container}:</span><span class="${!isContainerValid ? 'text-danger' : ''}">${escapeHTML(s.container)}</span></div>
-        ${s.carrier ? `<div class="info-row"><span class="info-label">Carrier:</span><span>${escapeHTML(s.carrier)}</span></div>` : ''}
-        <div class="info-row"><span class="info-label">${t.eta}:</span><span class="eta-value">${escapeHTML(s.eta)}</span></div>
-        <div class="timeline">${s.milestones.map(m => this.renderMilestone(m)).join('')}</div>
-        <div class="card-actions" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-          <button class="btn-details" style="flex: 2;" onclick="window.showDetails('${s.id}')">${exceptions.length > 0 ? t.analyzeException : t.viewDetails}</button>
-          ${trackingLink ? `<a href="${trackingLink}" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; background: rgba(0,255,255,0.1); border: 1px solid var(--cyan); color: var(--cyan);">🌐 Track</a>` : ''}
+        
+        <div style="background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+          <div class="info-row" style="margin: 0 0 8px 0;"><span class="info-label">${t.route}:</span><span style="font-weight: 600;">${escapeHTML(s.origin)} ➔ ${escapeHTML(s.destination)}</span></div>
+          <div class="info-row" style="margin: 0 0 8px 0;"><span class="info-label">${t.container}:</span><span class="${!isContainerValid ? 'text-danger' : ''}" style="font-family: monospace; font-size: 1rem;">${escapeHTML(s.container)}</span></div>
+          ${s.carrier ? `<div class="info-row" style="margin: 0;"><span class="info-label">Carrier:</span><span style="font-weight: 600;">${escapeHTML(s.carrier)}</span></div>` : ''}
+        </div>
+
+        <div class="info-row" style="border-top: 1px dashed var(--border); padding-top: 1rem; margin-bottom: 1rem;">
+          <span class="info-label">${t.eta}:</span>
+          <span class="eta-value" style="font-size: 1.1rem;">${escapeHTML(s.eta)}</span>
+        </div>
+
+        <div class="timeline" style="margin-bottom: 1.5rem;">${s.milestones.map(m => this.renderMilestone(m)).join('')}</div>
+        
+        <div class="card-actions" style="display: flex; gap: 0.75rem; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+          <button class="btn-primary" style="flex: 2; font-size: 0.85rem;" data-action="show-details" data-id="${s.id}">
+            ${exceptions.length > 0 ? t.analyzeException : t.viewDetails}
+          </button>
+          ${trackingLink ? `
+            <a href="${trackingLink}" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <span>🌐</span> Track
+            </a>
+          ` : ''}
         </div>
       </div>
     `;

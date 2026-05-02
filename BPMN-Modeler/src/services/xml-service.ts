@@ -28,20 +28,28 @@ function sanitizeXml(xml: string): string {
 }
 
 export async function loadXmlFromUrl(url: string) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`No se pudo cargar: ${url}`);
-  const xml = await response.text();
-  return sanitizeXml(xml);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Status: ${response.status}`);
+    const xml = await response.text();
+    return sanitizeXml(xml);
+  } catch (error) {
+    console.error("Error al cargar XML desde URL:", error);
+    throw new Error(`No se pudo cargar el diagrama remoto. ${error instanceof Error ? error.message : ""}`);
+  }
 }
 
 export async function openLocalXmlFromInput(fileInput: HTMLInputElement) {
-  const result = await openTextFile(fileInput);
-  if (!result) return null;
   try {
+    const result = await openTextFile(fileInput);
+    if (!result) return null;
     return {
       name: result.name || "diagram.bpmn",
       xml: sanitizeXml(result.text),
     };
+  } catch (error) {
+    console.error("Error al abrir XML local:", error);
+    throw new Error("El archivo no parece ser un XML/BPMN válido.");
   } finally {
     resetFileInput(fileInput);
   }

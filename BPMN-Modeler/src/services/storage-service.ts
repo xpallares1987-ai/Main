@@ -1,4 +1,5 @@
 import { db } from "./local-db";
+import { DiagramTab } from "../types";
 
 async function getEncryptionKey(pin: string, salt: Uint8Array) {
   const enc = new TextEncoder();
@@ -12,6 +13,7 @@ async function getEncryptionKey(pin: string, salt: Uint8Array) {
   return crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       salt: salt as any,
       iterations: 100000,
       hash: "SHA-256",
@@ -128,7 +130,7 @@ export function loadUiSession(keys: StorageKeys) {
 
 export async function saveTabsSession(
   keys: StorageKeys,
-  tabs: any[],
+  tabs: DiagramTab[],
   activeTabId: string,
 ) {
   if (!keys.tabsState) return false;
@@ -138,7 +140,7 @@ export async function saveTabsSession(
 }
 
 export async function loadTabsSession(keys: StorageKeys): Promise<{
-  tabs: any[];
+  tabs: DiagramTab[];
   activeTabId: string;
 } | null> {
   if (!keys.tabsState) return null;

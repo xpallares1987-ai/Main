@@ -44,6 +44,10 @@
             <img src="./assets/icons/image.svg" class="btn-icon">
             Imagen
           </button>
+          <button id="btnCopyXml" class="btn" type="button">
+            <img src="./assets/icons/save.svg" class="btn-icon" style="filter: hue-rotate(90deg);">
+            Copiar XML
+          </button>
           <button id="btnLogistics" class="btn" type="button">
             <img src="./assets/icons/logistics.svg" class="btn-icon">
             Logística
@@ -80,6 +84,10 @@
             <span id="diagramName">
               Proceso en blanco
             </span>
+            <div class="search-box" style="margin-left: auto; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.05); padding: 2px 10px; border-radius: 4px;">
+              <span style="font-size: 0.8rem; opacity: 0.6;">🔍</span>
+              <input type="text" id="diagramSearch" name="diagramSearch" placeholder="Buscar elemento..." style="border: none; background: transparent; font-size: 0.8rem; outline: none; width: 150px; color: inherit;" autocomplete="off">
+            </div>
           </div>
           <div id="canvas" class="canvas-panel__body"></div>
           
@@ -104,6 +112,7 @@
         <div id="statusText">
           Listo
         </div>
+        <div id="autoSaveText" style="opacity: 0.6; font-size: 0.75rem;"></div>
         <div id="selectionText">
           Sin selección
         </div>
@@ -111,7 +120,7 @@
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
-    <input id="fileInput" type="file" accept=".bpmn,.xml" name="fileInput" hidden />
+    <input id="fileInput" type="file" accept=".bpmn,.xml" name="fileInput" autocomplete="off" hidden />
 
     <dialog id="shortcutsModal" class="modal">
       <div class="modal__header">

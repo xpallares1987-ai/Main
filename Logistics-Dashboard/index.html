@@ -29,6 +29,14 @@
             </div>
         </div>
         <div class="nav-status">
+            <button id="btnPrint" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; margin-right: 0.5rem;" type="button">
+                🖨️ Imprimir
+            </button>
+            <button id="btnTheme" class="btn btn-secondary" style="padding: 0.4rem; border-radius: 50%; margin-right: 0.5rem;" type="button">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+            </button>
             <div class="status-dot"></div>
             Análisis Inteligente
         </div>
@@ -50,7 +58,7 @@
                         Cargar Excel. El sistema analizara y procesara un reporte.
                     </p>
                 </div>
-                <input type="file" id="excelInput" name="excelInput" accept=".xlsx, .xls, .csv">
+                <input type="file" id="excelInput" name="excelInput" accept=".xlsx, .xls, .csv" autocomplete="off">
                 
                 <div style="margin-top: 1rem;">
                     <button id="btnLoadSample" class="btn btn-secondary" type="button">
@@ -85,7 +93,7 @@
                             <span style="font-size: 0.8rem; font-weight: 700; color: var(--App-gray);">
                                 VISTA ACTIVA:
                             </span>
-                            <select id="sheetSelect" name="sheetSelect" style="font-weight: 800; border: none; background: transparent; color: var(--App-red); padding-left: 0.5rem; cursor: pointer;"></select>
+                            <select id="sheetSelect" name="sheetSelect" autocomplete="off" style="font-weight: 800; border: none; background: transparent; color: var(--App-red); padding-left: 0.5rem; cursor: pointer;"></select>
                         </div>
                         <button class="btn btn-secondary" id="btnReset" type="button">
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -154,7 +162,7 @@
                             Análisis Avanzado
                         </h3>
                         <div class="chart-controls">
-                            <select id="c5X" name="c5X" style="border: 1px solid var(--border);"></select>
+                            <select id="c5X" name="c5X" autocomplete="off" style="border: 1px solid var(--border);"></select>
                         </div>
                     </div>
                     <div class="chart-wrapper" style="min-height: 450px;">

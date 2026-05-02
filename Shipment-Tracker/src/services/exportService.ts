@@ -30,20 +30,30 @@ export const ExportService = {
     ].join('\n');
 
     // Create download link
+    const fileName = `shipment_report_${new Date().toISOString().split('T')[0]}.csv`;
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
+    this.triggerDownload(url, fileName);
+    return fileName;
+  },
+
+  exportToJSON(shipments: Shipment[]) {
+    const jsonContent = JSON.stringify(shipments, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const fileName = `shipment_report_${new Date().toISOString().split('T')[0]}.json`;
+    this.triggerDownload(url, fileName);
+    return fileName;
+  },
+
+  triggerDownload(url: string, fileName: string) {
     const link = document.createElement('a');
-    
-    const fileName = `shipment_report_${new Date().toISOString().split('T')[0]}.csv`;
-    
     link.setAttribute('href', url);
     link.setAttribute('download', fileName);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
-    return fileName;
   }
 };
 

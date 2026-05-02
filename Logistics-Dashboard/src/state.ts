@@ -7,6 +7,7 @@ export const state: AppState = {
     pIndex: 1,
     sortCol: "",
     sortAsc: true,
+    theme: (localStorage.getItem('theme') as 'light' | 'dark') || 'light',
 };
 
 export function resetState() {

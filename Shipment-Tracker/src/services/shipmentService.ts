@@ -81,23 +81,38 @@ export const ShipmentService = {
   },
 
   async addNote(shipmentId: string, text: string, author: string = 'Operador') {
-    const shipment = await this.addAuditEntry(shipmentId, 'NOTE_ADDED', `Nota: ${text.substring(0, 20)}...`, author);
-    if (!shipment) return null;
-    
-    const note: Note = {
-      id: crypto.randomUUID(),
-      text,
-      author,
-      date: new Date().toLocaleString()
-    };
-    if (!shipment.notes) shipment.notes = [];
-    shipment.notes.push(note);
-    
     const shipments = await this.getShipments();
-    const idx = shipments.findIndex(s => s.id === shipmentId);
-    shipments[idx] = shipment;
-    await this.saveShipments(shipments);
-    return shipment;
+    const index = shipments.findIndex(s => s.id === shipmentId);
+    
+    if (index !== -1) {
+      const shipment = shipments[index];
+      const timestamp = new Date().toLocaleString();
+      
+      const auditEntry: AuditLog = {
+        id: crypto.randomUUID(),
+        action: 'NOTE_ADDED',
+        author,
+        timestamp,
+        details: `Nota: ${text.substring(0, 20)}...`
+      };
+      
+      const note: Note = {
+        id: crypto.randomUUID(),
+        text,
+        author,
+        date: timestamp
+      };
+
+      if (!shipment.auditHistory) shipment.auditHistory = [];
+      if (!shipment.notes) shipment.notes = [];
+      
+      shipment.auditHistory.push(auditEntry);
+      shipment.notes.push(note);
+      
+      await this.saveShipments(shipments);
+      return shipment;
+    }
+    return null;
   },
 
   checkExceptions(s: Shipment) {

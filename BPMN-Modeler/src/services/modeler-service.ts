@@ -31,21 +31,15 @@ export async function createModeler({
   zeebeSupport = true,
 }: CreateModelerOptions) {
   try {
-    // Lazy load BPMN dependencies to optimize initial bundle size
+    // Lazy load core BPMN dependencies
     const [
       { default: BpmnModeler },
-      {
-        BpmnPropertiesPanelModule,
-        BpmnPropertiesProviderModule,
-        ZeebePropertiesProviderModule,
-      },
       { default: zeebeModdle },
       { default: ZeebeBehaviorsModule },
       { default: MinimapModule },
       { default: LintModule },
     ] = await Promise.all([
       import("bpmn-js/lib/Modeler"),
-      import("bpmn-js-properties-panel"),
       import("zeebe-bpmn-moddle/resources/zeebe.json"),
       import("camunda-bpmn-js-behaviors/lib/camunda-cloud"),
       import("diagram-js-minimap"),
@@ -53,25 +47,38 @@ export async function createModeler({
     ]);
 
     const containerNode = resolveTarget(container);
+    const additionalModules = [MinimapModule, LintModule];
+    let moddleExtensions = {};
+
+    if (camunda8 && zeebeSupport) {
+      additionalModules.push(ZeebeBehaviorsModule);
+      moddleExtensions = { zeebe: zeebeModdle };
+    }
+
+    if (propertiesPanel) {
+      const {
+        BpmnPropertiesPanelModule,
+        BpmnPropertiesProviderModule,
+        ZeebePropertiesProviderModule,
+      } = await import("bpmn-js-properties-panel");
+
+      additionalModules.push(
+        BpmnPropertiesPanelModule,
+        BpmnPropertiesProviderModule,
+      );
+      if (camunda8 && zeebeSupport) {
+        additionalModules.push(ZeebePropertiesProviderModule);
+      }
+    }
+
     const propertiesNode = propertiesPanel ? resolveTarget(properties) : null;
 
     return new BpmnModeler({
       container: containerNode,
       propertiesPanel: propertiesNode ? { parent: propertiesNode } : undefined,
       linting: { active: true },
-      additionalModules: [
-        MinimapModule,
-        LintModule,
-        ...(propertiesPanel
-          ? [BpmnPropertiesPanelModule, BpmnPropertiesProviderModule]
-          : []),
-        ...(camunda8 && zeebeSupport
-          ? [ZeebePropertiesProviderModule, ZeebeBehaviorsModule]
-          : []),
-      ],
-      moddleExtensions: {
-        ...(camunda8 && zeebeSupport ? { zeebe: zeebeModdle } : {}),
-      },
+      additionalModules,
+      moddleExtensions,
       keyboard: {
         bindTo: keyboardBindToWindow ? window : document,
       },
@@ -144,4 +151,48 @@ export function detachPropertiesPanel(modeler: Modeler) {
     detach: () => void;
   };
   if (panel) panel.detach();
+}
+
+interface BpmnElement {
+  id: string;
+  type: string;
+  businessObject: {
+    name?: string;
+    [key: string]: unknown;
+  };
+}
+
+interface ElementRegistry {
+  filter(cb: (element: BpmnElement) => boolean): BpmnElement[];
+  get(id: string): BpmnElement | undefined;
+}
+
+interface BpmnCanvas {
+  zoom(level: string | number, center?: BpmnElement | { x: number; y: number } | "auto"): void;
+}
+
+interface BpmnSelection {
+  select(element: BpmnElement | BpmnElement[]): void;
+}
+
+export function searchElements(modeler: Modeler, term: string): BpmnElement[] {
+  if (!modeler || !term) return [];
+  const elementRegistry = modeler.get("elementRegistry") as unknown as ElementRegistry;
+  const termLower = term.toLowerCase();
+
+  return elementRegistry.filter((element) => {
+    const businessObject = element.businessObject;
+    const nameMatch = businessObject && businessObject.name && businessObject.name.toLowerCase().includes(termLower);
+    const idMatch = element.id && element.id.toLowerCase().includes(termLower);
+    return Boolean(nameMatch || idMatch);
+  });
+}
+
+export function highlightElement(modeler: Modeler, element: BpmnElement) {
+  if (!modeler || !element) return;
+  const canvas = modeler.get("canvas") as unknown as BpmnCanvas;
+  const selection = modeler.get("selection") as unknown as BpmnSelection;
+
+  selection.select(element);
+  canvas.zoom(1.0, element);
 }

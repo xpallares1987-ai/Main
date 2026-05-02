@@ -7,7 +7,6 @@ Este es el repositorio central (Monorepo) que agrupa diversas aplicaciones indus
 1.  **[BPMN 2.0 Interactive Modeler](./BPMN-Modeler/):** Editor de procesos industriales interactivo con soporte para la nube (GitHub Gists).
 2.  **[Shipment Tracker](./Shipment-Tracker/):** Sistema de seguimiento de embarques con analítica integrada y mapas dinámicos.
 3.  **[Interactive Dashboard](./Logistics-Dashboard/):** Panel de control para análisis de auditoría y KPIs logísticos.
-4.  **[Shared Utils](./Shared-Utils/):** Núcleo de utilidades compartidas y servicios de seguridad.
 
 ## Estándares del Proyecto
 

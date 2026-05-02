@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --App-red: var(--ff-blue, #2563eb);
-    --App-red-light: var(--ff-blue-light, #dbeafe);
-    --App-red-hover: var(--ff-blue-dark, #1e40af);
-    --App-dark: var(--ff-navy, #0f172a);
+    --App-red: #2563eb;
+    --App-red-light: #dbeafe;
+    --App-red-hover: #1e40af;
+    --App-dark: #0f172a;
     --App-gray-dark: #1e293b;
     --App-gray: #64748b;
     --App-gray-light: #f8fafc;
     --App-surface: #ffffff;
+    --bg-body: #f1f5f9;
     --border: #e2e8f0;
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -23,12 +24,23 @@
     --error: #ef4444;
 }
 
+[data-theme='dark'] {
+    --App-surface: #1e293b;
+    --bg-body: #0f172a;
+    --App-dark: #f8fafc;
+    --App-gray-dark: #f1f5f9;
+    --App-gray: #94a3b8;
+    --App-gray-light: #334155;
+    --border: #334155;
+}
+
 body { 
     font-family: 'Inter', system-ui, -apple-system, sans-serif; 
     font-size: 14px; 
-    background-color: #f1f5f9; 
+    background-color: var(--bg-body); 
     color: var(--App-dark); 
     line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .navbar { 
@@ -230,5 +242,23 @@ td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; c
 ::-webkit-scrollbar-track { background: var(--App-gray-light); border-radius: 5px; }
 ::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 5px; border: 2px solid var(--App-gray-light); }
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+@media print {
+    .navbar, .control-panel, .upload-wrapper, .tab-bar, .pagination-bar, .btn-download, .ai-panel .btn {
+        display: none !important;
+    }
+    body { background: white; color: black; }
+    .container { padding: 0; width: 100%; max-width: none; }
+    .card, .kpi-card, .chart-card { border: 1px solid #eee; box-shadow: none !important; margin-bottom: 2rem; break-inside: avoid; }
+    .tab-pane { display: block !important; opacity: 1 !important; transform: none !important; }
+    .dynamic-grid { display: block; }
+    .chart-wrapper { min-height: 400px; page-break-after: always; }
+    .data-table-container { border: none; }
+    .table-responsive { max-height: none; overflow: visible; }
+    th { background: #f0f0f0 !important; color: black !important; -webkit-print-color-adjust: exact; }
+    .ai-panel { background: #f8fafc !important; color: black !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; }
+    .ai-pill { background: #eee !important; color: black !important; border: 1px solid #ddd; }
+    .ai-desc { background: white !important; color: black !important; border: 1px solid #eee; }
+}
 
 

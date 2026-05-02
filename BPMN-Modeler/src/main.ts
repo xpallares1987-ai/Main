@@ -7,7 +7,9 @@ import {
   cleanupModeler,
   detachPropertiesPanel,
   fitViewport,
+  highlightElement,
   importDiagram,
+  searchElements,
   zoomByStep,
 } from "./services/modeler-service";
 import { exportToPng } from "./services/export-service";
@@ -38,21 +40,6 @@ import {
 } from "./utils/dom";
 import { showToast } from "./toast";
 import { AppUi, DiagramTab } from "./types";
-
-// Passive Event Listener Patch for performance
-(function patchPassiveEvents() {
-  const originalAddEventListener = EventTarget.prototype.addEventListener;
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    let opts = options;
-    if (typeof options === "boolean") {
-      opts = { capture: options };
-    }
-    if (["wheel", "mousewheel", "touchstart", "touchmove"].includes(type)) {
-      opts = { ...(opts as object), passive: true };
-    }
-    return originalAddEventListener.call(this, type, listener, opts);
-  };
-})();
 
 let ui: AppUi;
 let statusbar: Statusbar;
@@ -302,6 +289,18 @@ async function handleDrop(e: DragEvent) {
   }
 }
 
+async function handleCopyXml() {
+  if (!state.modeler) return;
+  try {
+    const xml = await getDiagramXml(state.modeler);
+    await navigator.clipboard.writeText(xml);
+    showToast("XML copiado al portapapeles", "success");
+  } catch (err) {
+    console.error("Error al copiar XML", err);
+    showToast("No se pudo copiar el XML", "error");
+  }
+}
+
 function bindToolbar() {
   state.toolbar = createToolbar(ui, {
     onNew: () =>
@@ -318,12 +317,27 @@ function bindToolbar() {
     onZoomOut: () => state.modeler && zoomByStep(state.modeler, -0.1),
     onToggleProperties: () => state.sidebar?.toggle(),
   });
+
+  const btnCopyXml = document.getElementById("btnCopyXml");
+  if (btnCopyXml) {
+    on(btnCopyXml, "click", handleCopyXml);
+  }
 }
 
 function handleToggleTheme() {
   const newTheme = state.theme === "light" ? "dark" : "light";
   updateTheme(newTheme);
+  updateThemeIcon();
   showToast(`Tema: ${state.theme}`, "info");
+}
+
+function updateThemeIcon() {
+  const btn = ui.btnTheme;
+  if (btn) {
+    btn.innerHTML = state.theme === "light" ? 
+      `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>` :
+      `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>`;
+  }
 }
 
 async function handleOpenCloudModal() {
@@ -408,6 +422,28 @@ function bindModelerEvents() {
   });
 }
 
+async function handleAutoSave() {
+  const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
+  if (!activeTab || !state.modeler || !activeTab.isDirty) return;
+
+  const indicator = document.getElementById("autoSaveText");
+  if (indicator) indicator.textContent = "Guardando...";
+
+  try {
+    const xml = await getDiagramXml(state.modeler);
+    activeTab.xml = xml;
+    activeTab.isDirty = false;
+    await saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
+    updateTabsUi();
+    if (indicator) {
+      const now = new Date().toLocaleTimeString();
+      indicator.textContent = `Auto-guardado: ${now}`;
+    }
+  } catch (error) {
+    console.error("Auto-save failed", error);
+  }
+}
+
 async function init() {
   try {
     document.body.setAttribute("data-theme", state.theme);
@@ -429,6 +465,7 @@ async function init() {
 
     bindModelerEvents();
     bindToolbar();
+    updateThemeIcon();
 
     state.sidebar = createSidebar({
       sidebarElement: ui.propertiesSidebar,
@@ -462,8 +499,22 @@ async function init() {
     }
 
     const canvasEl = ui.canvas;
-    on(canvasEl, "dragover", handleDragOver);
-    on(canvasEl, "drop", handleDrop);
+    on<DragEvent>(canvasEl, "dragover", handleDragOver);
+    on<DragEvent>(canvasEl, "drop", handleDrop);
+
+    const searchInput = document.getElementById("diagramSearch") as HTMLInputElement;
+    if (searchInput) {
+      on(searchInput, "input", debounce(() => {
+        const term = searchInput.value;
+        if (state.modeler && term.length > 2) {
+          const results = searchElements(state.modeler, term);
+          if (results.length > 0) {
+            highlightElement(state.modeler, results[0]);
+            showToast(`Encontrado: ${results[0].businessObject.name || results[0].id}`, "info");
+          }
+        }
+      }, 500));
+    }
 
     const savedSession = await loadTabsSession(APP_CONFIG.storage.keys);
     if (savedSession && savedSession.tabs && savedSession.tabs.length > 0) {
@@ -474,6 +525,7 @@ async function init() {
     }
 
     showToast("Bienvenido al Modelador BPMN", "success");
+    setInterval(handleAutoSave, 30000);
   } catch (error) {
     console.error(error);
   }

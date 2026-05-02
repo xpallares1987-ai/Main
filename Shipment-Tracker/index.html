@@ -37,7 +37,7 @@
             </nav>
 
             <div class="header__actions">
-                <input type="file" id="excelInput" style="display: none;" accept=".xlsx, .xls, .csv">
+                <input type="file" id="excelInput" name="excelInput" style="display: none;" accept=".xlsx, .xls, .csv" autocomplete="off">
                 <button id="btnImport" class="btn-secondary" style="margin-right: 0.5rem; font-size: 0.8rem; padding: 0.5rem 1rem;" type="button">
                   📥 Import
                 </button>
@@ -82,7 +82,13 @@
             </div>
 
             <div id="view-contacts" style="display: none;">
-                <h2 id="txt-agents-title" style="color: var(--cyan); margin-bottom: 2rem;"></h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 id="txt-agents-title" style="color: var(--cyan); margin: 0;"></h2>
+                    <div style="position: relative; width: 300px;">
+                        <input type="text" id="agentSearch" name="agentSearch" placeholder="Buscar agente..." class="btn-secondary" style="width: 100%; padding-left: 2.5rem; text-align: left;" autocomplete="off">
+                        <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); opacity: 0.5;">🔍</span>
+                    </div>
+                </div>
                 <div id="agentList" class="agent-grid"></div>
             </div>
         </main>
