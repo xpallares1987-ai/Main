@@ -2,36 +2,79 @@ import { parseStringPromise } from 'xml2js';
 import { z } from 'zod';
 
 /**
+ * 🔒 SECURITY: Data Masking Dictionary
+ * This dictionary contains patterns and their generic replacements to ensure brand anonymity.
+ */
+const MASKING_RULES: Array<{ pattern: RegExp; replacement: string }> = [
+  { pattern: /SAICA/gi, replacement: 'Almacén Externo' },
+  { pattern: /NATUR/gi, replacement: 'Suministro Genérico' },
+  { pattern: /EL BURGO/gi, replacement: 'Nodo Regional' },
+  { pattern: /VENIZEL/gi, replacement: 'Centro Logístico FR' },
+];
+
+/**
+ * Applies masking rules to a string to sanitize sensitive data.
+ */
+export function applyDataMasking(text: string): string {
+  if (!text) return '';
+  let sanitized = text;
+  MASKING_RULES.forEach(({ pattern, replacement }) => {
+    sanitized = sanitized.replace(pattern, replacement);
+  });
+  return sanitized;
+}
+
+/**
+ * Deeply traverses an object or array to apply masking to all string values.
+ */
+export function maskSensitiveData<T>(data: T): T {
+  if (typeof data === 'string') {
+    return applyDataMasking(data) as unknown as T;
+  }
+  if (Array.isArray(data)) {
+    return data.map(item => maskSensitiveData(item)) as unknown as T;
+  }
+  if (data !== null && typeof data === 'object') {
+    const maskedObj: any = {};
+    for (const [key, value] of Object.entries(data)) {
+      maskedObj[key] = maskSensitiveData(value);
+    }
+    return maskedObj as T;
+  }
+  return data;
+}
+
+/**
  * Zod Schemas for data validation
  */
 export const BoardingSchema = z.object({
-  Origin: z.string(),
-  'Customer Order': z.string(),
-  Warehouse: z.string(),
-  POL: z.string(),
-  'Final Destination': z.string(),
+  Origin: z.string().transform(applyDataMasking),
+  'Customer Order': z.string().transform(applyDataMasking),
+  Warehouse: z.string().transform(applyDataMasking),
+  POL: z.string().transform(applyDataMasking),
+  'Final Destination': z.string().transform(applyDataMasking),
   'Fecha Lim. Carga': z.string(),
   'Delivery Date': z.string(),
   'Forecast Arrival': z.string(),
   Bultos: z.string(),
   'Weight (Tons)': z.string(),
-  'Ext. Addr. Number': z.string(),
+  'Ext. Addr. Number': z.string().transform(applyDataMasking),
 });
 
 export const ReceptionSchema = z.object({
-  Origin: z.string(),
-  Warehouse: z.string(),
-  Status: z.string(),
-  'Load Code': z.string(),
-  'Plate Number': z.string(),
+  Origin: z.string().transform(applyDataMasking),
+  Warehouse: z.string().transform(applyDataMasking),
+  Status: z.string().transform(applyDataMasking),
+  'Load Code': z.string().transform(applyDataMasking),
+  'Plate Number': z.string().transform(applyDataMasking),
   'Estimated Arrival at WH': z.string(),
-  'Ext. Addr. Number': z.string(),
-  'Final Destination': z.string(),
-  'Customer Order': z.string(),
-  'Item Number': z.string(),
+  'Ext. Addr. Number': z.string().transform(applyDataMasking),
+  'Final Destination': z.string().transform(applyDataMasking),
+  'Customer Order': z.string().transform(applyDataMasking),
+  'Item Number': z.string().transform(applyDataMasking),
   'Reel Year': z.string(),
-  'Paper Code': z.string(),
-  'Product Description': z.string(),
+  'Paper Code': z.string().transform(applyDataMasking),
+  'Product Description': z.string().transform(applyDataMasking),
   'Grammage (GM)': z.string(),
   'Diameter (CM)': z.string(),
   'Roll Width (CM)': z.string(),
@@ -40,18 +83,18 @@ export const ReceptionSchema = z.object({
 });
 
 export const StockSchema = z.object({
-  Origin: z.string(),
-  Warehouse: z.string(),
-  'Ext. Addr. Number': z.string(),
-  'Product Code': z.string(),
-  'Item Number': z.string(),
-  Description: z.string(),
+  Origin: z.string().transform(applyDataMasking),
+  Warehouse: z.string().transform(applyDataMasking),
+  'Ext. Addr. Number': z.string().transform(applyDataMasking),
+  'Product Code': z.string().transform(applyDataMasking),
+  'Item Number': z.string().transform(applyDataMasking),
+  Description: z.string().transform(applyDataMasking),
   Grammage: z.string(),
   Diameter: z.string(),
   'Roll Width': z.string(),
   Weight: z.string(),
-  'Load Code': z.string(),
-  'Customer Name': z.string(),
+  'Load Code': z.string().transform(applyDataMasking),
+  'Customer Name': z.string().transform(applyDataMasking),
 });
 
 /**
@@ -59,13 +102,13 @@ export const StockSchema = z.object({
  */
 export function flattenXmlValue(val: any): string {
   if (val === null || val === undefined) return '';
-  if (typeof val === 'string') return val.trim();
+  if (typeof val === 'string') return applyDataMasking(val.trim());
   if (typeof val === 'object') {
     if (Array.isArray(val)) return val.map(flattenXmlValue).join(', ');
     const inner = val._ || val.Value || val['Element:Text'] || '';
-    return typeof inner === 'object' ? flattenXmlValue(inner) : String(inner).trim();
+    return typeof inner === 'object' ? flattenXmlValue(inner) : applyDataMasking(String(inner).trim());
   }
-  return String(val).trim();
+  return applyDataMasking(String(val).trim());
 }
 
 /**
