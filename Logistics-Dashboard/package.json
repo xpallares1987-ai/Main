@@ -15,11 +15,13 @@
     "chart.js": "^4.4.7",
     "dexie": "^4.4.2",
     "leaflet": "^1.9.4",
+    "lucide-react": "^1.14.0",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "xml2js": "^0.6.2",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz"
+    "recharts": "^3.8.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/node": "^20",
