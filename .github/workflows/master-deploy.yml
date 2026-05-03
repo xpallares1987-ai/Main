@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
 
-# Cancelar ejecuciones en curso si se pushea algo nuevo a la misma rama
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -15,7 +14,30 @@ permissions:
   id-token: write
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      bpmn: ${{ steps.filter.outputs.bpmn }}
+      tracker: ${{ steps.filter.outputs.tracker }}
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      shared: ${{ steps.filter.outputs.shared }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            bpmn:
+              - 'BPMN-Modeler/**'
+            tracker:
+              - 'Shipment-Tracker/**'
+            dashboard:
+              - 'Logistics-Dashboard/**'
+            shared:
+              - 'packages/shared/**'
+
   build-all:
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,27 +49,43 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      # Única instalación para todo el Monorepo
-      - name: Install dependencies (Monorepo)
+      - name: Install dependencies
         run: npm install --legacy-peer-deps
 
       - name: Prepare Out Dir
         run: mkdir -p out
 
-      # BUILD All projects using Turbo (handles dependency graph)
-      - name: Build All
-        run: npx turbo build
+      # Build Shared if changed or if any consumer needs a build
+      - name: Build Shared Package
+        if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.tracker == 'true'
+        run: npx turbo run build --filter=@repo/shared
 
-      # ASSEMBLE Out Dir
-      - name: Assemble Out Dir
+      # Build BPMN Modeler
+      - name: Build BPMN Modeler
+        if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true'
         run: |
+          npx turbo run build --filter=bpmn-modeler
           mkdir -p out/BPMN-Modeler
           cp -r BPMN-Modeler/dist/* out/BPMN-Modeler/
+
+      # Build Shipment Tracker
+      - name: Build Shipment Tracker
+        if: needs.changes.outputs.tracker == 'true' || needs.changes.outputs.shared == 'true'
+        run: |
+          npx turbo run build --filter=shipment-tracker
           mkdir -p out/Shipment-Tracker
           cp -r Shipment-Tracker/dist/* out/Shipment-Tracker/
+
+      # Build Logistics Dashboard
+      - name: Build Logistics Dashboard
+        if: needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.shared == 'true'
+        run: |
+          npx turbo run build --filter=logistics-dashboard
           mkdir -p out/Logistics-Dashboard
           cp -r Logistics-Dashboard/out/* out/Logistics-Dashboard/
-          cp index.html out/
+
+      - name: Copy Root Index
+        run: cp index.html out/
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
