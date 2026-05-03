@@ -33,11 +33,8 @@ export default function Dashboard() {
   };
 
   const fetchLastSync = async () => {
-    try {
-      const res = await fetch('/api/external-warehouses/sync');
-      const result = await res.json();
-      setLastSync(result.lastSync);
-    } catch (e) {}
+    // La sincronización mediante API no está disponible en el despliegue estático
+    setLastSync(null);
   };
 
   const fetchData = async (tab: TabType, forceSync: boolean = false) => {
@@ -45,11 +42,8 @@ export default function Dashboard() {
     setError(null);
     try {
       if (forceSync) {
-        setIsSyncing(true);
-        const syncResponse = await fetch('/api/external-warehouses/sync', { method: 'POST' });
-        const syncResult = await syncResponse.json();
-        if (!syncResult.success) throw new Error(syncResult.error);
-        setLastSync(syncResult.lastSync);
+        // En despliegue estático de GitHub Pages, la sincronización en tiempo real no es posible
+        throw new Error('La sincronización en tiempo real no está disponible en la versión web estática. Por favor, actualiza desde tu entorno local.');
       }
 
       const endpoint = tab === 'Stock' ? 'GetStock' : tab === 'Boarding' ? 'GetBoardingList' : 'GetPendingReceptions';
