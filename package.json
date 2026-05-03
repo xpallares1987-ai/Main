@@ -5,7 +5,8 @@
   "workspaces": [
     "BPMN-Modeler",
     "Shipment-Tracker",
-    "Logistics-Dashboard"
+    "Logistics-Dashboard",
+    "packages/*"
   ],
   "scripts": {
     "dev:diagrams": "npm run dev -w BPMN-Modeler",

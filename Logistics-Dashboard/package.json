@@ -1,22 +1,30 @@
 {
   "name": "logistics-dashboard",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "type-check": "tsc",
-    "preview": "vite preview",
-    "lint": "eslint \"src/**/*.ts\"",
-    "format": "prettier --write \"src/**/*.ts\" \"index.html\"",
-    "test": "vitest"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "chart.js": "^4.4.7",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
-    "vite": "^8.0.10"
+    "@repo/shared": "*",
+    "apexcharts": "^5.10.6",
+    "axios": "^1.16.0",
+    "dexie": "^4.4.2",
+    "leaflet": "^1.9.4",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "xml2js": "^0.6.2",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz"
   },
   "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/xml2js": "^0.4.14",
+    "typescript": "^5"
   }
 }

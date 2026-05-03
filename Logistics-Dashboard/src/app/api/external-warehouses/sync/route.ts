@@ -13,8 +13,10 @@ export async function POST() {
     const command = `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}"`;
     
     const startTime = new Date();
-    const { stdout, stderr } = await execPromise(command);
+    const { stderr } = await execPromise(command);
     const endTime = new Date();
+
+    if (stderr) console.warn('[SYNC WARNING]:', stderr);
 
     const logEntry = {
       timestamp: startTime.toISOString(),
