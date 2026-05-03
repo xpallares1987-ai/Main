@@ -1,0 +1,60 @@
+{
+  "name": "Personal-Logistics-Monorepo",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "BPMN-Modeler",
+    "Shipment-Tracker",
+    "Logistics-Dashboard",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:diagrams": "npm run dev -w BPMN-Modeler",
+    "dev:tracker": "npm run dev -w Shipment-Tracker",
+    "dev:dashboard": "npm run dev -w Logistics-Dashboard",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "test": "turbo run test",
+    "format": "turbo run format"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.19",
+    "@vite-pwa/assets-generator": "^1.0.0",
+    "@vitest/mocker": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.39.4",
+    "@eslint/js": "^9.22.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.5.0",
+    "typescript-eslint": "^8.59.1",
+    "fake-indexeddb": "^6.2.5",
+    "jsdom": "^29.0.2",
+    "prettier": "^3.8.3",
+    "turbo": "^2.9.6",
+    "typescript": "^5.7.3",
+    "vite": "^8.0.10",
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.1.5",
+    "zod": "^4.4.2"
+  },
+  "overrides": {
+    "postcss": "^8.5.13",
+    "serialize-javascript": "7.0.5",
+    "vite-plugin-pwa": {
+      "vite": "$vite"
+    },
+    "workbox-build": "^7.4.0",
+    "workbox-window": "^7.4.0"
+  },
+  "dependencies": {
+    "apexcharts": "^5.10.6",
+    "dexie": "^4.4.2",
+    "leaflet": "^1.9.4",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz"
+  }
+}

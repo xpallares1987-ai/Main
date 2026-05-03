@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Tower - Logistics Operations</title>
+    <style>
+        :root {
+            --ff-navy: #0f172a;
+            --ff-blue: #2563eb;
+            --ff-orange: #f97316;
+            --ff-bg-app: #f8fafc;
+            --ff-text-main: #1e293b;
+            --ff-text-soft: #64748b;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--ff-bg-app);
+            color: var(--ff-text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--ff-navy) 0%, #1e293b 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            color: #94a3b8;
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .container {
+            max-width: 1200px;
+            margin: -4rem auto 4rem;
+            padding: 0 2rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2.5rem;
+        }
+        .card {
+            background: white;
+            padding: 3rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--ff-blue);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border-color: var(--ff-blue);
+        }
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        .card__icon {
+            font-size: 2.5rem;
+            background: #f1f5f9;
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.25rem;
+            color: var(--ff-blue);
+            transition: all 0.3s ease;
+        }
+        .card:hover .card__icon {
+            background: var(--ff-blue);
+            color: white;
+        }
+        .card h3 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 800;
+        }
+        .card p {
+            margin: 0;
+            color: var(--ff-text-soft);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 1rem;
+            background: #f1f5f9;
+            color: var(--ff-text-soft);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: fit-content;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        footer {
+            margin-top: auto;
+            padding: 3rem;
+            text-align: center;
+            color: var(--ff-text-soft);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <h1>Control Tower</h1>
+        <p>Solutions for a Freight Forwarding and Global Logistics.</p>
+    </header>
+    <div class="container">
+        <div class="grid">
+            <a href="./BPMN-Modeler/" class="card">
+                <div class="card__icon">⚙️</div>
+                <div class="badge">Process Modeler</div>
+                <h3>BPMN Modeler</h3>
+                <p>Operational Digitalization and optimization under BPMN 2.0. and native integration with Camunda 8.</p>
+            </a>
+            <a href="./Shipment-Tracker/" class="card">
+                <div class="card__icon">🚢</div>
+                <div class="badge">Real Time Visibility</div>
+                <h3>Shipment Tracker</h3>
+                <p>Shipment Geografical Tracking with Alerts and Contact Management.</p>
+            </a>
+            <a href="./Logistics-Dashboard/" class="card">
+                <div class="card__icon">📊</div>
+                <div class="badge">Data Intelligence</div>
+                <h3>Logistics Analytics</h3>
+                <p>Advanced Auditory of Financial and Operational status.</p>
+            </a>
+        </div>
+    </div>
+    <footer>
+        &copy; 2026 Xavier Pallarès
+    </footer>
+</body>
+</html>
+
