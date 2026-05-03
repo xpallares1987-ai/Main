@@ -203,7 +203,11 @@ export default function Dashboard() {
                       outerRadius={80}
                       paddingAngle={5}
                       dataKey="value"
-                      label={({name, percent}) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                      label={(props) => {
+                        const { name, percent } = props;
+                        const safePercent = percent !== undefined && percent !== null ? percent : 0;
+                        return `${name} ${(safePercent * 100).toFixed(0)}%`;
+                      }}
                     >
                       {stockByWarehouse.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
