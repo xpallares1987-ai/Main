@@ -2,7 +2,6 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-
 # This workflow integrates njsscan with GitHub's Code Scanning feature
 # nodejsscan is a static security code scanner that finds insecure code patterns in your Node.js applications
 
@@ -29,14 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     name: njsscan code scanning
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v4
-    - name: nodejsscan scan
-      id: njsscan
-      uses: ajinabraham/njsscan-action@231750a435d85095d33be7d192d52ec650625146
-      with:
-        args: '. --sarif --output results.sarif || true'
-    - name: Upload njsscan report
-      uses: github/codeql-action/upload-sarif@v4
-      with:
-        sarif_file: results.sarif
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: nodejsscan scan
+        id: njsscan
+        uses: ajinabraham/njsscan-action@7237412fdd36af517e2745077cedbf9d6900d711
+        with:
+          args: '. --sarif --output results.sarif || true'
+      - name: Upload njsscan report
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results.sarif
