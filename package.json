@@ -8,9 +8,9 @@
     "Logistics-Dashboard"
   ],
   "scripts": {
-    "dev:bpmn": "npm run dev -w BPMN-Modeler",
-    "dev:shipment": "npm run dev -w Shipment-Tracker",
-    "dev:logistics": "npm run dev -w Logistics-Dashboard",
+    "dev:diagrams": "npm run dev -w BPMN-Modeler",
+    "dev:tracker": "npm run dev -w Shipment-Tracker",
+    "dev:dashboard": "npm run dev -w Logistics-Dashboard",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
