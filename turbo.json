@@ -1,23 +1,41 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "out/**"
+      ],
+      "inputs": [
+        "src/**",
+        "public/**",
+        "next.config.mjs",
+        "tsconfig.json",
+        "package.json"
+      ]
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": []
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**", "test/**", "__tests__/**"]
     },
     "lint": {
-      "outputs": []
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["src/**"]
     },
     "type-check": {
-      "dependsOn": ["^type-check"],
-      "outputs": []
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["src/**", "tsconfig.json"]
     },
     "format": {
-      "outputs": []
+      "outputs": [],
+      "inputs": ["src/**", ".prettierrc*"]
     }
   }
 }
