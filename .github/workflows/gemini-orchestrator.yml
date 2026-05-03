@@ -1,0 +1,55 @@
+name: Gemini Orchestrator
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # 1. Triage issues when they are opened
+  triage-issue:
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    uses: ./.github/workflows/gemini-triage.yml
+    with:
+      additional_context: "Issue Title: ${{ github.event.issue.title }}\nIssue Body: ${{ github.event.issue.body }}"
+    secrets: inherit
+
+  # 2. Review pull requests when they are opened or updated
+  review-pr:
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/gemini-review.yml
+    with:
+      additional_context: "PR Title: ${{ github.event.pull_request.title }}\nPR Branch: ${{ github.event.pull_request.head.ref }}"
+    secrets: inherit
+
+  # 3. Handle interactive commands via issue/PR comments
+  # Triggers when a comment starts with "/gemini"
+  handle-command:
+    if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gemini')
+    uses: ./.github/workflows/gemini-invoke.yml
+    with:
+      additional_context: "User Command: ${{ github.event.comment.body }}\nContext: ${{ github.event.issue.pull_request && 'Pull Request' || 'Issue' }} #${{ github.event.issue.number }}"
+    secrets: inherit
+
+  # 4. Handle "plan and execute" requests via specific comment command
+  # Triggers when a comment starts with "/gemini-fix"
+  handle-fix:
+    if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gemini-fix')
+    uses: ./.github/workflows/gemini-plan-execute.yml
+    with:
+      additional_context: "Fix Request: ${{ github.event.comment.body }}\nTarget: ${{ github.event.issue.pull_request && 'Pull Request' || 'Issue' }} #${{ github.event.issue.number }}"
+    secrets: inherit
+
+  # 5. Self-Audit for Workflow changes
+  workflow-audit:
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/gemini-review.yml
+    with:
+      additional_context: "Audit Request: System Workflows have been modified. Please perform a deep audit of the CI/CD pipeline integrity."
+    secrets: inherit

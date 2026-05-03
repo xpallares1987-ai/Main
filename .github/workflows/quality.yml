@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -28,6 +31,11 @@ jobs:
               - 'Logistics-Dashboard/**'
             shared:
               - 'packages/shared/**'
+            root:
+              - 'package.json'
+              - 'package-lock.json'
+              - 'turbo.json'
+              - '.github/workflows/quality.yml'
 
   test-and-coverage:
     needs: changes
@@ -47,19 +55,19 @@ jobs:
 
       # Run tests and generate coverage for changed projects
       - name: Test Shared
-        if: needs.changes.outputs.shared == 'true'
+        if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
         run: npm run test -w @repo/shared
 
       - name: Test BPMN Modeler
-        if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true'
+        if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
         run: npm run test -w bpmn-modeler
 
       - name: Test Shipment Tracker
-        if: needs.changes.outputs.tracker == 'true' || needs.changes.outputs.shared == 'true'
+        if: needs.changes.outputs.tracker == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
         run: npm run test -w shipment-tracker
 
       - name: Test Logistics Dashboard
-        if: needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.shared == 'true'
+        if: needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
         run: npm run test -w logistics-dashboard
 
       # Upload to Codecov

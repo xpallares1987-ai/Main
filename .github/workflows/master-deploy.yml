@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -35,6 +38,11 @@ jobs:
               - 'Logistics-Dashboard/**'
             shared:
               - 'packages/shared/**'
+            root:
+              - 'package.json'
+              - 'package-lock.json'
+              - 'turbo.json'
+              - '.github/workflows/master-deploy.yml'
 
   build-all:
     needs: changes
@@ -57,12 +65,12 @@ jobs:
 
       # Build Shared if changed or if any consumer needs a build
       - name: Build Shared Package
-        if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.tracker == 'true'
+        if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.tracker == 'true' || needs.changes.outputs.root == 'true'
         run: npx turbo run build --filter=@repo/shared
 
       # Build BPMN Modeler
       - name: Build BPMN Modeler
-        if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true'
+        if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
         run: |
           npx turbo run build --filter=bpmn-modeler
           mkdir -p out/BPMN-Modeler
@@ -70,7 +78,7 @@ jobs:
 
       # Build Shipment Tracker
       - name: Build Shipment Tracker
-        if: needs.changes.outputs.tracker == 'true' || needs.changes.outputs.shared == 'true'
+        if: needs.changes.outputs.tracker == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
         run: |
           npx turbo run build --filter=shipment-tracker
           mkdir -p out/Shipment-Tracker
@@ -78,7 +86,7 @@ jobs:
 
       # Build Logistics Dashboard
       - name: Build Logistics Dashboard
-        if: needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.shared == 'true'
+        if: needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
         run: |
           npx turbo run build --filter=logistics-dashboard
           mkdir -p out/Logistics-Dashboard
