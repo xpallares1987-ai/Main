@@ -22,3 +22,4 @@
 - [ ] Se han actualizado los archivos `GEMINI.md` correspondientes si es necesario.
 - [ ] Se han añadido tests para las nuevas funcionalidades o correcciones.
 - [ ] La documentación ha sido actualizada.
+- [ ] **Seguridad:** Los datos están anonimizados y no se exponen marcas de terceros.
