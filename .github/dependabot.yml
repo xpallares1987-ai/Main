@@ -1,22 +1,44 @@
-version: 2
-updates:
-  - package-ecosystem: "npm"
-    directory: "/"https://github.com/xpallares1987-ai/Control-Tower/blob/main/.github/dependabot.yml
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-    labels:
-      - "dependencies"
-      - "javascript"
-
-  # Actualizaciones para GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "ci/cd"
+    version: 2
+    updates:
+      # 📦 Ecosistema npm (Raíz y Workspaces)
+      - package-ecosystem: "npm"
+        directory: "/"
+        schedule:
+          interval: "weekly"
+          day: "monday" # Las actualizaciones llegan al inicio de semana
+        open-pull-requests-limit: 10
+   
+        # Estrategia de versión: 'auto' actualiza el package.json siguiendo tus rangos (^ o ~)
+        versioning-strategy: auto
+   
+        groups:
+          # 1. Agrupar Parches y Minors (Seguro de auto-fusionar si los tests pasan)
+          safe-updates:
+            patterns:
+              - "*"
+            update-types:
+              - "patch"
+              - "minor"
+            exclude-patterns:
+              - "next" # Next.js suele requerir revisión manual incluso en minors
+              - "typescript"
+   
+          # 2. Agrupar todas las dependencias de desarrollo
+          dev-dependencies:
+            dependency-type: "development"
+            update-types:
+              - "patch"
+              - "minor"
+   
+        labels:
+          - "dependencies"
+          - "javascript"
+          - "automerge" # Etiqueta útil para flujos de CI/CD automáticos
+   
+      # 🤖 GitHub Actions
+      - package-ecosystem: "github-actions"
+        directory: "/"
+        schedule:
+          interval: "monthly" # Las acciones cambian menos frecuentemente
+        labels:
+          - "ci/cd"
