@@ -25,7 +25,7 @@ Este es el repositorio central (Monorepo) que agrupa diversas aplicaciones indus
 npm install
 
 # Iniciar Dashboard Logístico (Next.js)
-npm run dev:saica
+npm run dev:dashboard
 
 # Iniciar Modeler o Tracker (Vite)
 npm run dev:bpmn
