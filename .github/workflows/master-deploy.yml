@@ -49,7 +49,7 @@ jobs:
           mkdir -p out/Shipment-Tracker
           cp -r Shipment-Tracker/dist/* out/Shipment-Tracker/
           mkdir -p out/Logistics-Dashboard
-          cp -r Logistics-Dashboard/dist/* out/Logistics-Dashboard/
+          cp -r Logistics-Dashboard/out/* out/Logistics-Dashboard/
           cp index.html out/
 
       - name: Setup Pages

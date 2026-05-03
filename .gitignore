@@ -20,3 +20,9 @@ out/
 .env
 .env.local
 .env.*.local
+
+# gemini-cli settings
+.gemini/
+
+# GitHub App credentials
+gha-creds-*.json
