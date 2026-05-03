@@ -1,0 +1,71 @@
+name: Code Quality & Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      bpmn: ${{ steps.filter.outputs.bpmn }}
+      tracker: ${{ steps.filter.outputs.tracker }}
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      shared: ${{ steps.filter.outputs.shared }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            bpmn:
+              - 'BPMN-Modeler/**'
+            tracker:
+              - 'Shipment-Tracker/**'
+            dashboard:
+              - 'Logistics-Dashboard/**'
+            shared:
+              - 'packages/shared/**'
+
+  test-and-coverage:
+    needs: changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      # Run tests and generate coverage for changed projects
+      - name: Test Shared
+        if: needs.changes.outputs.shared == 'true'
+        run: npm run test -w @repo/shared
+
+      - name: Test BPMN Modeler
+        if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true'
+        run: npm run test -w bpmn-modeler
+
+      - name: Test Shipment Tracker
+        if: needs.changes.outputs.tracker == 'true' || needs.changes.outputs.shared == 'true'
+        run: npm run test -w shipment-tracker
+
+      - name: Test Logistics Dashboard
+        if: needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.shared == 'true'
+        run: npm run test -w logistics-dashboard
+
+      # Upload to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+          verbose: true
