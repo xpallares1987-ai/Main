@@ -3,7 +3,7 @@ name: Gemini Intelligence Audit
 on:
   pull_request:
     branches: [ main ]
-  workflow_dispatch: # Permite ejecutarlo manualmente
+  workflow_dispatch: 
 
 permissions:
   contents: read
@@ -18,16 +18,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Gemini CLI Audit
-        uses: google/gemini-cli-action@v1
+      - name: Run Gemini CLI
+        uses: google-github-actions/run-gemini-cli@v0.1.22
         with:
           api-key: ${{ secrets.GEMINI_API_KEY }}
           command: |
-            Audita los últimos cambios realizados. Enfócate en:
-            1. Asegurar que no existan referencias a marcas externas (mantenimiento de anonimización).
-            2. Verificar la integridad de los tipos de TypeScript en el monorepo.
-            3. Sugerir mejoras de performance en el procesamiento de XML en el Logistics-Dashboard.
-          include: |
-            Logistics-Dashboard/src/**
-            packages/shared/src/**
+            Realiza una auditoría de inteligencia artificial sobre los últimos cambios en el código. 
+            Prioridad:
+            1. Anonimización: Verifica que no existan nombres de clientes o marcas específicas (mantener términos genéricos).
+            2. Calidad: Evalúa el uso de tipos en TypeScript y la estructura del monorepo.
+            3. Rendimiento: Sugiere optimizaciones para el procesamiento de XML en Logistics-Dashboard.
+          include: "Logistics-Dashboard/src/**,packages/shared/src/**"
           model: "gemini-1.5-pro"
