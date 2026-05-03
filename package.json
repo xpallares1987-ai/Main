@@ -6,44 +6,58 @@
     "BPMN-Modeler",
     "Shipment-Tracker",
     "Logistics-Dashboard",
+    "Saica-Dashboard",
     "packages/*"
   ],
   "scripts": {
-    "dev:diagrams": "npm run dev -w BPMN-Modeler",
-    "dev:tracker": "npm run dev -w Shipment-Tracker",
-    "dev:dashboard": "npm run dev -w Logistics-Dashboard",
+    "dev:bpmn": "npm run dev -w BPMN-Modeler",
+    "dev:shipment": "npm run dev -w Shipment-Tracker",
+    "dev:logistics": "npm run dev -w Logistics-Dashboard",
+    "dev:saica": "npm run dev -w Saica-Dashboard",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "test": "turbo run test",
-    "format": "turbo run format"
+    "format": "turbo run format",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,html,md}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
+    "@eslint/js": "^9.22.0",
     "@types/node": "^20.17.19",
+    "@types/xml2js": "^0.4.14",
     "@vite-pwa/assets-generator": "^1.0.0",
     "@vitest/mocker": "^4.1.5",
     "@vitest/ui": "^4.1.5",
     "concurrently": "^9.1.2",
     "eslint": "^9.39.4",
-    "@eslint/js": "^9.22.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.5.0",
-    "typescript-eslint": "^8.59.1",
     "fake-indexeddb": "^6.2.5",
+    "globals": "^17.5.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.0.2",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
-    "turbo": "^2.9.6",
-    "typescript": "^5.7.3",
+    "turbo": "^2.9.7",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.1",
     "vite": "^8.0.10",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.1.5",
-    "zod": "^4.3.6"
+    "zod": "^4.4.2"
   },
   "overrides": {
-    "postcss": "^8.5.13",
     "serialize-javascript": "7.0.5",
     "vite-plugin-pwa": {
       "vite": "$vite"
@@ -55,6 +69,7 @@
     "apexcharts": "^5.10.6",
     "dexie": "^4.4.2",
     "leaflet": "^1.9.4",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz",
+    "xml2js": "^0.6.2"
   }
 }

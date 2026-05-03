@@ -10,8 +10,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules') && (id.includes('leaflet') || id.includes('apexcharts') || id.includes('xlsx'))) {
-            return 'vendor';
+          if (id.includes('node_modules')) {
+            if (id.includes('leaflet') || id.includes('chart.js') || id.includes('lucide-static')) {
+              return 'vendor';
+            }
           }
           return null;
         }

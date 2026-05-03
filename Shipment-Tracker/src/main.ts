@@ -1,12 +1,13 @@
-import '../assets/css/shared-theme.css';
+import '@torre/shared/assets/css/shared-theme.css';
+import '@torre/ui/assets/css/components.css';
 import '../assets/css/style.css';
 import { ShipmentService } from "./services/shipmentService";
 import { AgentService } from "./services/agentService";
 import { MapService } from "./services/mapService";
 import { UIComponents } from "./ui/components";
 import { ModalUI } from "./ui/modal";
-import { Toast } from "./ui/toast";
-import { debounce } from "./utils/dom";
+import { debounce } from "@torre/shared";
+import { Toast, Modal } from "@torre/ui";
 import { I18nService } from "./services/i18nService";
 import { ExportService } from "./services/exportService";
 import { ChartService } from "./services/chartService";
@@ -46,6 +47,13 @@ const customWindow = (window as unknown as CustomWindow);
 document.addEventListener('click', async (e) => {
   const target = e.target as HTMLElement;
   
+  // Language Switch
+  const langBtn = target.closest('[data-action="set-lang"]');
+  if (langBtn) {
+    const lang = (langBtn as HTMLElement).dataset.lang as 'es' | 'en';
+    I18nService.setLang(lang);
+  }
+
   // Show Details
   const detailsBtn = target.closest('[data-action="show-details"]');
   if (detailsBtn) {

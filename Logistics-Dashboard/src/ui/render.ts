@@ -1,7 +1,7 @@
 import { state } from '../state';
 import { FilterCriteria } from '../types';
 import { BLACK_COLS, BLACK_FILTERS, PAGE_SIZE } from '../config';
-import { escapeHTML, qs } from "../utils/dom";
+import { escapeHTML, qs } from "@torre/shared";
 import { UIComponents } from './components';
 
 export function renderSheetSelect(names: string[]) {
@@ -332,21 +332,5 @@ export function toggleRow(id: string) {
                 btn.style.borderColor = '';
             }
         }
-    }
-}
-
-export function showToast(title: string, message: string, isError = true) {
-    const container = qs('#toastContainer');
-    if (!container) return;
-    const toastDiv = document.createElement('div');
-    toastDiv.innerHTML = UIComponents.renderToast(title, message, isError);
-    const toast = toastDiv.firstElementChild as HTMLElement;
-    if (toast) {
-        container.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 400);
-        }, 5000);
     }
 }

@@ -10,8 +10,8 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('leaflet') || id.includes('apexcharts') || id.includes('xlsx')) {
-              return 'vendor';
+            if (id.includes('bpmn-js') || id.includes('diagram-js') || id.includes('@bpmn-io/properties-panel')) {
+              return 'bpmn-vendor';
             }
           }
           return null;

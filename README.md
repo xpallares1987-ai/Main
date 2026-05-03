@@ -1,37 +1,61 @@
-# Torre de Control
+# Torre de Control (Control Tower)
 
-Este es el repositorio central (Monorepo) que agrupa diversas aplicaciones industriales y de logística desarrolladas con estándares de alta calidad, Next.js y TypeScript estricto.
+Este es el repositorio central (Monorepo) que agrupa diversas aplicaciones industriales y de logística desarrolladas con estándares de alta calidad, Vanilla CSS y TypeScript estricto.
 
 ## Proyectos Incluidos
 
-1.  **[BPMN 2.0 Interactive Modeler](./BPMN-Modeler/):** Editor de procesos industriales interactivo con soporte para la nube (GitHub Gists).
-2.  **[Shipment Tracker](./Shipment-Tracker/):** Sistema de seguimiento de embarques con analítica integrada y mapas dinámicos.
-3.  **[Logistics Intelligence](./Logistics-Dashboard/):** Panel de control avanzado para auditoría, KPIs y gestión unificada de **Almacenes Externos** con sincronización local automatizada.
+1.  **[BPMN 2.0 Interactive Modeler](./BPMN-Modeler/):** Editor de procesos industriales interactivo con soporte para Camunda 8 y persistencia en la nube.
+2.  **[Logistics Intelligence Dashboard](./Logistics-Dashboard/):** Panel de BI para auditoría de datos, procesamiento de Excel y análisis con IA.
+3.  **[Shipment Tracker](./Shipment-Tracker/):** Sistema de seguimiento de embarques en tiempo real con mapas interactivos y capacidades PWA.
 
 ## Estándares del Proyecto
 
 - **Lenguaje:** TypeScript 5+ (Modo Estricto).
-- **Frontend:** Next.js (Logistics Dashboard) & Vite (Shipment/BPMN).
-- **Estilos:** Vanilla CSS (Zero Frameworks).
-- **Arquitectura:** Monorepo con utilidades compartidas (**Share-Utils**) bajo `@repo/shared`.
-- **Automatización:** Sincronización de datos mediante PowerShell (Local-Sync).
-- **Linting:** ESLint 9 (Flat Config) + Prettier.
-- **Pruebas:** Vitest (Zero Failures).
+- **Estilos:** Vanilla CSS (Zero Frameworks) - Enfoque en rendimiento y flexibilidad.
+- **Arquitectura:** Monorepo gestionado con `TurboRepo`.
+- **Linting:** ESLint 9 (Flat Config) + Prettier para un estilo de código consistente.
+- **Pruebas:** Vitest para asegurar la integridad de cada módulo.
+- **Seguridad:** Implementación de CSP, sanitización de datos y procesamiento local de información sensible.
 
-## Guía de Inicio
+## Estructura del Workspace
+
+```text
+/
+├── BPMN-Modeler/       # Modelador de procesos
+├── Logistics-Dashboard/# Dashboard de auditoría e IA
+├── Shipment-Tracker/   # Seguimiento de envíos (PWA)
+├── package.json        # Configuración raíz y scripts de Turbo
+└── turbo.json          # Orquestación de tareas
+```
+
+## Guía de Inicio Rápido
+
+### Instalación
 
 ```bash
-# Instalar todas las dependencias
 npm install
-
-# Iniciar Dashboard Logístico (Next.js)
-npm run dev:dashboard
-
-# Iniciar Modeler o Tracker (Vite)
-npm run dev:bpmn
-npm run dev:shipment
 ```
+
+### Comandos de Turbo
+
+```bash
+# Iniciar todos los proyectos en modo desarrollo
+npm run dev
+
+# Construir todos los proyectos para producción
+npm run build
+
+# Ejecutar todos los tests
+npm run test
+
+# Verificar linting en todo el monorepo
+npm run lint
+```
+
+## Configuración
+
+Copia el archivo `.env.example` a `.env` y configura las variables necesarias (principalmente para la sincronización con GitHub Gist si usas el BPMN Modeler).
 
 ## Licencia
 
-MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.

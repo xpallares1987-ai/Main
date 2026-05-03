@@ -1,10 +1,10 @@
-import { ensureElement } from "../utils/dom";
+import { ensureElement } from "@torre/shared";
 import { DiagramTab } from "../types";
 
-export function setDiagramName(element: HTMLElement, fileName: string) {
-  ensureElement(element, "elemento de nombre de diagrama");
-  const safeName = fileName && fileName.trim() ? fileName.trim() : "diagram.bpmn";
-  element.textContent = safeName;
+export function setDiagramName(element: HTMLElement | null, name: string) {
+  const el = ensureElement(element, "elemento de nombre de diagrama");
+  const safeName = name && name.trim() ? name.trim() : "diagram.bpmn";
+  el.textContent = safeName;
 }
 
 export function renderTabs(
@@ -12,33 +12,23 @@ export function renderTabs(
   tabs: DiagramTab[],
   activeTabId: string,
   onSwitch: (id: string) => void,
-  onClose: (id: string) => void
+  onClose: (id: string) => void,
 ) {
-  ensureElement(container, "contenedor de pestañas");
   container.innerHTML = "";
-
   tabs.forEach((tab) => {
     const tabEl = document.createElement("div");
-    tabEl.className = `tab ${tab.id === activeTabId ? "tab--active" : ""} ${tab.isDirty ? "tab--dirty" : ""}`;
-    
-    const labelEl = document.createElement("span");
-    labelEl.className = "tab__label";
-    labelEl.textContent = tab.name;
-    labelEl.onclick = () => onSwitch(tab.id);
+    tabEl.className = `tab ${tab.id === activeTabId ? "active" : ""}`;
+    tabEl.innerHTML = `
+      <span class="tab-name">${tab.name}${tab.isDirty ? "*" : ""}</span>
+      <button class="tab-close" title="Cerrar">&times;</button>
+    `;
 
-    const closeEl = document.createElement("button");
-    closeEl.className = "tab__close";
-    closeEl.innerHTML = "&times;";
-    closeEl.onclick = (e) => {
+    tabEl.querySelector(".tab-name")?.addEventListener("click", () => onSwitch(tab.id));
+    tabEl.querySelector(".tab-close")?.addEventListener("click", (e) => {
       e.stopPropagation();
       onClose(tab.id);
-    };
+    });
 
-    tabEl.appendChild(labelEl);
-    tabEl.appendChild(closeEl);
     container.appendChild(tabEl);
   });
 }
-
-
-

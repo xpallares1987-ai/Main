@@ -1,4 +1,4 @@
-import { ensureElement } from "../utils/dom";
+import { ensureElement } from "@torre/shared";
 
 export interface Statusbar {
   setStatus: (message: string, state?: string) => void;

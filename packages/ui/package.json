@@ -1,0 +1,19 @@
+{
+  "name": "@torre/ui",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@torre/shared": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,3 +1,13 @@
+import { z } from "zod";
+import { createEnvValidator } from "@torre/shared";
+
+const envSchema = {
+    VITE_GITHUB_GIST_ID: z.string().optional(),
+};
+
+const validateEnv = createEnvValidator(envSchema);
+export const env = validateEnv(import.meta.env);
+
 export const BLACK_SHEETS = ['Final Destination', 'Warehouse'];
 export const BLACK_COLS = ['Warehouse Code', 'Ext. Addr. Number', 'POL', 'POD', 'Reel Year', 'Load Type', 'Roll Length (CM)'];
 export const BLACK_FILTERS = ['Quantity', 'Customer Order', 'Item Number', 'Weight (Kg)', 'Weight (Kgs)', 'Weight (KG)', 'Pending', 'Total', 'Buyer Address', 'Load Code', 'Grammage (GM)', 'Diameter (CM)', 'Roll Width (CM)', 'Payables', 'Receivables', 'Local Amount', 'Total Rate', 'GP Ops.', 'Revenue Ops.', 'Expenses Ops.'];

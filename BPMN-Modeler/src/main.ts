@@ -1,3 +1,5 @@
+import "@torre/shared/assets/css/shared-theme.css";
+import "@torre/ui/assets/css/components.css";
 import "../assets/css/app.css";
 import APP_CONFIG from "./config";
 import { state, updateTheme } from "./state";
@@ -37,8 +39,8 @@ import {
   ensureExtension,
   formatError,
   safeTrim,
-} from "./utils/dom";
-import { showToast } from "./toast";
+} from "@torre/shared";
+import { Toast } from "@torre/ui";
 import { AppUi, DiagramTab } from "./types";
 
 let ui: AppUi;
@@ -106,7 +108,7 @@ async function handleSwitchTab(tabId: string) {
     setDiagramName(ui.diagramName, nextTab.name);
     updateTabsUi();
     await saveTabsSession(APP_CONFIG.storage.keys, state.tabs, state.activeTabId);
-    showToast(`Cambiado a: ${nextTab.name}`, "info");
+    Toast.show(`Cambiado a: ${nextTab.name}`, "info");
   }
 }
 
@@ -150,7 +152,7 @@ async function loadDiagramInNewTab(xml: string, fileName: string) {
   const tab = createTab(fileName, xml);
   state.tabs.push(tab);
   await handleSwitchTab(tab.id);
-  showToast(`Cargado: ${tab.name}`, "success");
+  Toast.show(`Cargado: ${tab.name}`, "success");
 }
 
 async function handleOpenDiagram() {
@@ -237,10 +239,10 @@ async function handleLogisticsTemplate() {
             name.toLowerCase().replace(/ /g, "-") + ".bpmn",
           );
           ui.logisticsModal.close();
-          showToast(`Plantilla cargada: ${name}`, "success");
+          Toast.show(`Plantilla cargada: ${name}`, "success");
         } catch (error) {
           console.error(error);
-          showToast("Error al cargar la plantilla", "error");
+          Toast.show("Error al cargar la plantilla", "error");
         }
       });
     });
@@ -258,7 +260,7 @@ async function handleSaveDiagram() {
   activeTab.isDirty = false;
   activeTab.xml = xml;
   updateTabsUi();
-  showToast("Diagrama guardado", "success");
+  Toast.show("Diagrama guardado", "success");
 }
 
 async function handleExportDiagram() {
@@ -266,7 +268,7 @@ async function handleExportDiagram() {
   const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
   const fileName = activeTab ? activeTab.name.replace(".bpmn", "") : "diagrama";
   await exportToPng(state.modeler, fileName);
-  showToast("Imagen exportada", "success");
+  Toast.show("Imagen exportada", "success");
 }
 
 function handleDragOver(e: DragEvent) {
@@ -285,7 +287,7 @@ async function handleDrop(e: DragEvent) {
     };
     reader.readAsText(file);
   } else {
-    showToast("Por favor, suelta un archivo .bpmn o .xml válido", "warning");
+    Toast.show("Por favor, suelta un archivo .bpmn o .xml válido", "warning");
   }
 }
 
@@ -294,10 +296,10 @@ async function handleCopyXml() {
   try {
     const xml = await getDiagramXml(state.modeler);
     await navigator.clipboard.writeText(xml);
-    showToast("XML copiado al portapapeles", "success");
+    Toast.show("XML copiado al portapapeles", "success");
   } catch (err) {
     console.error("Error al copiar XML", err);
-    showToast("No se pudo copiar el XML", "error");
+    Toast.show("No se pudo copiar el XML", "error");
   }
 }
 
@@ -328,7 +330,7 @@ function handleToggleTheme() {
   const newTheme = state.theme === "light" ? "dark" : "light";
   updateTheme(newTheme);
   updateThemeIcon();
-  showToast(`Tema: ${state.theme}`, "info");
+  Toast.show(`Tema: ${state.theme}`, "info");
 }
 
 function updateThemeIcon() {
@@ -351,7 +353,7 @@ async function handleOpenCloudModal() {
         const token = await decryptToken(encryptedToken, pin);
         ui.githubTokenInput.value = token;
       } catch {
-        showToast("PIN incorrecto", "error");
+        Toast.show("PIN incorrecto", "error");
         ui.githubTokenInput.value = "";
       }
     }
@@ -361,11 +363,11 @@ async function handleOpenCloudModal() {
 
 async function handleCloudSync() {
   const token = ui.githubTokenInput.value.trim();
-  if (!token) return showToast("Introduce un token de GitHub", "error");
+  if (!token) return Toast.show("Introduce un token de GitHub", "error");
 
   const pin = prompt("Crea un PIN para proteger tu token en esta sesión:");
   if (!pin)
-    return showToast("El PIN es obligatorio para proteger el token", "warning");
+    return Toast.show("El PIN es obligatorio para proteger el token", "warning");
 
   try {
     const encrypted = await encryptToken(token, pin);
@@ -383,10 +385,10 @@ async function handleCloudSync() {
     if (result?.id) {
       sessionStorage.setItem(APP_CONFIG.storage.keys.gistId, result.id);
       ui.cloudModal.close();
-      showToast("Sincronizado con GitHub", "success");
+      Toast.show("Sincronizado con GitHub", "success");
     }
   } catch {
-    showToast("Error de sincronización", "error");
+    Toast.show("Error de sincronización", "error");
   }
 }
 
@@ -394,7 +396,7 @@ async function runAction(action: () => Promise<void> | void, errorPrefix: string
   try {
     await action();
   } catch (error) {
-    showToast(formatError(error, errorPrefix), "error");
+    Toast.show(formatError(error, errorPrefix), "error");
   }
 }
 
@@ -510,7 +512,7 @@ async function init() {
           const results = searchElements(state.modeler, term);
           if (results.length > 0) {
             highlightElement(state.modeler, results[0]);
-            showToast(`Encontrado: ${results[0].businessObject.name || results[0].id}`, "info");
+            Toast.show(`Encontrado: ${results[0].businessObject.name || results[0].id}`, "info");
           }
         }
       }, 500));
@@ -524,7 +526,7 @@ async function init() {
       await handleNewTab();
     }
 
-    showToast("Bienvenido al Modelador BPMN", "success");
+    Toast.show("Bienvenido al Modelador BPMN", "success");
     setInterval(handleAutoSave, 30000);
   } catch (error) {
     console.error(error);

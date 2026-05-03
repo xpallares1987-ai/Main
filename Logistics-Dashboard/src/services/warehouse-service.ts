@@ -4,10 +4,7 @@ import {
   flattenXmlValue, 
   formatXmlDate, 
   formatXmlNumber, 
-  parseExternalXml,
-  BoardingSchema,
-  ReceptionSchema,
-  StockSchema
+  parseExternalXml 
 } from '@repo/shared';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -20,20 +17,6 @@ async function readLocalXml(fileName: string) {
   if (!fs.existsSync(filePath)) return null;
   const content = fs.readFileSync(filePath, 'utf-8');
   return await parseExternalXml(content);
-}
-
-/**
- * Validates a list of items against a Zod schema.
- */
-function validateItems<T>(items: any[], schema: any): T[] {
-  return items.map(item => {
-    const result = schema.safeParse(item);
-    if (!result.success) {
-      console.warn('[VALIDATION WARNING]: Invalid item structure', result.error.format());
-      return item; // Fallback to raw item if validation fails but we want to show data
-    }
-    return result.data;
-  });
 }
 
 /**
@@ -68,9 +51,7 @@ export async function getUnifiedBoardingList() {
     return i['Customer Order'] && i['Fecha Lim. Carga'].endsWith(currentYear);
   });
 
-  const validated = validateItems(processed, BoardingSchema);
-
-  return validated.sort((a: any, b: any) => {
+  return processed.sort((a, b) => {
     const parseDate = (d: string) => {
       const parts = d.split('/');
       if (parts.length < 3) return 0;
@@ -89,7 +70,7 @@ export async function getUnifiedPendingReceptions() {
   const list = data.ExternalWarehouses?.Receptions?.ReceptionItem || [];
   const items = Array.isArray(list) ? list : [list];
 
-  const processed = items.map(item => {
+  return items.map(item => {
     let wh = flattenXmlValue(item.Warehouse);
     if (wh === 'ANVERS') wh = 'VAN MOER';
 
@@ -120,8 +101,6 @@ export async function getUnifiedPendingReceptions() {
       'Weight (Kgs)': formatXmlNumber(item.Weight, 0)
     };
   });
-
-  return validateItems(processed, ReceptionSchema);
 }
 
 /**
@@ -153,9 +132,7 @@ export async function getUnifiedStock() {
     };
   });
 
-  const validated = validateItems(processed, StockSchema);
-
-  return validated.sort((a: any, b: any) => {
+  return processed.sort((a, b) => {
     return (a.Warehouse || '').localeCompare(b.Warehouse || '') || 
            (a['Ext. Addr. Number'] || '').localeCompare(b['Ext. Addr. Number'] || '') || 
            (a['Product Code'] || '').localeCompare(b['Product Code'] || '') || 

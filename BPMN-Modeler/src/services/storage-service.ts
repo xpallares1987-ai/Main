@@ -10,14 +10,15 @@ async function getEncryptionKey(pin: string, salt: Uint8Array) {
     false,
     ["deriveKey"]
   );
+  const algorithm: Pbkdf2Params = {
+    name: "PBKDF2",
+    salt: salt as unknown as ArrayBuffer,
+    iterations: 100000,
+    hash: "SHA-256",
+  };
+
   return crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      salt: salt as any,
-      iterations: 100000,
-      hash: "SHA-256",
-    },
+    algorithm,
     keyMaterial,
     { name: "AES-GCM", length: 256 },
     false,

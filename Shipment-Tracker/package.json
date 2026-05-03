@@ -13,6 +13,8 @@
     "test": "vitest run --environment jsdom --coverage"
   },
   "dependencies": {
+    "@torre/shared": "*",
+    "@torre/ui": "*",
     "lucide-static": "^0.372.0",
     "vite-plugin-pwa": "^1.2.0"
   },

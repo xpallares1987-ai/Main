@@ -1,4 +1,5 @@
-import '../assets/css/shared-theme.css';
+import '@torre/shared/assets/css/shared-theme.css';
+import '@torre/ui/assets/css/components.css';
 import '../assets/css/app.css';
 import { state, resetState } from './state';
 import { generateAIInsights } from './services/aiAnalyzer';
@@ -9,14 +10,14 @@ import {
     updateKPIs, 
     renderTable, 
     updateActiveFiltersDisplay,
-    showToast,
     toggleRow
 } from './ui/render';
-import { qs } from "./utils/dom";
+import { qs } from "@torre/shared";
+import { Toast } from "@torre/ui";
 import { FilterCriteria } from './types';
 
 // Attach to window for string-based onclick handlers
-(window as any).toggleRow = toggleRow;
+(window as unknown as { toggleRow: typeof toggleRow }).toggleRow = toggleRow;
 
 function applyFilters() {
     const criteria: FilterCriteria = {};
@@ -80,7 +81,7 @@ function renderAll() {
         copyBtn.onclick = () => {
             const text = aiSummary.innerText.replace('📋 Copiar Resumen', '').trim();
             navigator.clipboard.writeText(text);
-            showToast('Copiado', 'Resumen copiado al portapapeles', false);
+            Toast.show('Resumen copiado al portapapeles', 'success');
         };
         aiSummary.appendChild(copyBtn);
     }
@@ -129,14 +130,14 @@ async function handleFileUpload(e: Event) {
                     buildFilters(applyFilters);
                     renderAll();
                     if (dashboardUI) dashboardUI.style.display = 'block';
-                    showToast("Auditoría Finalizada", "El ecosistema de datos ha sido estructurado exitosamente.", false);
+                    Toast.show("El ecosistema de datos ha sido estructurado exitosamente.", "success");
                 } else {
-                    showToast("Carencia de Datos", "El archivo no contiene matrices válidas para auditoría.");
+                    Toast.show("El archivo no contiene matrices válidas para auditoría.", "warning");
                     if (uploadPanel) uploadPanel.style.display = 'flex';
                 }
             } else {
                 console.error(error);
-                showToast("Fallo Crítico", "Error en el procesamiento de datos: " + error);
+                Toast.show("Error en el procesamiento de datos: " + error, "error");
                 if (uploadPanel) uploadPanel.style.display = 'flex';
             }
             if (loader) loader.style.display = 'none';
@@ -145,7 +146,7 @@ async function handleFileUpload(e: Event) {
 
         worker.onerror = (err) => {
             console.error("Worker Error:", err);
-            showToast("Fallo Crítico", "Error interno en el motor de auditoría.");
+            Toast.show("Error interno en el motor de auditoría.", "error");
             if (loader) loader.style.display = 'none';
             if (uploadPanel) uploadPanel.style.display = 'flex';
             worker.terminate();
@@ -153,7 +154,7 @@ async function handleFileUpload(e: Event) {
 
     } catch (err) {
         console.error(err);
-        showToast("Fallo Crítico", "No se pudo iniciar el motor de auditoría.");
+        Toast.show("No se pudo iniciar el motor de auditoría.", "error");
         if (loader) loader.style.display = 'none';
         if (uploadPanel) uploadPanel.style.display = 'flex';
     }
@@ -178,7 +179,7 @@ function loadSampleData() {
         if (dashboardUI) dashboardUI.style.display = 'block';
         if (uploadPanel) uploadPanel.style.display = 'none';
 
-        showToast("Datos de Ejemplo Cargados", "Se ha estructurado un ecosistema de Freight Forwarding ficticio para demostración.", false);
+        Toast.show("Se ha estructurado un ecosistema de Freight Forwarding ficticio para demostración.", "success");
     }
 }
 

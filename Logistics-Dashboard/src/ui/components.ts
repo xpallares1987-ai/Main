@@ -1,4 +1,4 @@
-import { escapeHTML } from "../utils/dom";
+import { escapeHTML } from "@torre/shared";
 
 export const UIComponents = {
     renderKPI(label: string, value: string, sub: string, trend: 'up' | 'down' | 'neutral') {

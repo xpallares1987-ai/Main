@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com; connect-src 'self' https://unpkg.com https://cdn.jsdelivr.net;">
-    <meta name="referrer" content="no-referrer">
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
-    <title>
-      Shipment Tracker
-    </title>
-    <link rel="manifest" href="./manifest.webmanifest">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    </head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com; connect-src 'self' https://unpkg.com https://cdn.jsdelivr.net;"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Permissions-Policy"
+      content="camera=(), microphone=(), geolocation=(self)"
+    />
+    <title>Shipment Tracker</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <div id="offline-alert" class="offline-banner" style="display: none;">
       <span id="txt-offline-mode"></span>
       -
@@ -23,86 +29,123 @@
     </div>
 
     <div id="app">
-        <header class="header">
-            <div class="header__brand">
-                <h1 id="txt-title"></h1>
-                <span class="badge">
-                  Companies
-                </span>
-            </div>
-            
-            <nav class="main-nav">
-                <button id="nav-dashboard" class="nav-link active" type="button"></button>
-                <button id="nav-contacts" class="nav-link" type="button"></button>
-            </nav>
-
-            <div class="header__actions">
-                <input type="file" id="excelInput" name="excelInput" style="display: none;" accept=".xlsx, .xls, .csv" autocomplete="off">
-                <button id="btnImport" class="btn-secondary" style="margin-right: 0.5rem; font-size: 0.8rem; padding: 0.5rem 1rem;" type="button">
-                  📥 Import
-                </button>
-                <button id="btnAnalytics" class="btn-secondary" style="margin-right: 0.5rem; font-size: 0.8rem; padding: 0.5rem 1rem;" type="button">
-                  📊 Analytics
-                </button>
-                <button id="btnExport" class="btn-primary" style="margin-right: 1rem; font-size: 0.8rem; padding: 0.5rem 1rem;" type="button"></button>
-                <div class="live-indicator">
-                    <div class="live-dot"></div>
-                    <span id="txt-live"></span>
-                </div>
-                <div class="lang-selector">
-                    <button class="btn-lang" onclick="window.setLanguage('es')" type="button">
-                      Spanish
-                    </button>
-                    <button class="btn-lang" onclick="window.setLanguage('en')" type="button">
-                      English
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="dashboard">
-            <div id="view-dashboard">
-                <section id="statsPanel" class="stats-grid"></section>
-                <section id="analyticsPanel" class="analytics-container" style="display: none;">
-                    <div class="chart-card">
-                        <h4 id="txt-chart-status"></h4>
-                        <div id="statusChart"></div>
-                    </div>
-                    <div class="chart-card">
-                        <h4 id="txt-chart-mode"></h4>
-                        <div id="modeChart"></div>
-                    </div>
-                </section>
-                <div id="map" class="map-container"></div>
-                <section class="filters">
-                    <input type="text" id="searchInput" name="searchInput" autocomplete="off">
-                    <select id="statusFilter" name="statusFilter"></select>
-                </section>
-                <div id="shipmentList" class="shipment-grid"></div>
-            </div>
-
-            <div id="view-contacts" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                    <h2 id="txt-agents-title" style="color: var(--cyan); margin: 0;"></h2>
-                    <div style="position: relative; width: 300px;">
-                        <input type="text" id="agentSearch" name="agentSearch" placeholder="Buscar agente..." class="btn-secondary" style="width: 100%; padding-left: 2.5rem; text-align: left;" autocomplete="off">
-                        <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); opacity: 0.5;">🔍</span>
-                    </div>
-                </div>
-                <div id="agentList" class="agent-grid"></div>
-            </div>
-        </main>
-    </div>
-
-    <div id="detailsModal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" onclick="window.closeModal()" type="button">&times;</button>
-            <div id="modalBody"></div>
+      <header class="header">
+        <div class="header__brand">
+          <h1 id="txt-title"></h1>
+          <span class="badge"> Companies </span>
         </div>
-    </div>
 
-    <div id="toast-container"></div>
+        <nav class="main-nav">
+          <button
+            id="nav-dashboard"
+            class="nav-link active"
+            type="button"
+          ></button>
+          <button id="nav-contacts" class="nav-link" type="button"></button>
+        </nav>
+
+        <div class="header__actions">
+          <input
+            type="file"
+            id="excelInput"
+            name="excelInput"
+            style="display: none;"
+            accept=".xlsx, .xls, .csv"
+            autocomplete="off"
+          />
+          <button
+            id="btnImport"
+            class="btn-secondary"
+            style="margin-right: 0.5rem; font-size: 0.8rem; padding: 0.5rem 1rem;"
+            type="button"
+          >
+            📥 Import
+          </button>
+          <button
+            id="btnAnalytics"
+            class="btn-secondary"
+            style="margin-right: 0.5rem; font-size: 0.8rem; padding: 0.5rem 1rem;"
+            type="button"
+          >
+            📊 Analytics
+          </button>
+          <button
+            id="btnExport"
+            class="btn-primary"
+            style="margin-right: 1rem; font-size: 0.8rem; padding: 0.5rem 1rem;"
+            type="button"
+          ></button>
+          <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span id="txt-live"></span>
+          </div>
+          <div class="lang-selector">
+              <button class="btn-lang" data-action="set-lang" data-lang="es" type="button">
+                Spanish
+              </button>
+              <button class="btn-lang" data-action="set-lang" data-lang="en" type="button">
+                English
+              </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <div id="view-dashboard">
+          <section id="statsPanel" class="stats-grid"></section>
+          <section
+            id="analyticsPanel"
+            class="analytics-container"
+            style="display: none;"
+          >
+            <div class="chart-card">
+              <h4 id="txt-chart-status"></h4>
+              <div id="statusChart"></div>
+            </div>
+            <div class="chart-card">
+              <h4 id="txt-chart-mode"></h4>
+              <div id="modeChart"></div>
+            </div>
+          </section>
+          <div id="map" class="map-container"></div>
+          <section class="filters">
+            <input
+              type="text"
+              id="searchInput"
+              name="searchInput"
+              autocomplete="off"
+            />
+            <select id="statusFilter" name="statusFilter"></select>
+          </section>
+          <div id="shipmentList" class="shipment-grid"></div>
+        </div>
+
+        <div id="view-contacts" style="display: none;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;"
+          >
+            <h2 id="txt-agents-title" style="color: var(--cyan); margin: 0;"></h2>
+            <div style="position: relative; width: 300px;">
+              <input
+                type="text"
+                id="agentSearch"
+                name="agentSearch"
+                placeholder="Buscar agente..."
+                class="btn-secondary"
+                style="width: 100%; padding-left: 2.5rem; text-align: left;"
+                autocomplete="off"
+              />
+              <span
+                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); opacity: 0.5;"
+                >🔍</span
+              >
+            </div>
+          </div>
+          <div id="agentList" class="agent-grid"></div>
+        </div>
+      </main>
+    </div>
 
     <script type="module" src="./src/main.ts"></script>
-</body>
+  </body>
 </html>

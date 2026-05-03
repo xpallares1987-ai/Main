@@ -1,3 +1,13 @@
+import { z } from "zod";
+import { createEnvValidator } from "@torre/shared";
+
+const envSchema = {
+  VITE_GITHUB_GIST_ID: z.string().optional(),
+};
+
+const validateEnv = createEnvValidator(envSchema);
+export const env = validateEnv(import.meta.env);
+
 const APP_CONFIG = {
   app: {
     name: "BPMN 2.0 Interactive Modeler",
