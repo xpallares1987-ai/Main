@@ -13,6 +13,7 @@ type TabType = 'Overview' | 'Boarding' | 'Receptions' | 'Stock';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
+// Build sync fix: Ensuring the PieChart label type safety is correctly picked up
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('Overview');
   const [data, setData] = useState<any[]>([]);
