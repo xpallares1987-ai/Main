@@ -21,12 +21,12 @@ jobs:
       - name: Run Gemini CLI
         uses: google-github-actions/run-gemini-cli@v0.1.22
         with:
-          api-key: ${{ secrets.GEMINI_API_KEY }}
-          command: |
-            Realiza una auditoría de inteligencia artificial sobre los últimos cambios en el código. 
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            Realiza una auditoría de inteligencia artificial sobre los últimos cambios en el código dentro de 'Logistics-Dashboard/src/**' y 'packages/shared/src/**'. 
+            
             Prioridad:
-            1. Anonimización: Verifica que no existan nombres de clientes o marcas específicas (mantener términos genéricos).
+            1. Anonimización: Verifica que no existan nombres de clientes o marcas específicas (mantener términos genéricos como "Almacén Externo").
             2. Calidad: Evalúa el uso de tipos en TypeScript y la estructura del monorepo.
-            3. Rendimiento: Sugiere optimizaciones para el procesamiento de XML en Logistics-Dashboard.
-          include: "Logistics-Dashboard/src/**,packages/shared/src/**"
-          model: "gemini-1.5-pro"
+            3. Rendimiento: Sugiere optimizaciones para el procesamiento de XML en el servicio 'warehouse-service.ts'.
+          gemini_model: "gemini-1.5-pro"
