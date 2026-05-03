@@ -1,0 +1,31 @@
+name: Gemini Code Review
+
+on:
+  workflow_call:
+    inputs:
+      additional_context:
+        type: string
+        required: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gemini Review
+        uses: google-github-actions/run-gemini-cli@v0.1.22
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            Realiza una revisión técnica del código en este Pull Request. 
+            Contexto adicional: ${{ inputs.additional_context }}
+            
+            Prioridades:
+            1. Anonimización: Verifica que NO existan nombres de clientes específicos o marcas.
+            2. Calidad: Evalúa el uso de tipos en TypeScript.
+            3. Rendimiento: Sugiere mejoras en el procesamiento de datos XML.
+          gemini_model: "gemini-1.5-pro"

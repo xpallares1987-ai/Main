@@ -1,0 +1,28 @@
+name: Gemini Triage
+
+on:
+  workflow_call:
+    inputs:
+      additional_context:
+        type: string
+        required: false
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gemini Triage
+        uses: google-github-actions/run-gemini-cli@v0.1.22
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            Actúa como un gestor de proyectos experto. Analiza el contenido de este issue y:
+            1. Resume el problema o solicitud.
+            2. Clasifícalo (bug, feature request, consulta).
+            3. Sugiere los archivos del monorepo que podrían estar afectados.
+            
+            Contexto: ${{ inputs.additional_context }}
+          gemini_model: "gemini-1.5-pro"

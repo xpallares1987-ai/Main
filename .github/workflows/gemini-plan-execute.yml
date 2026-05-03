@@ -1,0 +1,32 @@
+name: Gemini Plan & Execute
+
+on:
+  workflow_call:
+    inputs:
+      additional_context:
+        type: string
+        required: false
+
+jobs:
+  plan-execute:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gemini Plan & Execute
+        uses: google-github-actions/run-gemini-cli@v0.1.22
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            Diseña y ejecuta un plan de cambios para resolver la solicitud.
+            Solicitud: ${{ inputs.additional_context }}
+            
+            Instrucciones:
+            1. Crea una propuesta de cambios técnica.
+            2. Aplica los cambios de forma quirúrgica.
+            3. Asegura que el código siga siendo anónimo.
+          gemini_model: "gemini-1.5-pro"

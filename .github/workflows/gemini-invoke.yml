@@ -1,0 +1,28 @@
+name: Gemini Invoke
+
+on:
+  workflow_call:
+    inputs:
+      additional_context:
+        type: string
+        required: false
+
+jobs:
+  invoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gemini Invoke
+        uses: google-github-actions/run-gemini-cli@v0.1.22
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            Responde a la siguiente solicitud interactiva sobre el monorepo 'Control Tower'.
+            Solicitud: ${{ inputs.additional_context }}
+            
+            Norma estricta: Mantén la anonimización de datos en todas tus respuestas.
+          gemini_model: "gemini-1.5-pro"
