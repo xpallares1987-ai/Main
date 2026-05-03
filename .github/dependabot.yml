@@ -1,8 +1,7 @@
 version: 2
 updates:
-  # Actualizaciones para el ecosistema npm (Monorepo)
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/"https://github.com/xpallares1987-ai/Control-Tower/blob/main/.github/dependabot.yml
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
