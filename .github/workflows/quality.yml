@@ -56,19 +56,19 @@ jobs:
       # Run tests and generate coverage for changed projects
       - name: Test Shared
         if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
-        run: npm run test -w @torre/shared
+        run: npx turbo run test --filter=@torre/shared
 
       - name: Test BPMN Modeler
         if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
-        run: npm run test -w bpmn-modeler
+        run: npx turbo run test --filter=bpmn-modeler
 
       - name: Test Shipment Tracker
         if: needs.changes.outputs.tracker == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
-        run: npm run test -w shipment-tracker
+        run: npx turbo run test --filter=shipment-tracker
 
       - name: Test Logistics Dashboard
         if: needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
-        run: npm run test -w logistics-dashboard
+        run: npx turbo run test --filter=logistics-dashboard
 
       # Upload to Codecov
       - name: Upload coverage to Codecov
