@@ -41,10 +41,10 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../src/app/api/external-warehouses/sync/route.ts
+// Validate ../../src/app/api/external-warehouses/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/external-warehouses/sync">> = Specific
-  const handler = {} as typeof import("../../src/app/api/external-warehouses/sync/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/external-warehouses">> = Specific
+  const handler = {} as typeof import("../../src/app/api/external-warehouses/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

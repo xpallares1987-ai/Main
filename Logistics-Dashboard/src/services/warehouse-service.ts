@@ -5,7 +5,7 @@ import {
   formatXmlDate, 
   formatXmlNumber, 
   parseExternalXml 
-} from '@repo/shared';
+} from '@torre/shared';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 

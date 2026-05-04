@@ -2,13 +2,12 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell
 } from 'recharts';
-import { 
-  LayoutDashboard, Ship, Inbox, Package, RefreshCw, Moon, Sun, Search, TrendingUp, BarChart3 
+import {
+  LayoutDashboard, Ship, Inbox, Package, RefreshCw, Moon, Sun, Search, BarChart3
 } from 'lucide-react';
-
 type TabType = 'Overview' | 'Boarding' | 'Receptions' | 'Stock';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
@@ -19,14 +18,13 @@ export default function Dashboard() {
   const [data, setData] = useState<any[]>([]);
   const [stockData, setStockData] = useState<any[]>([]);
   const [boardingData, setBoardingData] = useState<any[]>([]);
-  const [receptionData, setReceptionData] = useState<any[]>([]);
+  // const [receptionData, setReceptionData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [lastSync, setLastSync] = useState<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -67,7 +65,7 @@ export default function Dashboard() {
       
       if (tab === 'Stock') setStockData(formattedResult);
       if (tab === 'Boarding') setBoardingData(formattedResult);
-      if (tab === 'Receptions') setReceptionData(formattedResult);
+      // if (tab === 'Receptions') setReceptionData(formattedResult);
       
       setData(formattedResult);
     } catch (err: any) {
@@ -210,7 +208,7 @@ export default function Dashboard() {
                         return `${name} ${(safePercent * 100).toFixed(0)}%`;
                       }}
                     >
-                      {stockByWarehouse.map((entry, index) => (
+                      {stockByWarehouse.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
