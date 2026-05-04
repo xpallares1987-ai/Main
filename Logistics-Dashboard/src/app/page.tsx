@@ -372,69 +372,6 @@ export default function Dashboard() {
           </div>
         )}
       </main>
-
-      <style jsx global>{`
-        .overview-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-        .chart-card {
-          padding: 1.5rem;
-          min-height: 400px;
-        }
-        .stats-summary {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          padding: 2rem;
-          background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-main) 100%);
-        }
-        .stat-item {
-          text-align: center;
-          padding: 1rem;
-        }
-        .stat-label {
-          display: block;
-          font-size: 0.9rem;
-          color: var(--text-muted);
-          margin-bottom: 0.5rem;
-        }
-        .stat-value {
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: var(--badge-es);
-        }
-        .logo-area {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-        .logo-icon {
-          color: var(--badge-es);
-        }
-        .animate-spin {
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        .tab-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        @media (max-width: 768px) {
-          .overview-grid {
-            grid-template-columns: 1fr;
-          }
-          .tab-btn span {
-            display: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }

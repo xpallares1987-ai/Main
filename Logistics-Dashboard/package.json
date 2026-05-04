@@ -2,16 +2,18 @@
   "name": "logistics-dashboard",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint src"
   },
   "dependencies": {
     "@torre/shared": "*",
     "apexcharts": "^5.10.6",
     "axios": "^1.16.0",
+    "chart.js": "^4.5.1",
     "dexie": "^4.4.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.14.0",
