@@ -14,7 +14,7 @@ const MASKING_MAP: Record<string, string> = {
 /**
  * Applies data masking to a string based on the MASKING_MAP.
  */
-export function applyDataMasking(val: any): string {
+export function applyDataMasking(val: unknown): string {
   if (val === null || val === undefined) return '';
   let str = String(val);
   Object.entries(MASKING_MAP).forEach(([key, replacement]) => {
@@ -27,16 +27,16 @@ export function applyDataMasking(val: any): string {
 /**
  * Deeply masks sensitive data in objects/arrays.
  */
-export function maskSensitiveData(data: any): any {
+export function maskSensitiveData<T>(data: T): T {
   if (data === null || data === undefined) return data;
-  if (typeof data === 'string') return applyDataMasking(data);
-  if (Array.isArray(data)) return data.map(maskSensitiveData);
+  if (typeof data === 'string') return applyDataMasking(data) as unknown as T;
+  if (Array.isArray(data)) return data.map(maskSensitiveData) as unknown as T;
   if (typeof data === 'object') {
-    const masked: any = {};
-    for (const [key, value] of Object.entries(data)) {
+    const masked: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
       masked[key] = maskSensitiveData(value);
     }
-    return masked;
+    return masked as unknown as T;
   }
   return data;
 }
@@ -63,12 +63,13 @@ export const BoardingSchema = z
 /**
  * Utility to flatten complex XML structures and handle common Power Query logic.
  */
-export function flattenXmlValue(val: any): string {
+export function flattenXmlValue(val: unknown): string {
   if (val === null || val === undefined) return '';
   if (typeof val === 'string') return applyDataMasking(val.trim());
   if (typeof val === 'object') {
     if (Array.isArray(val)) return val.map(flattenXmlValue).join(', ');
-    const inner = val._ || val.Value || val['Element:Text'] || '';
+    const obj = val as Record<string, unknown>;
+    const inner = obj._ || obj.Value || obj['Element:Text'] || '';
     return typeof inner === 'object' ? flattenXmlValue(inner) : applyDataMasking(String(inner).trim());
   }
   return applyDataMasking(String(val).trim());
@@ -77,11 +78,12 @@ export function flattenXmlValue(val: any): string {
 /**
  * Formats date objects from XML into DD/MM/YYYY.
  */
-export function formatXmlDate(dateObj: any): string {
+export function formatXmlDate(dateObj: unknown): string {
   if (!dateObj || typeof dateObj !== 'object') return flattenXmlValue(dateObj);
-  const day = flattenXmlValue(dateObj.Day || dateObj.Date?.Day);
-  const month = flattenXmlValue(dateObj.Month || dateObj.Date?.Month);
-  const year = flattenXmlValue(dateObj.Year || dateObj.Date?.Year);
+  const obj = dateObj as Record<string, any>; // XML structures can be loose
+  const day = flattenXmlValue(obj.Day || obj.Date?.Day);
+  const month = flattenXmlValue(obj.Month || obj.Date?.Month);
+  const year = flattenXmlValue(obj.Year || obj.Date?.Year);
   if (day && month && year) {
     return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
   }
@@ -91,7 +93,7 @@ export function formatXmlDate(dateObj: any): string {
 /**
  * Rounds numbers to specified decimals and uses European format (comma).
  */
-export function formatXmlNumber(val: any, decimals: number = 3): string {
+export function formatXmlNumber(val: unknown, decimals: number = 3): string {
   const s = flattenXmlValue(val).replace(',', '.');
   const n = parseFloat(s);
   return isNaN(n) ? '' : n.toFixed(decimals).replace('.', ',');

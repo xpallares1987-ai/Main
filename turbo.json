@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
+  "globalPassThroughEnv": ["NODE_ENV", "GITHUB_TOKEN"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -14,28 +15,27 @@
         "src/**",
         "public/**",
         "next.config.mjs",
+        "vite.config.ts",
         "tsconfig.json",
         "package.json"
       ]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "outputs": ["coverage/**"],
-      "inputs": ["src/**", "test/**", "__tests__/**"]
+      "inputs": ["src/**", "test/**", "__tests__/**", "vitest.config.ts"]
     },
     "lint": {
-      "dependsOn": ["^build"],
       "outputs": [],
-      "inputs": ["src/**"]
+      "inputs": ["src/**", ".eslintrc*", "eslint.config.js"]
     },
     "type-check": {
-      "dependsOn": ["^build"],
       "outputs": [],
       "inputs": ["src/**", "tsconfig.json"]
     },
     "format": {
       "outputs": [],
-      "inputs": ["src/**", ".prettierrc*"]
+      "inputs": ["src/**", ".prettierrc*", "prettier.config.js"]
     }
   }
 }
