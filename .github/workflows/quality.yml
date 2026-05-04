@@ -56,7 +56,7 @@ jobs:
       # Run tests and generate coverage for changed projects
       - name: Test Shared
         if: needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
-        run: npm run test -w @repo/shared
+        run: npm run test -w @torre/shared
 
       - name: Test BPMN Modeler
         if: needs.changes.outputs.bpmn == 'true' || needs.changes.outputs.shared == 'true' || needs.changes.outputs.root == 'true'
