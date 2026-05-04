@@ -6,14 +6,12 @@
     "BPMN-Modeler",
     "Shipment-Tracker",
     "Logistics-Dashboard",
-    "Saica-Dashboard",
     "packages/*"
   ],
   "scripts": {
     "dev:bpmn": "npm run dev -w BPMN-Modeler",
     "dev:shipment": "npm run dev -w Shipment-Tracker",
     "dev:logistics": "npm run dev -w Logistics-Dashboard",
-    "dev:saica": "npm run dev -w Saica-Dashboard",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
