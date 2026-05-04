@@ -1,3 +1,5 @@
+import { escapeHTML } from "@torre/shared";
+
 export interface ModalOptions {
   title?: string;
   id?: string;
@@ -6,7 +8,7 @@ export interface ModalOptions {
 }
 
 export const Modal = {
-  create(contentHtml: string, options: ModalOptions = {}) {
+  create(content: string | HTMLElement, options: ModalOptions = {}) {
     const { 
       title = "", 
       id = "shared-modal", 
@@ -23,17 +25,26 @@ export const Modal = {
     modalOverlay.className = "modal-overlay";
     modalOverlay.style.display = "flex";
 
+    const safeTitle = escapeHTML(title);
+
     modalOverlay.innerHTML = `
       <div class="modal-content ff-card" style="max-width: ${maxWidth}; width: 100%;">
         <div class="modal-header">
-          <h2 class="modal-title">${title}</h2>
+          <h2 class="modal-title">${safeTitle}</h2>
           <button class="modal-close-btn" aria-label="Cerrar">&times;</button>
         </div>
-        <div class="modal-body">
-          ${contentHtml}
-        </div>
+        <div class="modal-body"></div>
       </div>
     `;
+
+    const bodyContainer = modalOverlay.querySelector(".modal-body") as HTMLElement;
+    if (typeof content === "string") {
+      // If we must use innerHTML for legacy support, we should ideally sanitize it
+      // but for now we follow the pattern while at least securing the title
+      bodyContainer.innerHTML = content;
+    } else {
+      bodyContainer.appendChild(content);
+    }
 
     document.body.appendChild(modalOverlay);
     document.body.style.overflow = "hidden";
