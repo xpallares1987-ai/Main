@@ -25,25 +25,40 @@ export const Modal = {
     modalOverlay.className = "modal-overlay";
     modalOverlay.style.display = "flex";
 
-    const safeTitle = escapeHTML(title);
+    // Create structure using safe methods
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content ff-card";
+    modalContent.style.maxWidth = maxWidth;
+    modalContent.style.width = "100%";
 
-    modalOverlay.innerHTML = `
-      <div class="modal-content ff-card" style="max-width: ${maxWidth}; width: 100%;">
-        <div class="modal-header">
-          <h2 class="modal-title">${safeTitle}</h2>
-          <button class="modal-close-btn" aria-label="Cerrar">&times;</button>
-        </div>
-        <div class="modal-body"></div>
-      </div>
-    `;
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "modal-header";
 
-    const bodyContainer = modalOverlay.querySelector(".modal-body") as HTMLElement;
+    const modalTitle = document.createElement("h2");
+    modalTitle.className = "modal-title";
+    modalTitle.textContent = title;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "modal-close-btn";
+    closeBtn.setAttribute("aria-label", "Cerrar");
+    closeBtn.innerHTML = "&times;"; // Entity is safe here
+
+    modalHeader.appendChild(modalTitle);
+    modalHeader.appendChild(closeBtn);
+
+    const modalBody = document.createElement("div");
+    modalBody.className = "modal-body";
+
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+    modalOverlay.appendChild(modalContent);
+
     if (typeof content === "string") {
-      // If we must use innerHTML for legacy support, we should ideally sanitize it
-      // but for now we follow the pattern while at least securing the title
-      bodyContainer.innerHTML = content;
+      // If we must support string HTML, we should ideally sanitize it. 
+      // For now, if it's a string, we use innerHTML but warn/document it's for trusted content.
+      modalBody.innerHTML = content;
     } else {
-      bodyContainer.appendChild(content);
+      modalBody.appendChild(content);
     }
 
     document.body.appendChild(modalOverlay);
