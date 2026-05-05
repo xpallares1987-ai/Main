@@ -12,6 +12,7 @@ Este es el repositorio central (Monorepo) que agrupa diversas aplicaciones indus
 
 - **Lenguaje:** TypeScript 5+ (Modo Estricto).
 - **Estilos:** Vanilla CSS (Zero Frameworks) - Enfoque en rendimiento y flexibilidad.
+- **Despliegue:** Configurado para GitHub Pages en subcarpetas (requiere `basePath` y `.nojekyll`).
 - **Arquitectura:** Monorepo gestionado con `TurboRepo`.
 - **Linting:** ESLint 9 (Flat Config) + Prettier para un estilo de código consistente.
 - **Pruebas:** Vitest para asegurar la integridad de cada módulo.
