@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
-  base: './',
+  base: '/Control-Tower/BPMN-Modeler/',
   build: {
     outDir: 'dist',
     emptyOutDir: true,

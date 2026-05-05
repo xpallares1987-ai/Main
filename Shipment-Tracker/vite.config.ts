@@ -3,7 +3,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
-  base: './',
+  base: '/Control-Tower/Shipment-Tracker/',
   build: {
     outDir: 'dist',
     emptyOutDir: true,

@@ -93,7 +93,9 @@ jobs:
           cp -r Logistics-Dashboard/out/* out/Logistics-Dashboard/
 
       - name: Copy Root Index
-        run: cp index.html out/
+        run: |
+          cp index.html out/
+          touch out/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
